@@ -1,0 +1,27 @@
+var envConfig = {
+    QIDO: {
+        hostName: 'raccoon.dicom.tw',
+        port: '443',
+        api: 'dicom-web',
+        http: "https"
+    },
+    WADO: {
+        hostName: 'raccoon.dicom.tw',
+        port: '443',
+        api: 'dicom-web',
+        http: "https"
+    },
+    FHIR: {
+        hostName: 'raccoon.dicom.tw',
+        port: '443',
+        api: 'api/fhir',
+        http: "https"
+    },
+    login: {
+        enable: false,
+        jwt: false //*If true, get token from localStorage and add headers for every requests
+    },
+    backend: {
+        baseUrl: "https://raccoon.dicom.tw"
+    }
+}
