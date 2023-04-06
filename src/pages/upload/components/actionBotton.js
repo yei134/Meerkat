@@ -18,7 +18,7 @@ function ActionBotton({setUploadFile}) {
             id: v4(),
             fileName: element.name,
             fileStatus: "READY",
-            processingPress: time,
+            processingProgress: time,
             fileSize: element.size,
           },
           ...prev,

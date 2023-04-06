@@ -2,9 +2,12 @@ const Item = ({
   id,
   number,
   fileName,
-  fileStatus,
-  processingPress,
+  modelClass,
+  versionNumber,
+  processingProgress,
   fileSize,
+  modelNote,
+  modelPublic,
   setUploadFile,
 }) => {
   function deleteItem() {
@@ -16,13 +19,15 @@ const Item = ({
     <tr className="item">
       <td>{number}</td>
       <td>{fileName}</td>
-      <td>{fileStatus}</td>
-      <td>Created&ensp;Time:{processingPress}</td>
-      <td>{fileSize}</td>
+      <td>{modelClass}</td>
+      <td>{versionNumber}</td>
+      <td>Created&ensp;Time:{processingProgress}</td>
+      <td>{fileSize}&nbsp;B</td>
+      <td>{modelNote}</td>
       <td>
         {/* 代改 */}
-        <button>1</button>
-        <button>2</button>
+        <button>{modelPublic}</button>
+        <button>Edit</button>
         <button onClick={deleteItem} className="remove">
           Delete
         </button>
