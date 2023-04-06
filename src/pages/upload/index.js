@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState} from "react";
 import "./index.css";
 import ActionBotton from "./components/actionBotton"; //檔案上傳操作按鈕
 import Content from "./components/Content"; //選擇的檔案上傳暫存顯示表格
