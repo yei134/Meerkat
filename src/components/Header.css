@@ -1,25 +1,26 @@
-.background{
-  width: auto;
-  height: auto;
-  background-color: #EEC39D;
+.background {
+  /* width: auto;
+  height: auto; */
+  background-color: #eec39d;
   padding: 40px 20px;
   margin-top: auto;
 }
-.h1{
+.h1 {
   color: black;
   left: 100px;
-  top:100px;
+  top: 100px;
   font-style: Kokoro;
 }
-.background1{
+.background1 {
   width: auto;
   height: auto;
-  background-color: #FFDFB9;
+  background-color: #ffdfb9;
   padding: 300px 20px;
 }
+/*
 .buttonFile {
   padding: 10px 10px;
-  background-color: #6C757D;
+  background-color: #6c757d;
   font-size: 16px;
   border-radius: 10px;
   color: white;
@@ -29,11 +30,10 @@
   border-width: 3px;
   margin-left: 20px;
   font-style: Kokoro;
-
 }
 .buttonFolder {
   padding: 10px 10px;
-  background-color: #6C757D;
+  background-color: #6c757d;
   font-size: 16px;
   border-radius: 10px;
   color: white;
@@ -43,7 +43,6 @@
   border-width: 3px;
   margin-left: 10px;
   font-style: Kokoro;
-
 }
 .buttonUpload {
   padding: 10px 10px;
@@ -55,9 +54,8 @@
   height: auto;
   border-color: white;
   border-width: 3px;
-  margin-left: 800px;
+  /* margin-left: 800px; 
   font-style: Kokoro;
-
 }
 .buttonReset {
   padding: 10px 10px;
@@ -71,12 +69,12 @@
   border-width: 3px;
   margin-left: 10px;
   font-style: Kokoro;
-
 }
-.table{
-  background-color: #FFDFB9;
+.table {
+  background-color: #ffdfb9;
   margin-top: -300px;
   font-style: Kokoro;
   text-align: center;
   vertical-align: top;
 }
+*/

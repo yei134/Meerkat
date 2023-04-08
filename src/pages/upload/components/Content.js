@@ -1,30 +1,8 @@
-import React from 'react';
-import './Content.css';
+import React from "react";
+import Item from "./Item";
 
-function Content(input_file) {
-  var show_table = "";
-  var time = Date();
-  time = time.split(' ');
-  time = time[3]+'-'+time[1]+'-'+time[2]+' '+time[4];
-  const show = (input_file) => {
-    for (let i = 0; i < input_file.length; i++) {
-      const element = input_file[i];
-      show_table +=
-        `
-        <tr>
-          <td>${ i+1 }</td>
-          <td>${element.name}</td>
-          <td>READY</td>
-          <td>Creat Time:${time}</td>
-          <td>${element.size}</td>
-          <td>Operation</td>
-        </tr>
-        `;
-    }
-    console.log(show_table);
-  };
-  show(input_file);
-  return ( 
+function Content({ uploadFile, setUploadFile }) {
+  return (
     <table>
       <thead>
         <tr>
@@ -34,10 +12,24 @@ function Content(input_file) {
           <th>Processing Progress</th>
           <th>FileSize</th>
           <th>Operation</th>
-        </tr>        
+        </tr>
       </thead>
       <tbody>
-        {show_table}
+        {uploadFile.map((item, index) => {
+          const { id, fileName, fileStatus, processingPress, fileSize } = item;
+          return (
+            <Item
+              key={id}
+              id={id}
+              number={index + 1}
+              fileName={fileName}
+              fileStatus={fileStatus}
+              processingPress={processingPress}
+              fileSize={fileSize}
+              setUploadFile={setUploadFile} //如果需要刪除項目時需要的
+            />
+          );
+        })}
       </tbody>
     </table>
   );

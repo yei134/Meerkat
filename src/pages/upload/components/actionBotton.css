@@ -6,7 +6,7 @@
   margin-top: auto;
 }
 .h1{
-  color: black;
+  color: #000000;
   left: 100px;
   top:100px;
   font-style: Kokoro;
@@ -17,20 +17,32 @@
   background-color: #FFDFB9;
   padding: 300px 20px;
 }
+
 .buttonFile {
-  padding: 10px 10px;
-  background-color: #6C757D;
-  font-size: 16px;
+  padding:0;
+  height: 40px;
+  width: 90px;
+  border: 1px solid #dd5923;
+  font-size:16px;
+  display: flex;
+  align-items: center;
+  background-color: #6c757d;
   border-radius: 10px;
   color: white;
-  width: auto;
-  height: auto;
   border-color: white;
   border-width: 3px;
-  margin-left: 20px;
-  font-style: Kokoro;
-
+  margin-left: 50px;
 }
+.upload{
+  height: 40px;
+  width: 90px;
+}
+input[type="file"]{
+  display: none;
+  }
+  
+
+
 .buttonFolder {
   padding: 10px 10px;
   background-color: #6C757D;
@@ -80,3 +92,8 @@
   text-align: center;
   vertical-align: top;
 }
+
+
+
+
+
