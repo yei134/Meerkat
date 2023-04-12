@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { API_GET_DATA } from "../../global/constants";
 import Edit from "./components/edit";
-import List from "./components/list";
 import "./index.css";
 import { Outlet } from "react-router-dom";
 
@@ -22,7 +21,7 @@ async function putMatter(matter) {
   });
 }
 
-const Home = () => {
+const NewDataset = () => {
   //定義一個react偵測到有變動時要渲染的東西
   const [matter, setMatter] = useState([]);
   const submittingState = useRef(false);
@@ -44,10 +43,9 @@ const Home = () => {
   return (
     <div className="app">
       <Edit add={setMatter} submittingState={submittingState}/>
-      <List listMatter={matter} listDelete={setMatter} submittingState={submittingState} />
       <Outlet/>
     </div>
   );
 };
 
-export default Home;
+export default NewDataset;

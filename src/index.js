@@ -5,6 +5,10 @@ import App from "./App";
 
 // 最終渲染頁面
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+root.render(
+<div>
+  <App />
+</div>
+);
 
 // reportWebVitals();
