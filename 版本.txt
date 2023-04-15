@@ -1,4 +1,45 @@
+Reset按鈕(是可以清除表格資料，不確定是否可行)
+//actionBotton.js
+
+//目前狀態為空陣列即可清除
+function deleteall(){
+    deletealldata([])
+  }
+<button onClick={deleteall} className="buttonReset">Reset</button>
+
+
+
+
+
 update事項:(待修正)
+//0409 上船資料夾按鈕
+.buttonFolder {
+  padding:0;
+  height: 40px;
+  width: 90px;
+  border: 1px solid #dd5923;
+  font-size:16px;
+  display: flex;
+  align-items: center;
+  background-color: #6c757d;
+  border-radius: 10px;
+  color: white;
+  border-color: white;
+  border-width: 3px;
+  margin-left: 200px;
+  margin-top: -65px;
+  justify-content:space-around;
+}
+//
+<label  for='filep'>
+      <input type="file" id='filep' webkitdirectory="true" onChange={add} accept=".dcm"  multiple='true' />
+      <p className="buttonFolder">上傳資料夾</p>  
+    </label> 
+
+
+
+
+
 //0408改按鈕樣式及未選擇檔案隱藏
 程式碼:
 //按鈕的樣式 actionBotton.js

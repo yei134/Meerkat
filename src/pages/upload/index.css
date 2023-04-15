@@ -1,0 +1,135 @@
+/* shorturl.at/dT467 */
+.wrap {
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+}
+table {
+  align-self: center;
+  align-items: center;
+  width: 100%;
+  border: 1;
+  background-color: #ffffff50;
+  border-collapse: collapse;
+}
+th {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #000000;
+  width: 25vw;
+  height: 75px;
+}
+
+td {
+  background-color: #ffffff05;
+  color: #000000;
+  width: 25vw;
+  height: 50px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+tr:hover td {
+  background-color: #ffffff50;
+  transition: all 0.3s ease-in-out;
+}
+
+tr td:first-child {
+  color: rgba(0, 0, 0);
+  /* border-left:5px solid rgba(79,192,210,0.6); */
+  transition: all 0.3s ease-in-out;
+}
+
+tr:hover td:first-child {
+  color: rgba(79, 192, 210, 1);
+  border-left: 5px solid rgba(79, 192, 210, 1);
+  transition: all 0.3s ease-in-out;
+}
+
+tr {
+  border-bottom: 2px solid #2a2a2a20;
+}
+
+tr:last-of-type {
+  border-bottom: none;
+}
+
+.background {
+  width: auto;
+  height: auto;
+  background-color: #eec39d;
+  padding: 40px 20px;
+  margin-top: auto;
+}
+.h1 {
+  color: black;
+  left: 100px;
+  top: 100px;
+  font-style: Kokoro;
+}
+.background1 {
+  width: auto;
+  height: auto;
+  background-color: #ffdfb9;
+  padding: 300px 20px;
+}
+/*
+.buttonFile {
+  padding: 10px 10px;
+  background-color: #6c757d;
+  font-size: 16px;
+  border-radius: 10px;
+  color: white;
+  width: auto;
+  height: auto;
+  border-color: white;
+  border-width: 3px;
+  margin-left: 20px;
+  font-style: Kokoro;
+}
+.buttonFolder {
+  padding: 10px 10px;
+  background-color: #6c757d;
+  font-size: 16px;
+  border-radius: 10px;
+  color: white;
+  width: auto;
+  height: auto;
+  border-color: white;
+  border-width: 3px;
+  margin-left: 10px;
+  font-style: Kokoro;
+}
+.buttonUpload {
+  padding: 10px 10px;
+  background-color: green;
+  font-size: 16px;
+  border-radius: 10px;
+  color: white;
+  width: auto;
+  height: auto;
+  border-color: white;
+  border-width: 3px;
+  /* margin-left: 800px;
+  font-style: Kokoro;
+}
+.buttonReset {
+  padding: 10px 10px;
+  background-color: red;
+  font-size: 16px;
+  border-radius: 10px;
+  color: white;
+  width: auto;
+  height: auto;
+  border-color: white;
+  border-width: 3px;
+  margin-left: 10px;
+  font-style: Kokoro;
+}
+.table {
+  background-color: #ffdfb9;
+  margin-top: -300px;
+  font-style: Kokoro;
+  text-align: center;
+  vertical-align: top;
+}
+
+*/
