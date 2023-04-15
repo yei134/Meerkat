@@ -8,6 +8,9 @@ function deleteall(){
 <button onClick={deleteall} className="buttonReset">Reset</button>
 
 
+//index.js(function upload)
+deletealldata={setUploadFile}
+
 
 
 
