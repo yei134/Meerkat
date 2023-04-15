@@ -16,7 +16,8 @@ function Content({ uploadFile, setUploadFile }) {
       </thead>
       <tbody>
         {uploadFile.map((item, index) => {
-          const { id, fileName, fileStatus, processingProgress, fileSize } = item;
+          const { id, fileName, fileStatus, processingProgress, fileSize } =
+            item;
           return (
             <Item
               key={id}

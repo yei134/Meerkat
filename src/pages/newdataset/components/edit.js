@@ -2,68 +2,99 @@ import { useState } from "react";
 import { v4 } from "uuid";
 
 const Edit = ({ add, submittingState }) => {
-  //變數與畫面物件綁定
-  const [matter, setMatter] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState(" ");
-  const [str, setStr] = useState(" ");
+  //新增資料集畫面需要的參數
+  const [name, setName] = useState("");//package_create name (資料集英文名稱 用來當檔案名的 不可有空白 數字開頭
+  const [title, setTitle] = useState("")//package_create title(資料集的名字 可以中文
+  const [note, setNote] = useState("");//package_create note(說明
+  const [private_dataset, setPrivate] = useState(false);//package_create private(是否對外公開 如果不要對外公開要有組織
+  const [groups, setGroups] = useState("");//package_create groups(屬於哪一類群組 如腦部 肺部
+  const [ownerOrg, setOwnerOrg] = useState(null);//package_create owner_org(組織 例如北榮 北護
 
-  function matterChange(e) {
-    setMatter(e.target.value);
+  //newDataset介面
+  function nameChange(e){
+    setName(e.target.value);
   }
-  function dateChange(e) {
-    setDate(e.target.value);
+  function titleChange(e){
+    setTitle(e.target.value);
   }
-  function timeChange(e) {
-    setTime(e.target.value);
+  function noteChange(e){
+    setNote(e.target.value);
   }
-  function strChange(e) {
-    setStr(e.target.value);
+  function privateChange(e){
+    setPrivate(e.target.value);
   }
-
-  function addMatter() { 
-    submittingState.current = true;  
-    add(function (prev) {
-      return [
-        ...prev,
-        {
-          id: v4(),
-          matter,
-          date,
-          time,
-        },
-      ];
-    });
+  function groupsChange(e){
+    setGroups(e.target.value);
+  }
+  function ownerOrgChange(e){
+    setOwnerOrg(e.target.value);
   }
 
-  // function handleChange(event) {
-  //   this.setState({value: event.target.value});
+  //範例
+  // function addMatter() { 
+  //   submittingState.current = true;  
+  //   add(function (prev) {
+  //     return [
+  //       ...prev,
+  //       {
+  //         id: v4(),
+  //         matter,
+  //         date,
+  //         time,
+  //       },
+  //     ];
+  //   });
   // }
 
   function handleSubmit(event) {
-    alert('An essay was submitted: ' + str);
+    alert('An essay was submitted: ');
     event.preventDefault();
   }
 
   return (
-    <div>
+    <div className="newDatasetDiv">
+      <h1>資料集新增</h1>
       <form onSubmit={handleSubmit}>
+        {/* 填寫區域 */}
         <label>
-          Essay:
-          <textarea value={str} onChange={strChange} />
+          *名稱：
+          <input type="text" value={name} onChange={nameChange} className="textbox" />
         </label>
-        <input type="submit" value="Submit" />
+        <p/>
+        <label>
+          *標題：
+          <input type="text" value={title} onChange={titleChange} className="textbox"/>
+          <div>(需英文且不可有空白)</div>
+        </label>
+        <hr></hr>
+        <label>
+          說明：
+          <textarea value={note} onChange={noteChange} />
+        </label>
+        <label>
+          <input type="checkbox" value={false}></input>
+          公開
+        </label>
+        <label>
+          所屬群組
+          <select id="groups" name="groups">
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="fiat">Fiat</option>
+            <option value="audi">Audi</option>
+          </select>
+        </label>
+        {/* 操作按鈕 */}
+        <div>
+          <button type="submit" className="add">
+              Submit
+            </button>
+            <button type="reset" className="add">
+              Reset
+            </button>
+            <button className="add">Cancel</button>
+        </div>
       </form>
-      <h1>備忘錄</h1>
-      <p>記事：</p>
-      <input type="text" value={matter} onChange={matterChange} />
-      <p>日期：</p>
-      <input type="date" value={date} onChange={dateChange} />
-      <p>時間：</p>
-      <input type="time" value={time} onChange={timeChange} />
-      <button onClick={addMatter} className="add">
-        新增
-      </button>
     </div>
   );
 };

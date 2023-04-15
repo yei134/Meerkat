@@ -43,9 +43,13 @@ const Home = () => {
   }, []);
   return (
     <div className="app">
-      <Edit add={setMatter} submittingState={submittingState}/>
-      <List listMatter={matter} listDelete={setMatter} submittingState={submittingState} />
-      <Outlet/>
+      <Edit add={setMatter} submittingState={submittingState} />
+      <List
+        listMatter={matter}
+        listDelete={setMatter}
+        submittingState={submittingState}
+      />
+      <Outlet />
     </div>
   );
 };

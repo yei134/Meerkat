@@ -42,8 +42,8 @@ const NewDataset = () => {
   }, []);
   return (
     <div className="app">
-      <Edit add={setMatter} submittingState={submittingState}/>
-      <Outlet/>
+      <Edit add={setMatter} submittingState={submittingState} />
+      <Outlet />
     </div>
   );
 };

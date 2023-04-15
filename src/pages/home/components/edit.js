@@ -17,8 +17,8 @@ const Edit = ({ add, submittingState }) => {
     setTime(e.target.value);
   }
 
-  function addMatter() { 
-    submittingState.current = true;  
+  function addMatter() {
+    submittingState.current = true;
     add(function (prev) {
       return [
         ...prev,

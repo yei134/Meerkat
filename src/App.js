@@ -1,6 +1,6 @@
 //載入套件
 import React from "react";
-import { BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 //載入檔案
 import Upload from "./pages/upload/index";
 import ModelUpload from "./pages/ModelUpload/index";
@@ -13,13 +13,13 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/"/>
-          <Route path="manage/" element={<Home/>}>     
-            <Route path="fileUpload" element={<Upload/>}/>
-            <Route path="modelUpload" element={<ModelUpload/>}/>
+          <Route path="/" />
+          <Route path="manage/" element={<Home />}>
+            <Route path="fileUpload" element={<Upload />} />
+            <Route path="modelUpload" element={<ModelUpload />} />
           </Route>
           <Route path="edit/">
-            <Route  path="newDataset" element={<NewDataset/>}/>
+            <Route path="newDataset" element={<NewDataset />} />
           </Route>
         </Routes>
       </BrowserRouter>

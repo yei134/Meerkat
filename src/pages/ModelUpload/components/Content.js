@@ -9,7 +9,7 @@ function Content({ uploadFile, setUploadFile }) {
           <th>NO.</th>
           <th>FileName</th>
           <th>Class</th>
-          <th>Version&ensp;No.</th> 
+          <th>Version&ensp;No.</th>
           <th>Processing&ensp;Progress</th>
           <th>FileSize</th>
           <th>Notes</th>
@@ -18,7 +18,7 @@ function Content({ uploadFile, setUploadFile }) {
       </thead>
       <tbody>
         {uploadFile.map((item, index) => {
-          const { 
+          const {
             id,
             fileName,
             modelClass,
@@ -26,7 +26,8 @@ function Content({ uploadFile, setUploadFile }) {
             processingProgress,
             fileSize,
             modelNote,
-            modelPublic, } = item;
+            modelPublic,
+          } = item;
           return (
             <Item
               key={id}
