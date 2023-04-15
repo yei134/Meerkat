@@ -27,7 +27,6 @@ function Content({ uploadFile, setUploadFile }) {
               processingPress={processingPress}
               fileSize={fileSize}
               setUploadFile={setUploadFile} //如果需要刪除項目時需要的
-              
             />
           );
         })}

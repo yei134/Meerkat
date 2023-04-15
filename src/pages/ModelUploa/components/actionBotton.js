@@ -1,18 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { v4 } from "uuid";
-import "./actionBotton.css";
 
 //多檔案上傳參考:https://ithelp.ithome.com.tw/articles/10269464
 //js基本操作:https://ithelp.ithome.com.tw/articles/10274961
 
-function ActionBotton({setUploadFile,deletealldata }) {
+function ActionBotton({setUploadFile}) {
   var time = Date() //取得現在時間
   time = time.split(" "); //將取得的值用空白分割
   time = time[3] + "-" + time[1] + "-" + time[2] + " " + time[4]; //取出分割後需要的部分
-
-  function deleteall(){
-    deletealldata([])
-  }
 
   function add(event) {
     const files = event.target.files;
@@ -33,26 +28,13 @@ function ActionBotton({setUploadFile,deletealldata }) {
     } 
   }
 
- 
   return (
-    <div className="upload">
-    <label  for='filenp'>
-    <input type="file" id='filenp'  onChange={add} accept=".dcm"  multiple='true' />
-    <p className="buttonFile">上傳檔案</p>  
-  </label> 
-  <label  for='filep'>
-    <input type="file" id='filep' webkitdirectory="true" onChange={add} accept=".dcm"  multiple='true' />
-    <p className="buttonFolder">上傳資料夾</p>  
-  </label>
-    <button onClick={deleteall} className="buttonReset">Reset</button>
-  </div>    
-
-    
+    <div>
+      <span>
+        <input type="file" onChange={add} accept=".dicom" multiple display='none'/>          
+      </span>
+    </div>    
   )
 }
 
 export default ActionBotton;
-
-
-/* --------------------------------
-webkitdirectory="true" 上船資料夾*/
