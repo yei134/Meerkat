@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { v4 } from "uuid";
 
-const Edit = ({ add, submittingState }) => {
+const Edit = ({ add, submittingState, dataset}) => {
   //新增資料集畫面需要的參數
   const [name, setName] = useState("");//package_create name (資料集英文名稱 用來當檔案名的 不可有空白 數字開頭
   const [title, setTitle] = useState("")//package_create title(資料集的名字 可以中文
   const [note, setNote] = useState("");//package_create note(說明
   const [private_dataset, setPrivate] = useState(false);//package_create private(是否對外公開 如果不要對外公開要有組織
   const [groups, setGroups] = useState("");//package_create groups(屬於哪一類群組 如腦部 肺部
-  const [ownerOrg, setOwnerOrg] = useState(null);//package_create owner_org(組織 例如北榮 北護
-
-  //newDataset介面
+  const [ownerOrg, setOwnerOrg] = useState("");//package_create owner_org(組織id 例如25188a0c-7f13-4562-a5e2-042df726de3c
+  
+  //newDataset's label change
   function nameChange(e){
     setName(e.target.value);
   }
@@ -30,41 +29,59 @@ const Edit = ({ add, submittingState }) => {
     setOwnerOrg(e.target.value);
   }
 
-  //範例
-  // function addMatter() { 
-  //   submittingState.current = true;  
-  //   add(function (prev) {
-  //     return [
-  //       ...prev,
-  //       {
-  //         id: v4(),
-  //         matter,
-  //         date,
-  //         time,
-  //       },
-  //     ];
-  //   });
-  // }
-
-  function handleSubmit(event) {
-    alert('An essay was submitted: ');
-    event.preventDefault();
+  //newDatasetform's button change
+  function btn_submit(){
+    submittingState.current = true;
+    add(function () {
+      return [
+        {
+          name,
+          title,
+          note,
+          private_dataset,
+          groups:{name:groups},
+          ownerOrg,
+        },
+      ];
+    });
+  }
+  function btn_reset(){
+    setName("")
+    setTitle("")
+    setNote("")
+    setPrivate(false)
+    setGroups("")
+    setOwnerOrg("")
+  }
+  function btn_cancel(){
+    //待補:等其他頁面出來後
+    alert("確認取消？");
+    btn_reset();
+    btn_submit();
   }
 
   return (
     <div className="newDatasetDiv">
       <h1>資料集新增</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={btn_submit}>
         {/* 填寫區域 */}
         <label>
-          <div>*名稱：</div>
-          <input type="text" value={name} onChange={nameChange} className="textbox" />
-        </label>
+          <span>*名字：(需英文且不可有空白)&nbsp;&nbsp;</span>
+          <input 
+            type="text" 
+            value={name} 
+            onChange={nameChange}
+            placeholder="需英文且不可有空白" 
+            className="textbox titleBox"/>
+        </label>        
         <p/>
         <label>
-          <div>*標題：</div>
-          <input type="text" value={title} onChange={titleChange} className="textbox"/>
-          <span>(需英文且不可有空白)</span>
+          <span>*標題：</span>
+          <input
+            type="text" 
+            value={title} 
+            onChange={titleChange} 
+            className="textbox nameBox" />
         </label>
         <hr></hr>
         <label>
@@ -73,13 +90,13 @@ const Edit = ({ add, submittingState }) => {
         </label>
         <label>
           <div>
-            <span><input type="checkbox" value={private_dataset} onChange={setPrivate}/></span>
+            <span><input type="checkbox" value={private_dataset} onChange={privateChange}/></span>
             公開
           </div>
         </label><p/>
         <label>{/*需要改成可以從ckan端取得資料*/}
           <span>所屬群組&nbsp;</span>
-          <select id="groups" name="groups">
+          <select id="groups" name="groups" value={groups} onChange={groupsChange}>
             <option value=""></option>
             <option value="ai-model">AI Model</option>
             <option value="biosignal">Bio-Signal</option>
@@ -93,7 +110,7 @@ const Edit = ({ add, submittingState }) => {
         </label><p/>
         <label>
           <span>組織&nbsp;</span>{/*需要改成可以從ckan端取得資料*/}
-          <select id="ownerOrg" name="ownerOrg" >
+          <select id="ownerOrg" name="ownerOrg" value={ownerOrg} onChange={ownerOrgChange}>
             <option value=""></option>
             <option value="academia-sinica">Academia Sinica</option>
             <option value="national-taipei-university-of-nursing-and-health-sciences">National Taipei University of Nursing and Health Sciences</option>
@@ -106,10 +123,10 @@ const Edit = ({ add, submittingState }) => {
           <button type="submit" className="add">
               Submit
             </button>
-            <button type="reset" className="add">
+            <button type="reset" onClick={btn_reset} className="add">
               Reset
             </button>
-            <button className="add">Cancel</button>
+            <button className="add" onClick={btn_cancel}>Cancel</button>
         </div>
       </form>
     </div>

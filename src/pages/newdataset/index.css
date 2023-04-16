@@ -17,8 +17,8 @@ input {
 
 textarea {
   /* padding: 10px; */
-  width: 96%;
-  height: 30%;
+  width: 98%;
+  height: 300px;
 }
 
 .app {
@@ -60,6 +60,10 @@ textarea {
   align-items: center;
 }
 
+.nameBox{
+  width: 90%;
+}
+
 .newDatasetDiv{
   width: 98%;
 }
@@ -73,4 +77,8 @@ textarea {
 
 .textbox{
   height: 8px;
+}
+
+.titleBox{
+  width: 80%;
 }
