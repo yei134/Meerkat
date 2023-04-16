@@ -1,3 +1,57 @@
+# 分支sz
+
+## 開啟前
+
+### 確認安裝套件:
+* express
+* json-server
+* react-router-dom
+
+### 套件安裝語法:
+* 當前資料夾內:
+`npm install express`
+*全域安裝
+`npm install express -g`
+* 初學補充:
+express可替換成自己需要的套件名稱
+`-g` 是全域的意思global
+`install` 可以只寫`i`，效果是一樣的，範例如下:
+`npm i express`
+
+## 開啟
+
+### 啟動步驟:
+
+* 在資料夾內啟用命令提示字元，輸入:
+`npm run server`
+
+* 另外開一個命令提示字元，或者在vsCode的terminal，輸入:
+`npm start`
+
+### 當前啟動後可運行網址:
+
+#### 20230416上傳的分支版本
+* [../manage/fileUpload](http://localhost:3001/manage/fileUpload)
+* [../edit/newDataset](http://localhost:3001/edit/newDataset)資料集創建表單(form)
+
+## 程式碼筆記
+
+### 目前已知待補齊功能
+* 將檔案上傳區域的資料寫入JSON檔案內，檔案上傳且離開頁面後，清空JSON檔案內資料
+
+### 撰寫架構
+
+#### json
+* posts(測試用)
+* data
+  * 1(newSet)
+* model
+
+### 語法範例
+
+
+# 以下為預設檔的md
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

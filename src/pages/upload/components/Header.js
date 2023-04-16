@@ -1,7 +1,6 @@
 import React from "react";
-import "./Header.css";
 
-export default function Header() {
+const Header = () => {
   return (
     <div className="background">
       <h1 className="h1">Cerebral Hemorrhage DICOM Uploder</h1>
@@ -19,4 +18,6 @@ export default function Header() {
       </div>
     </div>
   );
-}
+};
+
+export default Header;

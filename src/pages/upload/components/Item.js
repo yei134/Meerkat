@@ -3,7 +3,7 @@ const Item = ({
   number,
   fileName,
   fileStatus,
-  processingPress,
+  processingProgress,
   fileSize,
   setUploadFile,
 }) => {
@@ -17,7 +17,7 @@ const Item = ({
       <td>{number}</td>
       <td>{fileName}</td>
       <td>{fileStatus}</td>
-      <td>Created&ensp;Time:{processingPress}</td>
+      <td>Created&ensp;Time:{processingProgress}</td>
       <td>{fileSize}</td>
       <td>
         {/* 代改 */}

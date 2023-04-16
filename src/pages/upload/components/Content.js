@@ -16,7 +16,8 @@ function Content({ uploadFile, setUploadFile }) {
       </thead>
       <tbody>
         {uploadFile.map((item, index) => {
-          const { id, fileName, fileStatus, processingPress, fileSize } = item;
+          const { id, fileName, fileStatus, processingProgress, fileSize } =
+            item;
           return (
             <Item
               key={id}
@@ -24,7 +25,7 @@ function Content({ uploadFile, setUploadFile }) {
               number={index + 1}
               fileName={fileName}
               fileStatus={fileStatus}
-              processingPress={processingPress}
+              processingProgress={processingProgress}
               fileSize={fileSize}
               setUploadFile={setUploadFile} //如果需要刪除項目時需要的
             />
