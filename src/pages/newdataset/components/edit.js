@@ -57,31 +57,48 @@ const Edit = ({ add, submittingState }) => {
       <form onSubmit={handleSubmit}>
         {/* 填寫區域 */}
         <label>
-          *名稱：
+          <div>*名稱：</div>
           <input type="text" value={name} onChange={nameChange} className="textbox" />
         </label>
         <p/>
         <label>
-          *標題：
+          <div>*標題：</div>
           <input type="text" value={title} onChange={titleChange} className="textbox"/>
-          <div>(需英文且不可有空白)</div>
+          <span>(需英文且不可有空白)</span>
         </label>
         <hr></hr>
         <label>
-          說明：
+          <div>說明：</div>
           <textarea value={note} onChange={noteChange} />
         </label>
         <label>
-          <input type="checkbox" value={false}></input>
-          公開
-        </label>
-        <label>
-          所屬群組
+          <div>
+            <span><input type="checkbox" value={private_dataset} onChange={setPrivate}/></span>
+            公開
+          </div>
+        </label><p/>
+        <label>{/*需要改成可以從ckan端取得資料*/}
+          <span>所屬群組&nbsp;</span>
           <select id="groups" name="groups">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="fiat">Fiat</option>
-            <option value="audi">Audi</option>
+            <option value=""></option>
+            <option value="ai-model">AI Model</option>
+            <option value="biosignal">Bio-Signal</option>
+            <option value="brain-image">Brain Image</option>
+            <option value="digital-pathology">Digital Pathology</option>
+            <option value="drone">Drone</option>
+            <option value="genomic-data">Genomic Data</option>
+            <option value="health-record">Health Record</option>
+            <option value="medical-image">Medical Image</option>
+          </select>
+        </label><p/>
+        <label>
+          <span>組織&nbsp;</span>{/*需要改成可以從ckan端取得資料*/}
+          <select id="ownerOrg" name="ownerOrg" >
+            <option value=""></option>
+            <option value="academia-sinica">Academia Sinica</option>
+            <option value="national-taipei-university-of-nursing-and-health-sciences">National Taipei University of Nursing and Health Sciences</option>
+            <option value="national-yang-ming-chiao-tung-university">National Yang-Ming Chiao Tung University</option>
+            <option value="taipei-veterans-general-hospital">Taipei Veterans General Hospital</option>
           </select>
         </label>
         {/* 操作按鈕 */}

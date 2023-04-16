@@ -1,6 +1,7 @@
 div {
   padding: 1%;
   padding-top: 2%;
+  width: 98%;
 }
 
 hr {
@@ -11,18 +12,18 @@ hr {
 input {
   padding: 10px;
   width: auto;
-  /* height: 5px; */
+  height: auto;
 }
 
 textarea {
-  padding: 10px;
-  width: 98%;
+  /* padding: 10px; */
+  width: 96%;
   height: 30%;
 }
 
 .app {
-  width: 80%;
-  padding: 20px;
+  width: 98%;
+  padding: 1%;
   border: 0px solid #000;
   box-sizing: border-box;
   background-color: #ffffff30;
@@ -60,7 +61,7 @@ textarea {
 }
 
 .newDatasetDiv{
-  width: 80%;
+  width: 98%;
 }
 
 .remove {
