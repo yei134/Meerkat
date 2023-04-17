@@ -6,6 +6,7 @@ import Upload from "./pages/upload/index";
 import ModelUpload from "./pages/ModelUpload/index";
 import Home from "./pages/home";
 import NewDataset from "./pages/newdataset";
+import DatasetInfo from "./pages/datasetinfo";
 
 // 介面所需框架集合
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="edit/">
             <Route path="newDataset" element={<NewDataset />} />
           </Route>
+          <Route path="test/" element={<DatasetInfo/>}/>
         </Routes>
       </BrowserRouter>
     </div>
