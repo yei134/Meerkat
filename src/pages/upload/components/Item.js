@@ -12,9 +12,22 @@ const Item = ({
       return prev.filter((item) => item.id !== id);
     });
   }
- 
+  function uploadItem() {
+    setUploadFile(function (prev) {
+      const newUploadFile = prev.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            fileStatus: "SUCCESS",
+          };
+        }
+        return item;
+      });
+      return newUploadFile;
+    });
+  }
   return (
-    <tr className="item">
+    <tr>
       <td>{number}</td>
       <td>{fileName}</td>
       <td>{fileStatus}</td>
@@ -22,7 +35,7 @@ const Item = ({
       <td>{fileSize}</td>
       <td>
         {/* 代改 */}
-        <button>單向上傳</button>
+        <button onClick={uploadItem} className="btnUpload">upload</button>
         <button onClick={deleteItem} className="remove">
           Delete
         </button>

@@ -1,3 +1,23 @@
+//0419 表格比例問題:將tr 中的classname="item"，移掉後表格即可對齊，感覺他又去吃到別的css
+ <tr>
+      <td>{number}</td>
+      <td>{fileName}</td>
+      <td>{fileStatus}</td>
+      <td>Created&ensp;Time:{processingProgress}</td>
+      <td>{fileSize}</td>
+      <td>
+        {/* 代改 */}
+        <button>單向上傳</button>
+        <button onClick={deleteItem} className="remove">
+          Delete
+        </button>
+      </td>
+    </tr>
+
+
+
+
+
 Reset按鈕(是可以清除表格資料，不確定是否可行)
 //actionBotton.js
 
