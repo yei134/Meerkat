@@ -65,14 +65,14 @@ const Edit = ({ add, submittingState, dataset}) => {
       <h1>資料集新增</h1>
       <form onSubmit={btn_submit}>
         {/* 填寫區域 */}
-        <label>
+        <label >
           <span>*名字：(需英文且不可有空白)&nbsp;&nbsp;</span>
           <input 
             type="text" 
             value={name} 
             onChange={nameChange}
             placeholder="需英文且不可有空白" 
-            className="textbox titleBox"/>
+            className="input-field"/>
         </label>        
         <p/>
         <label>
@@ -81,21 +81,21 @@ const Edit = ({ add, submittingState, dataset}) => {
             type="text" 
             value={title} 
             onChange={titleChange} 
-            className="textbox nameBox" />
+            className="input-field" />
         </label>
         <hr></hr>
         <label>
-          <div>說明：</div>
-          <textarea value={note} onChange={noteChange} />
+          <span>說明：</span>
+          <textarea value={note} onChange={noteChange} className="input-field1" />
         </label>
         <label>
-          <div>
-            <span><input type="checkbox" value={private_dataset} onChange={privateChange}/></span>
+          <div >
+            <span ><input type="checkbox"  value={private_dataset} onChange={privateChange}/></span>
             公開
           </div>
         </label><p/>
         <label>{/*需要改成可以從ckan端取得資料*/}
-          <span>所屬群組&nbsp;</span>
+          <span >所屬群組&nbsp;</span>
           <select id="groups" name="groups" value={groups} onChange={groupsChange}>
             <option value=""></option>
             <option value="ai-model">AI Model</option>
