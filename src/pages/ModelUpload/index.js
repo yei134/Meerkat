@@ -8,7 +8,7 @@ function ModelUpload() {
   const [uploadFile, setUploadFile] = useState([]);
 
   return (
-    <div>
+    <div className="test">
       <ActionBotton setUploadFile={setUploadFile} />
       <Content uploadFile={uploadFile} setUploadFile={setUploadFile} />
     </div>

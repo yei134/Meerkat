@@ -9,7 +9,7 @@ function Upload() {
   const [uploadFile, setUploadFile] = useState([]);
 
   return (
-    <div>
+    <div className="test">
       <Header />
       <ActionBotton setUploadFile={setUploadFile} />
       <Content uploadFile={uploadFile} setUploadFile={setUploadFile} />
