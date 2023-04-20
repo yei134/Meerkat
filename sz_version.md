@@ -107,6 +107,7 @@ datasetList css
 * 19
   * 影片1~15集
   * 更新練習檔案nodeReact
+  * 實際:1~5
 * 20
   * 影片16~25集
   * 更新練習檔案nodeReact
@@ -133,3 +134,18 @@ datasetList css
   * RACCOON SERVER是甚麼
     * 資料使用者是申請CSV可視權
     * 學長會有一個程式碼 去核對RACCOON的白名單
+# 20230420
+## 目標
+### 預定
+趕上昨天計畫
+* 沒趕上
+* 今日進度:
+  * 影片6&7
+  * 寫config switch 建立test
+    * config建立共同調用參數
+    * switch建立router功能
+    * test 成功用express建立post method's rest api
+### 希望
+早點回家
+### 夢想
+睡覺
