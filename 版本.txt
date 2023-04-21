@@ -1,4 +1,100 @@
-//0419 表格比例問題:將tr 中的classname="item"，移掉後表格即可對齊，感覺他又去吃到別的css
+//0420檔案大小取至小數點第1位、READY及SUCCESS的樣式、
+(需求:四種狀態PROCESSING上傳中(灰色)，READY(藍色)，SUCCESS(綠色)，Fail(紅色)、-->等到時候有API再來用，現在只是模擬狀態
+按鈕的樣式調大一點)
+
+1.按鈕樣式及狀態
+.btnFile {
+    border-radius: 10px;
+    background-color: #6c757d;
+    color: white;
+    margin: 5px;
+    /* 與附近元素的距離 */
+    padding: 10px;
+    /* 與元素內的距離 */
+    white-space: nowrap;
+    /* width: 90px; */
+    /* height: 40px; */
+    /* border: 1px solid #dd5923; */
+    /* font-size: 16px; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* border-color: white; */
+    /* border-width: 3px; */
+    /* margin-left: 90px; */
+    /* justify-content: space-around; */
+}
+
+.btnReset {
+    background-color: #DC3545;
+    border: 0px;
+    border-radius: 10px;
+    color: #fff;
+    margin: 5px;
+    /* 與附近元素的距離 */
+    padding: 10px;
+    /* 與元素內的距離 */
+    white-space: nowrap;
+    /* 強制元素不分行 */
+    /* height: 40px; */
+    /* width: 90px; */
+    /* font-size: 16px; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* border-color: white; */
+    /* border-width: 3px; */
+    /* margin-left: 500px; */
+    /* justify-content: space-around; */
+    /* margin-top: -59px; */
+}
+
+.btnUpload {
+    background-color: #28A745;
+    border: 0px;
+    border-radius: 10px;
+    color: #fff;
+    margin: 5px;
+    /* 與附近元素的距離 */
+    padding: 10px;
+    /* 與元素內的距離 */
+    white-space: nowrap;
+    /* 強制元素不分行 */
+    /* height: 40px; */
+    /* width: 90px; */
+    /* font-size: 16px; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* border-color: white; */
+    /* border-width: 3px; */
+    /* margin-left: 500px; */
+    /* justify-content: space-around; */
+    /* margin-top: -59px; */
+}
+
+/* ============================= */
+.hr {
+    border: 3.5px solid rgb(87, 86, 15);
+    opacity: 0.1;
+}
+
+div {
+    margin: 0px;
+}
+
+.ready {
+    color:rgb(106, 106, 247);
+    font-weight: bold;
+}
+.success {
+    color: rgb(0, 142, 0);
+    font-weight: bold;
+}
+
+2.檔案大小
+      fileSize={(fileSize /(1024*1024)).toFixed(1) + "MB"}
+
+
+//0419 1.表格比例問題:將tr 中的classname="item"，移掉後表格即可對齊，2.表格內的上傳功能、READY變成成功
+1.
  <tr>
       <td>{number}</td>
       <td>{fileName}</td>
@@ -13,12 +109,26 @@
         </button>
       </td>
     </tr>
+    2.
+    function status() {
+    setstatus(function (prev) {
+      return prev.map((file) => {
+        if (file.fileStatus === "READY") {
+          return {
+            ...file,
+            fileStatus: "SUCCESS",
+          };
+        }
+        return file;
+      });
+    });
+  }
 
 
 
 
 
-Reset按鈕(是可以清除表格資料，不確定是否可行)
+Reset按鈕(是可以清除表格資料)
 //actionBotton.js
 
 //目前狀態為空陣列即可清除

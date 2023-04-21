@@ -8,11 +8,11 @@ import Header from "./components/Header";
 function Upload() {
   //定義一個react偵測到有變動時要渲染的東西
   const [uploadFile, setUploadFile] = useState([]);
-
   return (
-    <div>
+    <div className="divHeader">
       <Header />
       <ActionBotton setUploadFile={setUploadFile} deletealldata={setUploadFile} setstatus={setUploadFile} />
+      <hr className="hr" />
       <Content uploadFile={uploadFile} setUploadFile={setUploadFile} />
     </div>
   );
