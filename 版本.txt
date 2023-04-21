@@ -1,5 +1,5 @@
 //0420檔案大小取至小數點第1位、READY及SUCCESS的樣式、
-(需求:四種狀態PROCESSING上傳中(灰色)，READY(藍色)，SUCCESS(綠色)，Fail(紅色)、--
+(需求:四種狀態PROCESSING上傳中(灰色)，READY(藍色)，SUCCESS(綠色)，Fail(紅色)、-->等到時候有API再來用，現在只是模擬狀態
 按鈕的樣式調大一點)
 
 1.按鈕樣式及狀態
