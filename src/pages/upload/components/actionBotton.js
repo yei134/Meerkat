@@ -2,7 +2,6 @@
 import { v4 } from "uuid";
 //多檔案上傳參考:https://ithelp.ithome.com.tw/articles/10269464
 //js基本操作:https://ithelp.ithome.com.tw/articles/10274961
-
 function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
   var time = Date(); //取得現在時間
   time = time.split(" "); //將取得的值用空白分割
@@ -41,7 +40,6 @@ function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
       });
     }
   }
-
   return (
     <div className="test">
       {/* className="upload" */}
@@ -53,11 +51,10 @@ function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
         <input type="file" id='filep' webkitdirectory="true" onChange={add} accept=".dcm" multiple='true' />
         <span className="btnFile">上傳資料夾</span>
       </label>
-      <span/>
+      <span />
       <button onClick={deleteall} className="btnReset">Reset</button>
       <button onClick={status} className="btnUpload">Upload</button>
     </div>
   )
 }
-
 export default ActionBotton;
