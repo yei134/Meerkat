@@ -47,6 +47,14 @@ express可替換成自己需要的套件名稱
   * 1(newSet)
 * model
 
+#### 資料夾
+* Meerkat
+  * client
+    * 前端:放置react
+  * api
+    * 後端:放置node
+  * node_modules
+
 ### 語法範例
 
 
