@@ -1,9 +1,9 @@
 import React from "react";
 
-const List = () => {
+const List = ({datasetName}) => {
   return (
     <div>
-      <h2>A_DATA_SET</h2>
+      <h2>{datasetName}</h2>
       <p>description</p>
     </div>
   );
