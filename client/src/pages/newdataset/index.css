@@ -82,3 +82,27 @@ textarea {
 .titleBox{
   width: 80%;
 }
+
+.input-field {
+  padding: 0.5em 0.7em;
+  border-radius: 0.1em;
+  border: 1px solid var(--c-border, currentColor);
+  color: var(--c-text);
+  font-size: 1rem;
+  letter-spacing: 0.1ch;
+  width: 96%;
+  margin: 5px 0 0 0px
+}
+
+.input-field1 {
+  padding: 0.5em 0.7em;
+  height: 90px;
+  border-radius: 0.1em;
+  border: 1px solid var(--c-border, currentColor);
+  color: var(--c-text);
+  font-size: 1rem;
+  letter-spacing: 0.1ch;
+  width: 96%;
+  margin: 5px 0 0 0px
+  
+}

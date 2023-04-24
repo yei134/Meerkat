@@ -12,20 +12,32 @@ const Item = ({
       return prev.filter((item) => item.id !== id);
     });
   }
+  
+  function uploadItem() {
+    setUploadFile(function (prev) {
+      const newUploadFile = prev.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            fileStatus: "SUCCESS",
+          };
+        }
+        return item;
+      });
+      return newUploadFile;
+    });
+  }
   return (
-    <tr className="item">
+    <tr>
       <td>{number}</td>
       <td>{fileName}</td>
-      <td>{fileStatus}</td>
+      <td className={fileStatus === "READY" ? "ready" : "success"}>{fileStatus}</td>
       <td>Created&ensp;Time:{processingProgress}</td>
       <td>{fileSize}</td>
       <td>
         {/* 代改 */}
-        <button>1</button>
-        <button>2</button>
-        <button onClick={deleteItem} className="remove">
-          Delete
-        </button>
+        <button onClick={uploadItem} className="btnUpload">Upload</button>
+        <button onClick={deleteItem} className="btnReset">Delete</button>
       </td>
     </tr>
   );

@@ -1,8 +1,5 @@
-.app {
-  width: 100%;
-  padding: 20px;
-  border: 1px solid #000;
-  box-sizing: border-box;
+div{
+  padding-top: 0;
 }
 
 input {
@@ -18,6 +15,13 @@ input {
   box-sizing: border-box;
   width: 100%;
   padding: 15px;
+}
+
+.app {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #000;
+  box-sizing: border-box;
 }
 
 .list {

@@ -2,7 +2,7 @@ import React from "react";
 
 const ConLeft = () => {
   return (
-    <div>
+    <div className="left">
       <span>
         <h2>datasetTitle</h2>
         <hr/>

@@ -1,4 +1,4 @@
-import React, {Component,useState, useEffect} from "react";
+import React, {Component} from "react";
 import "./index.css";
 import Header from "./components/hearder";
 import Content from "./components/content"

@@ -1,7 +1,7 @@
 import React from "react";
 import Item from "./Item";
 
-function Content({ uploadFile, setUploadFile }) {
+function Content({ uploadFile, setUploadFile, setstatus }) {
   return (
     <table>
       <thead>
@@ -26,8 +26,9 @@ function Content({ uploadFile, setUploadFile }) {
               fileName={fileName}
               fileStatus={fileStatus}
               processingProgress={processingProgress}
-              fileSize={fileSize}
+              fileSize={(fileSize /(1024*1024)).toFixed(1) + "MB"}
               setUploadFile={setUploadFile} //如果需要刪除項目時需要的
+              setstatus={setstatus}
             />
           );
         })}
@@ -35,5 +36,4 @@ function Content({ uploadFile, setUploadFile }) {
     </table>
   );
 }
-
 export default Content;

@@ -4,7 +4,7 @@ import ConRight from "./conright";
 
 const Content = () => {
   return (
-    <div>
+    <div className="flex-container">
       <ConLeft/>
       <ConRight/>
     </div>

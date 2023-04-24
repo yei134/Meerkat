@@ -5,7 +5,7 @@ const Header = () => {
     <div>
       <div>AI&nbsp;Data&nbsp;Sharing</div>
       <div>
-        <button><a href="newDatset">新增資料集</a></button>
+        <button><a href="newDataset">新增資料集</a></button>
       </div>
     </div>
   );

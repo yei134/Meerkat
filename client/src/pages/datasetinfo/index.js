@@ -5,7 +5,7 @@ import Content from "./components/content"
 function DatasetInfo(){
 
   return(
-    <div>
+    <div className="test">
       <Header/>
       <hr/>
       <Content/>
