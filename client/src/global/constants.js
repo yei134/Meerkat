@@ -2,6 +2,7 @@
 export const API_HOST = "http://localhost:3000";
 export const API_GET_DATA = `${API_HOST}/posts/1`;
 export const api_get_data_newSet = `${API_HOST}/data/1`;
+export const api_get_symptoms = `${API_HOST}/data/2`;
 //ckan api
 export const ckan_default = "http://localhost:9000/"
 export const ckan_test_1 = `${ckan_default}ckan`

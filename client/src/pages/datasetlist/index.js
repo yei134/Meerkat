@@ -18,8 +18,7 @@ class DatasetList extends Component{
   }
   componentWillMount() {
     this.callAPI();
-  }
-
+  }  
   render(){
     return(
       <div>

@@ -191,6 +191,21 @@ datasetList css
 ### 夢想
 把datasetinfo的api放入
 
+# 20230504
+## 目標
+### 預定
+沒有，看啥不開心就改誰
+* datasetList
+  * 增加nav
+* datasetInfo
+  * 增加標題連結回主頁
+* fileUpload
+  * 增加標題連結回資訊頁
+### 希望
+睡覺
+### 夢想
+睡覺
+
 # 模板:
 ## 目標
 ### 預定

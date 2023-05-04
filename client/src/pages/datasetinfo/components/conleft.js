@@ -1,30 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 
-const ConLeft = () => {
-  return (
-    <div className="left">
-      <span>
-        <h2>datasetTitle</h2>
-        <hr/>
+const ConLeft = ({name, private_dataset, groups, ownerOrg, description}) => {
+    return (
+    <div className="conleft"> 
+      <div>
         <table>
           <thead>
             <tr>
-              <th>作者</th>
-              <th>name</th>
+              <th>Field</th>
+              <th>Value</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>最後更新</td>
-              <td>uploadDate</td>
+              <td>作者</td>
+              <td>name</td>
             </tr>
             <tr>
-              <td>創建日期</td>
-              <td>buildDate</td>
+              <td>所屬群組</td>
+              <td>{groups}</td>
+            </tr>
+            <tr>
+              <td>組織</td>
+              <td>{ownerOrg}</td>
+            </tr>
+            <tr>
+              <td>
+                病徵
+              </td>
+              <td>{description}</td>
             </tr>
             </tbody>
         </table>
-      </span>
+      </div>
     </div>
   );
 };

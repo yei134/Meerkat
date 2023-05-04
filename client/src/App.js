@@ -4,8 +4,6 @@ import React, {Component} from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 //載入檔案
 import Upload from "./pages/upload/index";
-import ModelUpload from "./pages/ModelUpload/index";
-import Home from "./pages/home";
 import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
 import DatasetList from "./pages/datasetlist";
@@ -21,9 +19,7 @@ class App extends Component{
             <Route path="/" element={<DatasetList/>}/>{/*資料集清單*/}
             <Route path="datasetInfo" element={<DatasetInfo/>}/>
             <Route path="newDataset" element={<NewDataset />} />
-            <Route path="manage" element={<Home />}/>
             <Route path="fileUpload" element={<Upload />} />
-            <Route path="modelUpload" element={<ModelUpload />} />
           </Routes>
         </BrowserRouter>
       </div>

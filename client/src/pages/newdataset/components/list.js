@@ -1,19 +1,19 @@
 import Item from "./item";
 
-const List = ({ listMatter, listDelete, submittingState }) => {
+const List = ({ listSymptoms, listDelete, submittingState1}) => {
   return (
-    <div className="list">
-      {listMatter.map((item) => {
-        const { id, matter, date, time } = item;
+    <div>
+      {listSymptoms.map((item) => {
+        const { id, symptoms, description} = item;
+        console.log(id);
         return (
           <Item
             key={id}
             id={id}
-            note={matter}
-            date={date}
-            time={time}
+            symptoms={symptoms} 
+            description={description}
             listDelete={listDelete}
-            submittingState={submittingState}
+            submittingState1={submittingState1}
           />
         );
       })}
