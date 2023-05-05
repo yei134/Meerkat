@@ -1,0 +1,118 @@
+//假資料(待改)--->後續接後端須改的地方(index.js)
+  const [uploadFile, setUploadFile] = useState([ {
+    id: 1,
+    fileName: "example1.pdf",
+    processingProgress: "2023-05-05 12:30:00",
+    fileSize: 2345678,
+    isChecked: false,
+  },
+  {
+    id: 2,
+    fileName: "example2.pdf",
+    processingProgress: "2023-05-05 13:00:00",
+    fileSize: 9876543,
+    isChecked: false,
+  },]);
+  ------------------------------------------
+  //暫改(後續接上後端，下載會抓檔案的URL)(ITEM.js)
+   downloadUrl,
+
+}) => {
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+//確認是否勾選
+   <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={() => setUploadFile((prev) => {
+            return prev.map((item) => {
+              if (item.id === id) {
+                return { ...item, isChecked: !isChecked };
+              }
+              return item;
+            });
+          })}
+        />
+  ----
+  //actionbutton.js
+  function ActionBotton({ setUploadFile }) {
+  const [showModal, setShowModal] = useState(false); // 新增狀態來判斷是否顯示彈跳視窗
+  -----
+  //打勾確認刪除
+  function deleteItems() {
+    setUploadFile((prev) => prev.filter((item) => !item.isChecked));
+  }//按下確認，則會使用 setUploadFile 來過濾掉已勾選的項目，同時將 isDeleteMode 和 isDeleting 狀態都設定為 false，表示完成了刪除動作
+  ------
+  //modal彈跳視窗
+  function handleDelete() {
+    setShowModal(true); // 設定彈跳視窗為顯示狀態
+  }
+  function closeModal() {
+    setShowModal(false); // 設定彈跳視窗為隱藏狀態
+  }
+  function handleDeleteConfirm() {
+    deleteItems();
+    closeModal(); // 執行刪除動作並關閉彈跳視窗
+  }
+
+   {/* 彈跳視窗內容
+         isOpen 是否顯示彈跳視窗
+         onRequestClose 關閉時回傳的函數
+      */}
+      <ReactModal
+        isOpen={showModal}
+        onRequestClose={closeModal}
+        contentLabel="Delete Modal"
+        className="modal">
+        <h2>確認要刪除嗎？</h2>
+        <div className="modal-button">
+          <button onClick={closeModal}>取消</button>
+          <button onClick={handleDeleteConfirm}>確定</button>
+        </div>
+      </ReactModal>
+      ----------------
+      //彈跳視窗的樣式
+      .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  width: 300px;
+}
+
+.modal h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+}
+
+.modal-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-button button {
+  margin-left: 10px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+      
