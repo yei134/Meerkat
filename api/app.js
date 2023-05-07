@@ -8,8 +8,9 @@ var cors = require("cors");//載入跨域套件
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var testAPIRouter = require("./routes/testAPI");//載入之前寫好的api檔案
-var ckanAPI = require("./routes/ckanAPI");//載入之前寫好的api檔案
+var testAPIRouter = require("./routes/testAPI");
+var getCkan = require("./routes/getCkan");
+var postCkan = require("./routes/postCkan");
 
 var app = express();
 
@@ -26,8 +27,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use("/testAPI", testAPIRouter);//router
-app.use("/ckan", ckanAPI);//router
+//ckan
+app.use("/testAPI", testAPIRouter);
+app.use("/ckan_get", getCkan);
+app.use("/ckan_post", postCkan);
+//raccoon
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
