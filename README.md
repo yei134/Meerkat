@@ -61,11 +61,11 @@ localhost:9000/ckan_post/package_create<br>
 (必要)Header參數：<br>
 Authorization(Token)<br>
 <br>
-(非全數，*為必填)body指定參數之定義：<br>
-name(資料集的name欄位)*<br>
-title(資料集的標題欄位)*<br>
+(非全數，\*為必填)body指定參數之定義：<br>
+name(資料集的name欄位)\*<br>
+title(資料集的標題欄位)\*<br>
 author(資料集的作者欄位)<br>
 maintainer(資料集的維護者欄位)<br>
 note(資料集的描述說明欄位)<br>
-owner_org(資料集的擁有組織)*<br>
+owner_org(資料集的擁有組織)\*<br>
 groups(資料集的擁有組織)<br>
