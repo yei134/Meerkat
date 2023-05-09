@@ -1,132 +1,71 @@
-# 分支sz
+# 執行Meerkat專案步驟 #
 
-## 開啟前
+1.Meerkat/client執行npm install進行安裝前端套件<br>
+2.Meerkat/api執行npm install進行安裝後端套件<br>
+3.Meerkat/client執行npm start啟動前端<br>
+4.Meerkat/api執行npm start啟動後端<br>
 
-### 確認安裝套件:
-* express
-* json-server
-* react-router-dom
+# 前端(client)環境變數設置
 
-### 套件安裝語法:
-* 當前資料夾內:
-`npm install express`
-*全域安裝
-`npm install express -g`
-* 初學補充:
-express可替換成自己需要的套件名稱
-`-g` 是全域的意思global
-`install` 可以只寫`i`，效果是一樣的，範例如下:
-`npm i express`
+Meerkat/client/.env<br>
+REACT_APP_BACKEND_URI=http://localhost:9000/<br>
+<br>
+（開發環境訪問時請設置localhost。）<br>
 
-## 開啟
+# 後端(api)環境變數設置
 
-### 啟動步驟:
+Meerkat/client/.env<br>
+CKAN_BASE_URI_2=https://data.dmc.nycu.edu.tw/api/3/action/<br>
+CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/<br>
+<br>
+（CKAN_BASE_URI為擁有最高權限之測試平台，若無特殊情況請使用這個網址。）<br>
 
-* 在資料夾內啟用命令提示字元，輸入:
-`npm run server`
+# 後端API #
 
-* 另外開一個命令提示字元，或者在vsCode的terminal，輸入:
-`npm start`
+# 2023/05/07後端開啟的API
 
-### 當前啟動後可運行網址:
+# 測試express #
+localhost:9000<br>
+正常響應頁面：Express Welcom to Express<br>
+<br>
+localhost:9000/testAPI<br>
+正常頁面響應：API is working properly<br>
+正常命令響應：API is working properly<br>
 
-#### 20230416上傳的分支版本
-* [../manage/fileUpload](http://localhost:3001/manage/fileUpload)
-* [../edit/newDataset](http://localhost:3001/edit/newDataset)資料集創建表單(form)
+# 對CKAN的GET請求 #
+localhost:9000/ckan_get/<br>
+正常頁面響應：ckan get api working well.<br>
+正常命令響應：ckan get api working well.<br>
+<br>
+localhost:9000/ckan_get/package_list<br>
+正常頁面響應：資料集之name的json格式<br>
+正常命令響應：200 or 304<br>
+<br>
+localhost:9000/ckan_get/package_show<br>
+正常頁面響應：指定資料集之詳細資訊的json格式<br>
+正常命令響應：200 or 304<br>
+指定參數之定義：<br>
+datasetName(資料集的name欄位)<br>
+<br>
+ex.<br>
+localhost:9000/ckan_get/package_show?datasetName=x-ray<br>
 
-## 程式碼筆記
+# 對CKAN的POST請求 #
 
-### 目前已知待補齊功能
-* 將檔案上傳區域的資料寫入JSON檔案內，檔案上傳且離開頁面後，清空JSON檔案內資料
-
-### 撰寫架構
-
-#### json
-* posts(測試用)
-* data
-  * 1(newSet)
-* model
-
-#### 資料夾
-* Meerkat
-  * client
-    * 前端:放置react
-  * api
-    * 後端:放置node
-  * node_modules
-
-### 語法範例
-
-
-# 以下為預設檔的md
-
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+localhost:9000/ckan_post/package_create<br>
+正常頁面響應：新增資料集<br>
+正常命令響應：200<br>
+<br>
+※詳細參數說明請見redmine的資料上傳介面文件※<br>
+<br>
+(必要)Header參數：<br>
+Authorization(Token)<br>
+<br>
+(非全數，\*為必填)body指定參數之定義：<br>
+name(資料集的name欄位)\*<br>
+title(資料集的標題欄位)\*<br>
+author(資料集的作者欄位)<br>
+maintainer(資料集的維護者欄位)<br>
+note(資料集的描述說明欄位)<br>
+owner_org(資料集的擁有組織)\*<br>
+groups(資料集的擁有組織)<br>
