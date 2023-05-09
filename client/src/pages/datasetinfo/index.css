@@ -1,0 +1,89 @@
+.span{  
+  display: flex;
+  flex-direction: row;
+}
+.rightdiv{
+  margin-top: 8%;
+  margin-bottom: 0px;
+  padding-top: 0;
+}
+.a {
+  font-size: 20px;
+  text-decoration:none;
+  color: #e6e2d2;
+  font-weight:bold;
+}
+.divimage{
+  /* width: 100px; */
+  height: 100px;
+}
+.pagediv{
+  position: relative;
+  left: 20px;
+  right: 20px;
+}
+.div{
+  margin: 10px 10px 10px 10px;
+  font-family:Microsoft JhengHei;
+  text-indent: 2em;
+  letter-spacing:1.5px;
+  color: #575141;
+  line-height:25px;
+}
+.button {
+  float:right;
+  background-color: #575140;
+  border: none;
+  border-radius: 5px;
+  padding: 1%;
+  margin-right: 20px;
+}
+.button:hover {
+  box-shadow: 0 6px 6px 0 rgba(0,0,0,0.24), 0 10px 10px 0 rgba(0,0,0,0.19);
+}
+.conleft{
+  margin: 25px;
+  width: 30%;
+  margin: 100px 10px 10px 10px ;
+}
+.conright{
+  width: 70%;
+}
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #FCD9AF;
+}
+.flex-container-header {
+  display: flex;
+  flex-direction: row;
+  font-size: 40px;
+  /* text-align: center; */
+}
+.dataleft{
+  width: 50%;
+}
+.dataright{
+  width: 50%;
+}
+.h6{
+  color: #b7aa7e;  
+  margin:10px 0px 0px 0px;
+  font-family:Microsoft JhengHei
+}
+.h3{
+  margin:0px 0px 10px 0px;
+  font-family:Microsoft JhengHei
+}
+.h2{
+  text-indent: 2em;
+}
+.h1{
+  font-size: 40px;
+  font-family:Microsoft JhengHei;
+  height: 100px;
+  margin: 0;
+  padding:30px;
+  align-content: center;
+}
+/*上右下左*/
