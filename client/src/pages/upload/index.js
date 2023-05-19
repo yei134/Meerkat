@@ -9,12 +9,14 @@ function Upload() {
   //定義一個react偵測到有變動時要渲染的東西
   const [uploadFile, setUploadFile] = useState([]);
   return (
-    <div className="divHeader">
-      <Header />
-      <ActionBotton setUploadFile={setUploadFile} deletealldata={setUploadFile} setstatus={setUploadFile} />
-      <hr className="hr" />
+    <>
+      <div className="head">
+        <Header />
+        <ActionBotton setUploadFile={setUploadFile} deletealldata={setUploadFile} setstatus={setUploadFile} />
+      </div>
       <Content uploadFile={uploadFile} setUploadFile={setUploadFile} />
-    </div>
+      <div>&nbsp;</div>{/* 美觀用 */}
+    </>
   );
 }
 

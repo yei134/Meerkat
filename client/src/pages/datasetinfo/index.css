@@ -37,6 +37,7 @@
   border-radius: 5px;
   padding: 1%;
   margin-right: 20px;
+  box-shadow: 0 3px 3px 0 #6C757D
 }
 .button:hover {
   box-shadow: 0 6px 6px 0 rgba(0,0,0,0.24), 0 10px 10px 0 rgba(0,0,0,0.19);
@@ -79,11 +80,13 @@
   text-indent: 2em;
 }
 .h1{
+  /* color: #ffff; */
   font-size: 40px;
   font-family:Microsoft JhengHei;
   height: 100px;
   margin: 0;
   padding:30px;
   align-content: center;
+  text-shadow: 0.05em 0.05em 0.1em #575141
 }
 /*上右下左*/

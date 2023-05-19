@@ -1,5 +1,17 @@
 div{
-  padding-top: 0;
+  padding: 0;
+}
+.head{
+  background-color: #E6D4AB;
+  padding-left:3%;
+  width: auto;
+}
+.content{
+  margin:2% 8% 0 8%;
+  padding: 2% 3% 0 3%;
+  word-wrap:break-word;  /*元素換行*/
+  width: auto;
+  background-color: #EDE2C4;
 }
 a{
   color: inherit;
@@ -7,11 +19,11 @@ a{
 }
 header nav {
   height: 10%;
-  background-color: #7aaca9;
+  background-color: #85B2B2;
   color: white;
 }
 header nav ul{
-  background-color: #70a29e;
+  background-color: #85B2B2;
   list-style-type: none;   /* 移除項目符號 */
   margin: 0;
   padding: 0;
@@ -22,7 +34,22 @@ header nav ul li{
   float: left;
 }
 header nav ul li a, .newDatasetBtn{
-  background-color: #70a29e;
+  background-color: #85B2B2;
   margin: 5px;
   padding:5px;
 }
+.link{
+  font-size:larger;
+  letter-spacing: 5px;/*字體間距*/
+  font-weight:bold;
+  font-family:"Microsoft JhengHei";
+}
+
+.p{
+  color:#6C757D;
+  letter-spacing: 1px;/*字體間距*/
+  text-indent:35px;
+  font-family:"Microsoft JhengHei";
+
+}
+

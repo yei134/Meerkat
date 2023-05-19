@@ -7,16 +7,16 @@ const Header = () => {
       <nav>
         <ul>
           <li>
-            <a href="/datasetInfo">datasetInfo</a>
+            {/* <a href="/datasetInfo">datasetInfo</a> */}
           </li>
           <li>
-            <a href="/newDataset">newDataset</a>
+            {/* <a href="/newDataset">newDataset</a> */}
           </li>
           <li>
             {/* <a href="/manage">manage</a> */}
           </li>
           <li>
-            <a href="/fileUpload">fileUpload</a>
+            {/* <a href="/fileUpload">fileUpload</a> */}
           </li>
         </ul>
       </nav>
