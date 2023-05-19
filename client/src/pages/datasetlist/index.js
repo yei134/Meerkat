@@ -16,12 +16,17 @@ function DatasetList() {
   },[])
   return(
     <>
-      <Header/>
-      {
-        list.map((element)=>{
-          return(<Content dataset={element} key={element}/>)
-        })
-      }
+      <div className="head">
+        <Header/>
+      </div>
+      <div className="content">
+        {
+            list.map((element)=>{
+              return(<Content dataset={element} key={element}/>)
+            })
+        }
+      </div>
+
     </>
   )
 }

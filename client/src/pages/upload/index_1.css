@@ -7,7 +7,7 @@
 table {
   align-self: center;
   align-items: center;
-  width: 100%;
+  width:auto;
   border: 1;
   background-color: #ffffff50;
   border-collapse: collapse;
