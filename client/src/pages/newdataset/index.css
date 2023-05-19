@@ -1,0 +1,105 @@
+div {
+  padding: 1%;
+  padding-top: 2%;
+  width: 98%;
+}
+
+hr {
+  border: 1px solid #00000020;
+  width: 100%;
+}
+
+input {
+  padding: 10px;
+  width: auto;
+  height: auto;
+}
+
+textarea {
+  /* padding: 10px; */
+  width: 98%;
+  /* height: 300px; */
+}
+
+.app {
+  width: 98%;
+  padding: 1%;
+  border: 0px solid #000;
+  box-sizing: border-box;
+  background-color: #ffffff30;
+}
+
+.add {
+  margin-top: 20px;
+  background-color: #444;
+  color: #fff;
+  box-sizing: border-box;
+  width: 60px;
+  height: 25px;
+  padding: 5px;
+  border-radius: 4px; /*按鈕圓角*/
+  border: 1px solid #aaa; /*按鈕描邊外框*/
+  align-content: center;
+}
+
+.add:hover {
+  background-color: #000;
+}
+
+.list {
+  padding-top: 20px;
+}
+
+.item {
+  width: 100%;
+  border-bottom: 1px solid #000;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nameBox{
+  width: 90%;
+}
+
+.newDatasetDiv{
+  width: 98%;
+}
+
+.remove {
+  border: 0;
+  background-color: rgb(212, 101, 101);
+  color: #fff;
+  padding: 10px;
+}
+
+.textbox{
+  height: 8px;
+}
+
+.titleBox{
+  width: 80%;
+}
+
+.button_cancel{
+  border: none;
+  height: 15px;
+  width: 15px;
+  background-color: transparent;
+  background-image: url("../newdataset/image/圖片4.svg");
+}
+
+.div_index{
+  display: inline-block; /*隨內容物變更區塊大小*/
+  height: auto;
+  width: auto;
+  background-color: #D9D9D9;
+  border-radius: 5px;
+  text-align: center;
+  color: #455367;
+  font-size: 15px;
+  margin-top: 5px;
+  padding: 2px;
+}
