@@ -38,6 +38,7 @@ function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
           ...prev,
         ];
       });
+      event.value={}
     }
   }
   return (

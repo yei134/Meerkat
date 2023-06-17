@@ -1,11 +1,12 @@
 import React from "react";
 import "../index.css";
-
-const ConRight = ({note, symptoms, title}) => {
+//notes, symptoms, title
+const ConRight = ({notes, symptoms, title}) => {
   return (
-    <div>
+    <div className="conright">
       <h2>{title}</h2>
-      <div className="div">{note}</div>
+      <div className="note">{notes}</div>
+      <hr></hr>
       <div className="flex-container">
         <div className="dataleft">
           <h3 className="h3">DICOM索引檔</h3>

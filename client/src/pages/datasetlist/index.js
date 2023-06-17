@@ -7,6 +7,7 @@ import Header from "./components/hearder";
 import Content from "./components/content"
 // import { ckan_test_1 } from "../../global/constants";
 
+
 function DatasetList() {
   const[list,setList]=useState([])
   useEffect(()=>{
@@ -19,14 +20,13 @@ function DatasetList() {
       <div className="head">
         <Header/>
       </div>
-      <div className="content">
+      <div className="list_content">
         {
-            list.map((element)=>{
-              return(<Content dataset={element} key={element}/>)
-            })
+          list.map((element)=>{
+            return(<Content dataset={element} key={element}/>)
+          })
         }
       </div>
-
     </>
   )
 }

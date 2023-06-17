@@ -5,9 +5,9 @@ require('dotenv').config();
 
 //CKAN_BASE_URI: v6
 //CKAN_BASE_URI_2:  nycu
-const {CKAN_BASE_URI} = process.env;
-const ckanGetPackageList = CKAN_BASE_URI+"package_list";
-const ckanGetPackageShow = CKAN_BASE_URI+"package_show";
+const {CKAN_BASE_URI_2} = process.env;
+const ckanGetPackageList = CKAN_BASE_URI_2+"package_list";
+const ckanGetPackageShow = CKAN_BASE_URI_2+"package_show";
 
 //反映ckan_get正常
 router.get('/', async (req, res) => {

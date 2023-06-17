@@ -1,45 +1,77 @@
+//sz
 import { useState, useEffect, useRef } from "react";
 import { api_get_data_newSet } from"../../../global/constants";
 import { api_get_symptoms } from "../../../global/constants";
+import axios from 'axios';
 import React from "react";
 import ConLeft from "./conleft";
 import ConRight from "./conright";
 
+var ownerOrg="";
+// var groups=["app"];
+var groups="";
 
-const Content = ({listDataset, listSymptoms}) => {
-  const [author, setAuthor]=useState([]); //author 資料集作者
-  const [notes, setNotes]=useState([]); //notes 資料及註解
-  const [title, setTitle]=useState([]); //title 資料集名稱
-  const [createTime, setCreateTime]=useState([]); //metadata_created 創建時間
-  const [modifiedTime, setModifiedTime]=useState([]); //metadata_modified 修改時間
-  const [organization, setOrganization]=useState([]); //organization.title 資料集所屬組織
-  const [symptoms, setSymptoms]=useState([]); //resources.name 病徵名稱
+const Content = ({datasetName}) => {
+  // const [symptoms, setSymptoms]=useState([]); //resources.name 病徵名稱
+  var [packageDataInfo, setPackageDataInfo]=useState([]);
+  useEffect(() => {
+    const getDataset = async () => {
+      try {
+        // const response = await axios.get( 
+        //   `${process.env.REACT_APP_BACKEND_URI}ckan_get/package_show`,
+        //   {params:{datasetName:datasetName}});
+        // packageDataInfo = response.data.result;
+        // setPackageDataInfo(packageDataInfo);
+        // console.log(packageDataInfo);
+        await axios.get( 
+          `${process.env.REACT_APP_BACKEND_URI}ckan_get/package_show`,
+          {params:{datasetName:datasetName}})
+        .then(response => {
+          packageDataInfo = response.data.result;
+          setPackageDataInfo(packageDataInfo);
+          ownerOrg = packageDataInfo.organization.title;
+          if(packageDataInfo.groups.length>=1){
+            for(var i=0; i<=packageDataInfo.groups.length; i++){
+              groups = packageDataInfo.groups[i].title; //待改
+            }
+          }else{
+            groups = null;
+          }
+          // console.log(packageDataInfo.groups[0].title);
+        })
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    getDataset();
+  },[])
+  console.log(packageDataInfo);
+  console.log()
+  var author = packageDataInfo.author;
+  var notes = packageDataInfo.notes;
+  var title = packageDataInfo.title;
+  var createTime = packageDataInfo.metadata_created;
+  var modifiedTime = packageDataInfo.metadata_modified;
+
   return (
-    <div>
-      {/* {listDataset.map((item)=>{
-        const {name, title, note, private_dataset, groups, ownerOrg, symptoms}=item;
-        console.log(name);
-        return(
-          <div className="flex-container">
-            <ConLeft
-              key={name}
-              name = {name}
-              title = {title}
-              groups = {groups}
-              ownerOrg = {ownerOrg}
-            />
-            <ConRight
-              key={name}
-              note = {note}
-              symptoms = {symptoms}
-              title = {title}
-            />
-          </div>
-        )
-    })} */}
+    <div className="flex-container">
+      <ConLeft
+        key={datasetName}
+        name = {datasetName}
+        title = {title}
+        groups = {groups}
+        ownerOrg = {ownerOrg}
+        author = {author}
+        createTime={createTime}
+        modifiedTime={modifiedTime}
+      />
+      <ConRight
+        key={notes}
+        notes = {notes}
+        title = {title}
+      />
     </div>
-    
   );
-};
+}
 
 export default Content;

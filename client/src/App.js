@@ -4,19 +4,13 @@ import React, {Component} from "react";
 import { 
   BrowserRouter, 
   createBrowserRouter,
-  RouterProvider,
-  Route, 
-  Routes,
-  Link,
-  Form, 
-  useLoaderData
+  RouterProvider
 } from "react-router-dom";
 //載入檔案
 import Upload from "./pages/upload/index";
 import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
 import DatasetList from "./pages/datasetlist";
-// import DatasetInfo, {loader as datasetLoader,} from "./pages/datasetinfo";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +18,7 @@ const router = createBrowserRouter([
     element: <DatasetList/>,
   },
   {
-    path: "datasetInfo/:datasetId",
+    path: "datasetInfo/:getId",
     element: <DatasetInfo />,
   },
   {
