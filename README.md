@@ -112,6 +112,7 @@ name(申請人ckan帳號ID)<br>
 orgnization(所屬組織)<br>
 applicantID(存放在本機端ㄉ位址，預設是跟Meerkat同一層的檔案夾proposals)<br>
 telephone(手機號碼)<br>
+datasetID(資料集ID)<br>
 maintainer(審核人ckan帳號ID)<br>
 applyTime(請使用JS的Date函數)<br>
 
