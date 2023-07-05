@@ -108,13 +108,16 @@ localhost:9000/document/formUpload<br>
 正常頁面響應：200<br>
 <br>
 指定參數之定義：<br>
-name(申請人ckan帳號ID)<br>
-orgnization(所屬組織)<br>
+applyUserID(申請人ckan帳號ID)<br>
+userName(申請人名稱)<br>
+applyOrgnization(所屬組織)<br>
 applicantID(存放在本機端ㄉ位址，預設是跟Meerkat同一層的檔案夾proposals)<br>
-telephone(手機號碼)<br>
-datasetID(資料集ID)<br>
+applyTelephone(申請手機號碼)<br>
+applyDatasetID(申請資料集ID)<br>
+applyEmail(申請電子郵件)<br>
 maintainer(審核人ckan帳號ID)<br>
 applyTime(請使用JS的Date函數)<br>
+status(申請狀態0:未審核 1:通過 2:補件)<br>
 
 # GET Mongo資料庫 #
 
