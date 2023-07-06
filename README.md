@@ -1,4 +1,4 @@
-![image](https://github.com/yei134/Meerkat/assets/75054589/1b2d8faf-a9e1-47bd-85a1-50c58fdad017)# 執行Meerkat專案步驟 #
+# 執行Meerkat專案步驟 #
 
 1.Meerkat/client執行npm install進行安裝前端套件<br>
 2.Meerkat/api執行npm install進行安裝後端套件<br>
