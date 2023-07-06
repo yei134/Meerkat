@@ -66,20 +66,18 @@ router.post('/formUpload',async (req, res) => {
   try{
     const applicantDocs = await db.collection('applicantdocs');
     // 宣告表單欄位
-    const {userName, applyUserID, applyOrgnization, applyEmail, applyTelephone, applyDatasetID, applicantID, author, applyTime} = req.body
+    const {userName, maintainerEmail, applyDatasetID, applicantID, applyEmail, applyTime, status, comments} = req.body
     // 創建一個動態模型的文檔
     const newDoc = 
     { 
       userName: userName, 
-      applyUserID: applyUserID,
-      author: author, 
-      applyOrgnization: applyOrgnization,
+      maintainerEmail: maintainerEmail, 
       applyDatasetID: applyDatasetID,
       applicantID: applicantID, 
       applyEmail: applyEmail,
-      applyTelephone: applyTelephone, 
       applyTime: applyTime,
-      status: 0
+      status: 0,
+      comments: comments
     }
     let result = await applicantDocs.insertOne(newDoc);
     //console.log("new Date = " + new Date())
