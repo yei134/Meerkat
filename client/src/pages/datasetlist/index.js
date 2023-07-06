@@ -17,9 +17,7 @@ function DatasetList() {
   },[])
   return(
     <>
-      <div className="head">
-        <Header/>
-      </div>
+      <Header/>
       <div className="list_content">
         {
           list.map((element)=>{

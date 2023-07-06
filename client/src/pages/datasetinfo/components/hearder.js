@@ -11,12 +11,12 @@ const Header = () => {
     console.log("file manage");
   }
   return (
-    <header className="head container">
-      <div className="test">
+    <header className="head">
+      <div>
         <img src="../LOGO.svg" className="logo1"></img>
         <h1><a href="/">AI&nbsp;Data&nbsp;Sharing</a></h1> 
       </div>  
-      <div>
+      <div className="button_pic">
         <button className="button"><a href="/fileUpload" className="a">上傳dicom</a></button>
         <button className="button"><a href="/datasetInfo" className="a">管理dicom</a></button>
         <button className="button"><a href="/datasetInfo" className="a">管理附件</a></button>

@@ -3,10 +3,13 @@ import React from "react";
 export default function Header() {
   return (
     <header>
-      <h1>
+      <div>
         <img src="LOGO.svg" className="logo"></img>
-        <a href="/datasetInfo/">Cerebral Hemorrhage DICOM Uploder</a>
-      </h1>
+        <h1>
+          <a href="/datasetInfo/">Cerebral Hemorrhage DICOM Uploder</a>
+        </h1>
+      </div>
+
     </header>
   );
 }

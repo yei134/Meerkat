@@ -57,11 +57,7 @@
   padding: 0 2% 0 2%;;
   background-color: #EDE2C4;
 }
-.test{
-  display: flex;
-  flex-direction: row;
-  
-}
+
 .flex-container {
   display: flex;
   flex-direction: row;
@@ -94,10 +90,12 @@
   text-indent: 2em;
 }
 .logo1{
-  width: 90px;
+  width:90px;
   float: left;
   position: relative;
-  right:10px
+  top:4px;
+  right:11px;
+
 }
 .note{
   text-indent:33px;
