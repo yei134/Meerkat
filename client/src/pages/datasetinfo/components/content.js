@@ -9,7 +9,10 @@ import ConRight from "./conright";
 
 var ownerOrg="";
 // var groups=["app"];
-var groups="";
+var groups=[];
+var files=[];
+var filesName=[];
+var groupsName=[];
 
 const Content = ({datasetName}) => {
   // const [symptoms, setSymptoms]=useState([]); //resources.name 病徵名稱
@@ -22,22 +25,24 @@ const Content = ({datasetName}) => {
         //   {params:{datasetName:datasetName}});
         // packageDataInfo = response.data.result;
         // setPackageDataInfo(packageDataInfo);
-        // console.log(packageDataInfo);
+        console.log(packageDataInfo);
         await axios.get( 
           `${process.env.REACT_APP_BACKEND_URI}ckan_get/package_show`,
           {params:{datasetName:datasetName}})
         .then(response => {
+          console.log(response);
           packageDataInfo = response.data.result;
           setPackageDataInfo(packageDataInfo);
           ownerOrg = packageDataInfo.organization.title;
-          if(packageDataInfo.groups.length>=1){
-            for(var i=0; i<=packageDataInfo.groups.length; i++){
-              groups = packageDataInfo.groups[i].title; //待改
-            }
-          }else{
-            groups = null;
-          }
-          // console.log(packageDataInfo.groups[0].title);
+          files=packageDataInfo.resources.map((resource)=>resource.name);
+          groups=packageDataInfo.groups.map((name)=>name);
+          // for(var i=0; i<=files.length; i++){
+          //   filesName = files[i].name;
+          //   console.log(filesName)
+          // }
+          // for(var i=0; i<=groups.length; i++){
+          //   groupsName = groups[i].name;
+          // }
         })
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -45,8 +50,7 @@ const Content = ({datasetName}) => {
     }
     getDataset();
   },[])
-  console.log(groups);
-  console.log()
+  console.log(packageDataInfo);
   var author = packageDataInfo.author;
   var notes = packageDataInfo.notes;
   var title = packageDataInfo.title;
@@ -55,22 +59,24 @@ const Content = ({datasetName}) => {
 
   return (
     <div className="flex-container">
-            <ConLeft
-              key={datasetName}
-              name = {datasetName}
-              title = {title}
-              groups = {groups}
-              ownerOrg = {ownerOrg}
-              author = {author}
-              createTime={createTime}
-              modifiedTime={modifiedTime}
-            />
-            <ConRight
-              key={notes}
-              notes = {notes}
-              title = {title}
-            />
-          </div>
+      <ConLeft
+        key={datasetName}
+        name = {datasetName}
+        title = {title}
+        groupsName = {groupsName}
+        ownerOrg = {ownerOrg}
+        author = {author}
+        createTime={createTime}
+        modifiedTime={modifiedTime}
+      />
+      <ConRight
+        key={notes}
+        notes = {notes}
+        title = {title}
+        files = {files}
+        name = {datasetName}
+      />
+    </div>
   );
 }
 

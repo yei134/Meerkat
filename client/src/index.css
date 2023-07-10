@@ -1,7 +1,31 @@
 .background1{
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: #FBEECB;
+}
+.head{
+  background-color: #E6D4AB;
+  padding-left:3%;
   width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+.logo{
+  width:90px;
+  float: left;
+  position: relative;
+  bottom: 23px;
+  right:10px;
+}
+h1{
+  font-size: 45px;
+  margin-top: 20px;
+}
+.button_pic{
+  padding-bottom: 5px;
 }
 /* .body {
   background-color: #ffdfb9;

@@ -21,12 +21,21 @@ textarea {
   /* height: 300px; */
 }
 
-.app {
-  width: 98%;
-  padding: 1%;
-  border: 0px solid #000;
-  box-sizing: border-box;
-  background-color: #ffffff30;
+.text{
+  letter-spacing: 2px;/*字體間距*/
+}
+
+.new_basic{
+  min-height: 100vh;
+  width: 100%;
+}
+
+.new_content{
+  font-size: 24px;
+  width:auto;
+  background-color: #FFFAEE;
+  margin:3% 15% 0 15%;
+  padding: 40px 20px 40px 60px;
 }
 
 .add {
@@ -64,9 +73,6 @@ textarea {
   width: 90%;
 }
 
-.newDatasetDiv{
-  width: 98%;
-}
 
 .remove {
   border: 0;
@@ -102,4 +108,44 @@ textarea {
   font-size: 15px;
   margin-top: 5px;
   padding: 2px;
+}
+
+.input-field {
+  padding: 0.4em 0.6em;
+  border-radius: 0.5em;
+  border: 1px solid var(--c-border, currentColor);
+  color: var(--c-text);
+  font-size: 20px;
+  letter-spacing: 0.1ch;
+  margin: 10px 0 0 0px;
+  width:90%;
+  /*overscroll-behavior: none;*/
+}
+.input-field1 {
+  padding: 0.4em 0.6em;
+  border-radius: 0.5em;
+  border: 1px solid var(--c-border, currentColor);
+  color: var(--c-text);
+  font-size: 20PX;
+  letter-spacing: 0.1ch;
+  margin: 5px 0 0 0px;
+  width:90%;
+}
+
+h5{
+  margin-bottom: 5px;
+}
+
+.ft_div{
+  margin:20px 0 20px 0;
+}
+
+.label_flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.label_left{
+  width:120px;
+  margin-top: 13px;
 }

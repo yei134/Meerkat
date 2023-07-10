@@ -6,6 +6,7 @@ import Edit from "./components/edit";
 import List from "./components/list";
 import "./index.css";
 import { Outlet } from "react-router-dom";
+import Header from "./components/header";
 
 //去json資料庫拿東西出來
 async function fetchDataset(setDataset) {
@@ -80,21 +81,24 @@ const NewDataset = () => {
   }, []);
 
   return (
-    <div className="app">
-      <Edit
-        add={setDataset}
-        symptomsAdd={setSymptoms} 
-        submittingState={submittingState}
-        submittingState1={submittingState1}
-        dataset={dataset} 
-        arraySymptoms={symptoms} 
-      />
-      <List
-        listSymptoms={symptoms}
-        listDelete={setSymptoms}
-        submittingState1={submittingState1}
-      />
-      <Outlet />
+    <div className="new_basic">
+      <Header/>
+      <div className="new_content">
+        <Edit
+          add={setDataset}
+          symptomsAdd={setSymptoms} 
+          submittingState={submittingState}
+          submittingState1={submittingState1}
+          dataset={dataset} 
+          arraySymptoms={symptoms} 
+        />
+        <List
+          listSymptoms={symptoms}
+          listDelete={setSymptoms}
+          submittingState1={submittingState1}
+        />
+        <Outlet />
+      </div>
     </div>
   );
 };

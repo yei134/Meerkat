@@ -153,7 +153,14 @@ tr:last-of-type {
   margin-top: auto;
 }
 
-.head{
+.upload_head{
   background-color: #E6D4AB;
   width: auto;
+}
+.page{
+  color: #6699A4;
+}
+.p{
+  font-weight: bold;
+  margin: 0px, 0px, 0px, 20%,;
 }

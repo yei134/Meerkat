@@ -4,9 +4,15 @@ import React, {Component} from "react";
 import { 
   BrowserRouter, 
   createBrowserRouter,
+  Route,
+  Routes,
   RouterProvider
 } from "react-router-dom";
+import Keycloak from "./keycloak";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import PrivateRoute from "./helpers/PrivateRoute";
 //載入檔案
+import Nav from "./components/Nav";
 import Upload from "./pages/upload/index";
 import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
@@ -19,22 +25,39 @@ const router = createBrowserRouter([
   },
   {
     path: "datasetInfo/:getId",
-    element: <DatasetInfo />,
+    element:(
+      <PrivateRoute>
+        <DatasetInfo />
+      </PrivateRoute>
+    )
   },
   {
-    path:"newDataset",
-    element:<NewDataset />,
+    path: "newDataset",
+    element:(
+      <PrivateRoute>
+        <NewDataset />
+      </PrivateRoute>
+    )
   },
   {
-    path:"fileUpload",
-    element:<Upload />,
+    path: "datasetInfo/:getId/fileUpload",
+    element:(
+      <PrivateRoute>
+        <Upload />
+      </PrivateRoute>
+    )
   }
 ]);
-// 介面所需框架集合
+//介面所需框架集合
 class App extends Component{  
   render(){
     return (
-      <RouterProvider router={router} />
+	<div>
+      <ReactKeycloakProvider authClient={Keycloak}>
+        <Nav />
+        <RouterProvider router={router} />
+      </ReactKeycloakProvider>
+	</div>
     );
   }  
 }

@@ -4,7 +4,8 @@ export default function Header() {
   return (
     <header>
       <h1>
-        <a href="/datasetInfo">Cerebral Hemorrhage DICOM Uploder</a>
+        <a href="/"><img src="../../LOGO.svg" className="logo"></img></a>
+        <a href="/">Cerebral Hemorrhage DICOM Uploder</a>
       </h1>
     </header>
   );

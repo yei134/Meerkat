@@ -42,14 +42,15 @@ function DatasetInfo(){
   // }, []);
 
   return(
-    <div className="pagediv">
-      <Header/>
-      <hr/>
+    <>
+      <Header
+        datasetName={datasetName.getId}
+      />
       <Content
         datasetName={datasetName.getId}
         // listSymptoms={symptoms}
       />
-    </div>
+    </>
   );
 }
 export default DatasetInfo;

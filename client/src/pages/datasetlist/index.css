@@ -1,16 +1,17 @@
 div{
   padding: 0;
 }
-.head{
+.list_head{
   background-color: #E6D4AB;
   padding-left:3%;
   width: auto;
 }
-.content{
+.list_content{
   margin:2% 8% 0 8%;
   padding: 2% 3% 0 3%;
   word-wrap:break-word;  /*元素換行*/
   width: auto;
+  height: auto;
   background-color: #EDE2C4;
 }
 a{
@@ -39,17 +40,44 @@ header nav ul li a, .newDatasetBtn{
   padding:5px;
 }
 .link{
-  font-size:larger;
-  letter-spacing: 5px;/*字體間距*/
+  font-size:25px;
+  letter-spacing: 3px;/*字體間距*/
   font-weight:bold;
-  font-family:"Microsoft JhengHei";
+  font-family:"Helvetica","Microsoft JhengHei";
 }
 
 .p{
+  font-size:20px;
   color:#6C757D;
   letter-spacing: 1px;/*字體間距*/
-  text-indent:35px;
-  font-family:"Microsoft JhengHei";
-
+  text-indent:42px;
+  font-family:"Helvetica","Microsoft JhengHei",serif;
 }
 
+.button1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:16px;
+  font-weight:bold;
+  float: right;
+  color: #FFFFFF;
+  width: 120px;
+  height: 35px;
+  background-color: #6699A4;
+  border: none;
+  border-radius: 5px;
+  margin:0 10px 10px 0;
+  box-shadow: 0 3px 3px 0 #6C757D
+}
+.button1:hover {
+  box-shadow: 0 6px 6px 0 rgba(0,0,0,0.24), 0 10px 10px 0 rgba(0,0,0,0.19);
+}
+
+.hr{
+  margin-bottom: 30px;
+}
+
+.icon {
+  align-self: center;
+}

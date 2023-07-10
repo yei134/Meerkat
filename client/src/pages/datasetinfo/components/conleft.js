@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ConLeft = ({author, groups, createTime, modifiedTime, ownerOrg}) => {
+const ConLeft = ({author, groupsName, createTime, modifiedTime, ownerOrg}) => {
   // const {title}=ownerOrg;
   // console.log(title);
   // console.log(groups);
@@ -21,7 +21,7 @@ const ConLeft = ({author, groups, createTime, modifiedTime, ownerOrg}) => {
             </tr>
             <tr>
               <td>所屬群組</td>
-              <td>{groups}</td>
+              <td>{groupsName}</td>
             </tr>
             <tr>
               <td>組織</td>

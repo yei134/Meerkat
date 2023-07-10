@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 } from "uuid";
 
+/*諄  變數需重新設定*/
+
 const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, arraySymptoms}) => {
   //新增資料集畫面需要的參數
   const [name, setName] = useState("");//package_create name (資料集英文名稱 用來當檔案名的 不可有空白 數字開頭
@@ -137,42 +139,41 @@ const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, ar
 
   return (
     <div>
-      <div className="newDatasetDiv">
-        <h1>資料集新增</h1>
+      <div>
         <form>
           {/* 填寫區域 */}
-          <label>
-            <span>*名字：(需英文且不可有空白)&nbsp;&nbsp;</span>
+          <label className="label_flex">
+            <span className="label_left">*名字：</span>
             <input 
               type="text" 
               value={name} 
               onChange={nameChange}
               placeholder="需英文且不可有空白" 
-              className="textbox titleBox"/>
+              className="input-field"/>
           </label>
           <p/>
-          <label>
-            <span>*標題：</span>
+          <label className="label_flex">
+            <span className="label_left">*標題：</span>
             <input
               type="text" 
               value={title} 
               onChange={titleChange} 
-              className="textbox nameBox" />
+              className="input-field" />
           </label>
           <hr></hr>
-          <label>
-            <div>說明：</div>
-            <textarea value={note} onChange={noteChange} />
+          <label className="label_flex">  
+            <div className="label_left">說明：</div>
+            <textarea value={note} onChange={noteChange} className="input-field1" />
           </label>
           <label>
-            <div>
+            <div className="ft_div">
               <span><input type="checkbox" value={private_dataset} onChange={privateChange}/></span>
               公開
             </div>
           </label><p/>
-          <label>{/*需要改成可以從ckan端取得資料*/}
-            <span>所屬群組&nbsp;</span>
-            <select id="groups" name="groups" value={groups} onChange={groupsChange}>
+          <label className="label_flex">{/*需要改成可以從ckan端取得資料*/}
+            <span className="label_left">所屬群組&nbsp;</span>
+            <select id="groups" className="input-field" name="groups" value={groups} onChange={groupsChange}>
               <option value=""></option>
               <option value="ai-model">AI Model</option>
               <option value="biosignal">Bio-Signal</option>
@@ -184,12 +185,12 @@ const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, ar
               <option value="medical-image">Medical Image</option>
             </select>
           </label><p/>
-          <label>
-            <span>組織&nbsp;</span>{/*需要改成可以從ckan端取得資料*/}
-            <select id="ownerOrg" name="ownerOrg" value={ownerOrg} onChange={ownerOrgChange}>
+          <label className="label_flex">
+            <span className="label_left">組織&nbsp;</span>{/*需要改成可以從ckan端取得資料*/}
+            <select id="ownerOrg" className="input-field" name="ownerOrg" value={ownerOrg} onChange={ownerOrgChange}>
               <option value=""></option>
               <option value="academia-sinica">Academia Sinica</option>
-              <option value="national-taipei-university-of-nursing-and-health-sciences">National Taipei University of Nursing and Health Sciences</option>
+              <option className="label_flex" value="national-taipei-university-of-nursing-and-health-sciences">National Taipei University of Nursing and Health Sciences</option>
               <option value="national-yang-ming-chiao-tung-university">National Yang-Ming Chiao Tung University</option>
               <option value="taipei-veterans-general-hospital">Taipei Veterans General Hospital</option>
             </select>
@@ -204,14 +205,14 @@ const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, ar
               value={input1} 
               onChange={symptomsChange} 
               placeholder="請以英文病徵命名(需小寫英文字母，可附加 ' _ ' 符號)"
-              className="textbox nameBox"/>
+              className="input-field"/>
               <h5>*索引檔名稱：</h5>
               <input
               type="text" 
               value={input2}
               onChange={descriptionChange}
               placeholder="請以中文病徵命名"
-              className="textbox nameBox"/>
+              className="input-field"/>
             </div>
           </label>
           <div>      
@@ -235,5 +236,4 @@ const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, ar
 };
 
 export default Edit;
-
 
