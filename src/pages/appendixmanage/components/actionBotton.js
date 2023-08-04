@@ -41,7 +41,6 @@ function ActionBotton({ setUploadFile }) {
   )
 }
 export default ActionBotton;
-//&&其中 && 是 JavaScript 的邏輯運算符，意思是當 && 左邊的表達式的值為 true 時，才會繼續執行右邊的程式碼
 
 // //透過 fetch 函式向伺服器取得下載檔案的資料，取得回應後會得到一個 Response 物件。
 // const response = await fetch(downloadUrl);

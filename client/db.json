@@ -1,0 +1,27 @@
+{
+  "posts": [
+    {
+      "matter": [],
+      "id": "1"
+    }
+  ],
+  "data": [
+    {
+      "dataset": [
+        {
+          "name": "TaipeiVeteransGeneralHospital_DementiaMolecularImagingClinicalDatabase",
+          "title": "台北榮總失智症分子影像臨床資料庫",
+          "note": "腦神經受損後，局部腦血流與其代謝功能皆會受到影響。腦部斷層灌注掃描(single-photon emission computed tomography, SPECT)及葡萄糖正子攝影(fluorodeoxyglucose positron emission tomography, FDG-PET) 這兩種分子影像(molecular imaging)都是目前臨床上失智症診斷的利器。經由解析病患腦血流及葡萄糖代謝圖譜，發現兩者間的相關性非常高。因此本研究欲透過 SPECT 與其對應的臨床認知功能常模並採用 AI 運算方式，以結構性腦影像 MRI 來預測腦部葡萄糖代謝功能分子影像，即 zero-dose FDG-PET，協助早期診斷出失智症高危險者，在減少輻射暴露的 同時亦可降低醫療支出，並解決正子攝影的普及率遠較磁振造影低的現況。",
+          "private_dataset": false,
+          "groups": "ai-model",
+          "ownerOrg": "academia-sinica"
+        }
+      ],
+      "id": "1"
+    },
+    {
+      "symptoms": [],
+      "id": "2"
+    }
+  ]
+}
