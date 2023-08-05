@@ -1,0 +1,7 @@
+AccessionNumber
+PatientID
+Modality
+StudyDescription
+StudyInstanceUID
+SeriesInstanceUID
+SOPInstanceUID
