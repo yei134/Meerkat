@@ -2,22 +2,50 @@
 
 ### 完成進度
 #### DEBUG
-1. studiesNew -> 與index_create分割功能
-2. post resource_delete -> delete resource_delete
-  > 功能未動，僅修改router屬性
-3. getStudiesList -> package_show -> resource_show
-  > 功能未動，僅修改呼叫的API
-4. postStudiesAppend -> package_show -> resource_show
-  > 功能未動，僅修改呼叫的API
+1. /api/uploads/ & /api/csv_temp/ 目錄已新增至github
+2. studiesAppend -> 追加比對：有重複study時不append
 
 ### UPDATE
-#### 新增API
-/raccoonAPI/studiesDelete(只刪減)
+1. 統整response格式<br>
+1-1-1. /ckanAPI/resource_delete
+> {`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
+1-1-2. /ckanAPI/resource_patch
+> 請求成功`200`
+> 請求失敗`500`
+1-1-3. /ckanAPI/index_create
+> 請求成功`200`:{`id`:索引檔id,`indexName`:索引檔標題}
+> 請求失敗`500`
+1-1-4. /ckanAPI/resource_create
+> 請求成功`200`:{`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
+1-1-5. /ckanAPI/package_create
+> 請求成功`200`:{`package_id`: 資料集id}
+> 請求失敗`500`
+1-1-6. /ckanAPI/package_search
+> 請求成功`200`:搜尋結果陣列
+> 請求失敗`500`
+1-1-7. /ckanAPI/package_show
+> 請求成功`200`:搜尋結果陣列
+> 請求失敗`500`
+1-1-8. /ckanAPI/package_list
+> 請求成功`200`:搜尋結果陣列
+> 請求失敗`500`
+<br>
+1-2-1. /raccoonAPI/studies
+> 請求成功`200`:DICOM陣列
+> 請求失敗`500`
+1-2-2. /raccoonAPI/studiNew
+> 請求成功`200`
+> 請求失敗`500`
+1-2-3. /raccoonAPI/studiesAppend
+> 請求成功`200`
+> 請求失敗`500`
+1-2-4. /raccoonAPI/studiesDelete
+> 請求成功`200`:{success: true, deletedDICOM: 成功的陣列}
+> 請求失敗`500`
 
 ### DEBUG清單
 1. package_create -> post json body issue
-2. studiesAppend -> 追加比對：有重複study時不append
-3. 重複功能寫獨立function(寫讀檔、resource_patch)
+2. 重複功能寫獨立function(寫讀檔、resource_patch)
 
 ### 2023/05/07後端開啟的API
 
@@ -94,8 +122,7 @@ post localhost:9000/ckanAPI/
 ```
 postlocalhost:9000/ckanAPI/package_create
 ```
-正常頁面響應：新增資料集<br>
-正常命令響應：200<br>
+正常頁面響應：{`package_id`: 資料集id}<br>
 
 > 詳細參數說明請見redmine的`資料上傳介面`文件
 
@@ -123,6 +150,11 @@ post localhost:9000/ckanAPI/resource_create
 ```
 Authorization
 ```
+正常頁面響應：
+> {`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
+
+<br>
+
 > 要以`muiltipart/form-data`方式傳送，而不是`application/json`
 ### form-data指定參數之定義
 1. **\*package_id(指定資料集之name欄位)**<br>
@@ -137,6 +169,11 @@ post localhost:9000/ckanAPI/index_create
 ```
 Authorization
 ```
+正常頁面響應：
+> {`id`:索引檔id,`indexName`:索引檔標題}
+
+<br>
+
 ### application/json指定參數之定義
 1. **\*package_id(指定資料集之name欄位)**<br>
 2. symptom(病徵名稱)<br>
@@ -150,6 +187,12 @@ post localhost:9000/ckanAPI/resource_patch
 ```
 Authorization
 ```
+正常頁面響應：
+> 請求成功`200`
+> 請求失敗`500`
+
+<br>
+
 > 要以`muiltipart/form-data`方式傳送，而不是`application/json`
 ### form-data指定參數之定義(非全數，\*為必填)
 1. **\*id(指定附件之id欄位)**<br>
@@ -168,7 +211,11 @@ delete localhost:9000/ckanAPI/resource_delete
 ```
 Authorization
 ```
-正常頁面響應：OK<br>
+正常頁面響應：
+> {`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
+
+<br>
+
 ### application/json指定參數之定義(非全數，\*為必填)
 1. **\*id(指定附件之id欄位)**<br>
 
