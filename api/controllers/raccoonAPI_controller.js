@@ -81,7 +81,7 @@ exports.checkGet = async (req, res) => {
 exports.getStudiesList = async (req, res) => {
   try {
     var fileUrl = '';   // 要下載的檔案 URL
-    var fileName = '';  // 檔案名稱
+    var fileName = 'index.csv';  // 檔案名稱
     var filePath = '';  // 要儲存的檔案路徑
 
     //主線佇列
@@ -103,7 +103,8 @@ exports.getStudiesList = async (req, res) => {
     function step1(callback){
       // 索引檔resource_id
       const index = req.query.id;
-      const header = req.body.authorization;
+      const header = req.headers.authorization;
+      console.log(index);
       //拉csv的下載URL
       axios.get(`${ckanGetResource}`,
       {
@@ -115,14 +116,8 @@ exports.getStudiesList = async (req, res) => {
         }
       })
       .then(getRes => {
-        fileName = getRes.data.result.name;
-        const keyword = '_[type]_';                                     // 要拿來分割的字串
-        const splitWords = fileName.split(keyword);                     // 進行分割存成長度為2的陣列
-        //console.log(fileName)
-        const symptomGet = splitWords.length > 1 ? splitWords[1] : '';  // 有割到東西的話就直接等於第二個值
-        console.log('step.1 get symptom index file downloading url');
         fileUrl = getRes.data.result.url;
-        filePath = `${csvTempDirectory}${symptomGet[1]}`;
+        filePath = `${csvTempDirectory}${fileName}`;
         
         callback();
       })
