@@ -1,70 +1,34 @@
-# Getting Started with Create React App
+# 執行Meerkat專案步驟 #
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1.Meerkat/client執行npm install進行安裝前端套件<br>
+2.Meerkat/api執行npm install進行安裝後端套件<br>
+3.Meerkat/client執行npm start啟動前端<br>
+4.Meerkat/api執行npm start啟動後端<br>
 
-## Available Scripts
+# 前端(client)環境變數設置
 
-In the project directory, you can run:
+Meerkat/client/.env<br>
+REACT_APP_BACKEND_URI=http://localhost:9000/<br>
+<br>
+（開發環境訪問時請設置localhost。）<br>
 
-### `npm start`
+# 後端(api)環境變數設置
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Meerkat/client/.env<br>
+CKAN_BASE_URI_2=https://data.dmc.nycu.edu.tw/api/3/action/<br>
+目前使用-->CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/<br>
+<br>
+（CKAN_BASE_URI為擁有最高權限之測試平台，若無特殊情況請使用這個網址。）<br>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# 前端目前改動
+附件管理頁面
+小視窗需下載modal<br>
+ npm install react-modal<br>
+1.actionbutton(刪除按鈕)<br>
+可刪除但別亂刪正在使用的檔案
+2.content(內容頁)<br>
+3.conleft(左側區塊)<br>標題名稱         4.conright(右側區塊)<br>表格
+5.uploadbutton(上船按鈕)<br>
+功能待改，css可更動
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

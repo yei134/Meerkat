@@ -1,0 +1,19 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  padding-top: 3.5rem;
+  background-color: gainsboro;  
+  border-style: solid;
+  border-color: gainsboro;
+}
+
+#consoleTable {
+  padding: 1rem 0;
+}
+
+#SystemInfoModal .modal-body {
+  white-space: pre-line
+}

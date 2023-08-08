@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html ng-app="UploadApp" ng-controller="UploadCtrl" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+    <title>Raccoon | Upload DICOM</title>
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="./Raccoon _ Upload DICOM_files/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./Raccoon _ Upload DICOM_files/UploadDicom.css">
+    <link rel="stylesheet" href="./Raccoon _ Upload DICOM_files/all.min.css">
+</head>
+
+
+<body ondragover="angular.element(this).scope().dragoverHandler(event);angular.element(this).scope().dragEnter()" ondrop="angular.element(this).scope().dropHandler(event);angular.element(this).scope().dragLeave()" ondragleave="angular.element(this).scope().dragLeave()">
+    <link rel="stylesheet" href="./Raccoon _ Upload DICOM_files/navbar.css">
+
+<nav class="navbar navbar-expand navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="https://raccoon.dicom.tw/"> </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item nav-logo">
+                <a href="https://raccoon.dicom.tw/">
+                    <img src="./Raccoon _ Upload DICOM_files/logo.svg" alt="raccoon logo">
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav navbar-right ml-auto">
+            <li class="nav-item active">
+                <div class="dropdown show">
+                    <a class="nav-link 
+                        dropdown-toggle 
+                        active 
+                        dropdown-toggle-lang
+                        dropdown-toggle-service
+                        " href="https://raccoon.dicom.tw/dicom/updicom#" data-toggle="dropdown" id="dropdownService" aria-haspopup="true" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownService">
+                        <div class="dropdown-multiCol">
+                            <div class="dropdown-col-item">
+                                <a class="dropdown-item service-upload-dicom text-center ng-scope" href="https://raccoon.dicom.tw/dicom/updicom" translate="">Upload DICOM</a>
+                            </div>
+
+                            <div class="dropdown-col-item">
+                                <a class="dropdown-item service-image-ms text-center ng-scope" href="https://raccoon.dicom.tw/dicom/imageMS" translate="">DICOM Images MS</a>
+                            </div>
+
+                             
+                        </div>
+                    </div>
+                </div>
+                
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item active">
+                <div class="dropdown show">
+                    <a class="nav-link dropdown-toggle active dropdown-toggle-lang" href="https://raccoon.dicom.tw/dicom/updicom#" data-toggle="dropdown" id="dropdownLang" aria-haspopup="true" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownLang">
+                        <a class="dropdown-item" href="https://raccoon.dicom.tw/dicom/updicom#" onclick="raccoon.setLang(&#39;en_US&#39;)">English</a>
+                        <a class="dropdown-item" href="https://raccoon.dicom.tw/dicom/updicom#" onclick="raccoon.setLang(&#39;zh_TW&#39;)">繁體中文</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+         
+        
+        <ul class="nav navbar-nav navbar-right nav-login" style="display: none;">
+            <li class="nav-item active">
+                <a class="nav-link" href="https://raccoon.dicom.tw/login">LOGIN</a>
+            </li>
+        </ul>
+        
+    </div>
+</nav>
+<script src="./Raccoon _ Upload DICOM_files/config.js.下載"></script>
+<script>
+    if (envConfig) {
+         let navLogin = document.querySelector(".nav-login");
+        if (envConfig.login.enable) {
+            navLogin.style.display = "block";
+        } else {
+            navLogin.style.display = "none";
+        }
+    }
+</script> 
+    <div id="consoleTable">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-4 text-center text-md-left text-nowrap">
+                    <h2 class="text-success ng-scope" translate="">DICOM Uploader</h2>
+                </div>
+                <div class="col-12 col-md-8 text-center text-md-right">
+                    <button class="btn btn-success mt-1 mr-1" ng-click="uploadFile()"><i class="fas fa-upload"></i>&nbsp;<span translate="" class="ng-scope">Upload All</span></button>
+                    <button class="btn btn-danger mt-1 mr-1" ng-click="resetUpload()"><i class="far fa-trash-alt"></i>&nbsp;<span translate="" class="ng-scope">Reset</span></button>
+                    <button class="btn btn-secondary mt-1 mr-1" onclick="inputFile.click()"><i class="fas fa-file-alt"></i>&nbsp;<span translate="" class="ng-scope">Select Files</span></button>
+                    <button class="btn btn-secondary mt-1" onclick="inputFolder.click()"><i class="fas fa-folder-open"></i>&nbsp;<span translate="" class="ng-scope">Select Folder</span></button>
+                    <input id="inputFile" type="file" class="d-none" onchange="angular.element(this).scope().appendFiles(this.files)" multiple="multiple">
+                    <input id="inputFolder" type="file" class="d-none" webkitdirectory="true" onchange="angular.element(this).scope().appendFiles(this.files)">
+                </div>
+                <div class="col-12 text-center">
+                    <div ng-show="IsUploading" class="ng-hide">
+                        <h5 class="mt-1">
+                            <strong class="ng-binding">Uploading Progress：%
+                                ( / )</strong>
+                        </h5>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" ng-style="{&#39;width&#39; : ((successUpload+errorUpload)/totalUpload*100)+&#39;%&#39;}"></div>
+                        </div>
+                    </div>
+                    <h5 class="mt-1" ng-show="!IsUploading &amp;&amp; !IsNewUpload"><strong class="ng-binding"></strong></h5>
+                </div>
+                <!-- File table -->
+                <div class="col-12">
+                    <hr>
+                    <h6>
+                        <div class="float-left mb-1 ng-binding">File List： Files</div>
+                        <div class="float-right mb-1">
+                            <input type="checkbox" class="mr-1 ng-pristine ng-untouched ng-valid ng-empty" id="check-allow-filename" ng-model="AllowSameFileName">
+                            <label for="check-allow-filename" translate="" class="ng-scope">Allow Same Filename</label>
+                        </div>
+                    </h6>
+                    <table class="table table-sm table-striped table-bordered table-hover table-rwd text-center bg-light">
+                        <thead>
+                            <tr class="tr-only-hide">
+                                <th style="width: 5%">No.</th>
+                                <th style="width: 30%;" ng-click="orderCol=&#39;fileName&#39;; reverseList=!reverseList;" translate="" class="ng-scope">Filename</th>
+                                <th style="width: 10%;" ng-click="orderCol=&#39;Status&#39;; reverseList=!reverseList;" translate="" class="ng-scope">Status</th>
+                                <th style="width: 45%;" ng-click="orderCol=&#39;Result&#39;; reverseList=!reverseList;" translate="" class="ng-scope">Processing Progress</th>
+                                <th style="width: 10%;" translate="" class="ng-scope">Operation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ngRepeat: fileItem in fileList | orderBy:orderCol:reverseList -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="SystemInfoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><strong id="SystemInfoTitle"></strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" ng-click="systemInfo=&#39;&#39;">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div id="SystemInfoText" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info ng-scope" data-dismiss="modal" ng-click="systemInfo=&#39;&#39;" translate="">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+<script src="./Raccoon _ Upload DICOM_files/jquery-3.3.1.slim.min.js.下載" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+<script src="./Raccoon _ Upload DICOM_files/popper.min.js.下載" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+<script src="./Raccoon _ Upload DICOM_files/bootstrap.min.js.下載" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+<script src="./Raccoon _ Upload DICOM_files/angular.min.js.下載"></script>
+<script src="./Raccoon _ Upload DICOM_files/ngCommon.js.下載"></script>
+<script src="./Raccoon _ Upload DICOM_files/common.js.下載"></script>
+<script src="./Raccoon _ Upload DICOM_files/angular-cookies.js.下載"></script>
+<script src="./Raccoon _ Upload DICOM_files/angular-translate.min.js.下載" integrity="sha512-a/Saqh9wa0rRm8gEgTqGYgoIh1Jki7htgcbLo6R9R990l8TqdIrpx9yWuTLJ+lMsWpQeLbrkbKvkTizrOuCI9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./Raccoon _ Upload DICOM_files/angular-translate-storage-cookie.min.js.下載" integrity="sha512-CUC4LT0irqbeXBxZm4mhYid9rjXJWJALuy8xrhH8Uxw3ish2BxQbEiHDWfZcTgsW8FKAG52eoeICTHZZfl7CZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./Raccoon _ Upload DICOM_files/angular-translate-storage-local.min.js.下載" integrity="sha512-qA5jJVDAvuz6hkU52JxQ3S5OY0RKRoGPVNmYoHyxl89B9/S5mnlEjyVeR46/UZBtOx87MQ2zA5IffpbvWC9Y2Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./Raccoon _ Upload DICOM_files/angular-translate-loader-static-files.js.下載" integrity="sha512-zrJTB3VkziIateyhgLI0De3KBGrtK8uK9bR4K//Y0TxqcRXMZAP11m0U12YvGjAv+PlH4jPfVAZyYnao/ecnEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+    import {  formDataToBlob  } from '../scripts/external/formdata/formdata-to-blob.js'
+    window.formDataToBlob  = formDataToBlob;
+</script>
+<script src="./Raccoon _ Upload DICOM_files/formdata.min.js.下載"></script>
+
+<script src="./Raccoon _ Upload DICOM_files/config.js.下載"></script>
+<script src="./Raccoon _ Upload DICOM_files/UploadDicom.js.下載"></script></body></html>
