@@ -145,20 +145,30 @@ exports.getStudiesList = async (req, res) => {
         })
       )
       .catch(err => {
-        console.log(err.response.data.error)
-        res.status(500).send(axiosErrMesJSON);
+        console.log(err)
+        res.status(500).send(err);
       })
     }
 
     // 4.打開step.3拉到的csv，將特定欄位逐一讀出
     function step3(callback){
+      const readColumns = ["Type","AccessionNumber","PatientID","Modality","StudyDescription","StudyInstanceUID","SeriesInstanceUID","SOPInstanceUID"]
+      var tableData = []
       // 讀取csv檔案
-      readCSVFile(filePath, ['StudyInstanceUID'])
+      readCSVFile(filePath, readColumns)
       .then((data) => {
         console.log('step.3 csv processing successed');
-        const resData = {
-          StudyInstanceUID: data
+        for (let i = 0; i < data.length; i += readColumns.length) {
+          const rowData = data.slice(i , i + readColumns.length)
+          tableData.push(rowData);
         }
+        // const resData = {
+        //   StudyInstanceUID: data
+        // }
+        const resData = tableData.map(row => {
+          const [Type,AccessionNumber,PatientID,Modality,StudyDescription,StudyInstanceUID,SeriesInstanceUID,SOPInstanceUID] = row;
+          return {Type,AccessionNumber,PatientID,Modality,StudyDescription,StudyInstanceUID,SeriesInstanceUID,SOPInstanceUID}
+        });
         const resJSONdata = JSON.stringify(resData, null, 2);
         res.send(resJSONdata); 
       })

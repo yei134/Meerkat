@@ -1,51 +1,34 @@
-# 2023/08/06變動
+# 2023/08/08變動
 
 ### 完成進度
 #### DEBUG
-1. /api/uploads/ & /api/csv_temp/ 目錄已新增至github
-2. studiesAppend -> 追加比對：有重複study時不append
-
-### UPDATE
-1. 統整response格式<br>
-1-1-1. /ckanAPI/resource_delete
-> {`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
-1-1-2. /ckanAPI/resource_patch
-> 請求成功`200`
-> 請求失敗`500`
-1-1-3. /ckanAPI/index_create
-> 請求成功`200`:{`id`:索引檔id,`indexName`:索引檔標題}
-> 請求失敗`500`
-1-1-4. /ckanAPI/resource_create
-> 請求成功`200`:{`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
-1-1-5. /ckanAPI/package_create
-> 請求成功`200`:{`package_id`: 資料集id}
-> 請求失敗`500`
-1-1-6. /ckanAPI/package_search
-> 請求成功`200`:搜尋結果陣列
-> 請求失敗`500`
-1-1-7. /ckanAPI/package_show
-> 請求成功`200`:搜尋結果陣列
-> 請求失敗`500`
-1-1-8. /ckanAPI/package_list
-> 請求成功`200`:搜尋結果陣列
-> 請求失敗`500`
-<br>
-1-2-1. /raccoonAPI/studies
-> 請求成功`200`:DICOM陣列
-> 請求失敗`500`
-1-2-2. /raccoonAPI/studiNew
-> 請求成功`200`
-> 請求失敗`500`
-1-2-3. /raccoonAPI/studiesAppend
-> 請求成功`200`
-> 請求失敗`500`
-1-2-4. /raccoonAPI/studiesDelete
-> 請求成功`200`:{success: true, deletedDICOM: 成功的陣列}
-> 請求失敗`500`
-
-### DEBUG清單
 1. package_create -> post json body issue
-2. 重複功能寫獨立function(寫讀檔、resource_patch)
+> 需注意organization必填問題、name必填（小寫且標點符號限半形減號跟底線）、email要包含小老鼠
+2. /raccoonAPI/studies -> error會噴出去
+> error log參數設定錯誤
+
+
+### UPDATE清單
+1. /raccoonAPI/studies -> 返回欄位增至指定8個欄位
+> [
+    {
+        "Type": "",
+        "AccessionNumber": "",
+        "PatientID": "",
+        "Modality": "",
+        "StudyDescription": "",
+        "StudyInstanceUID": "",
+        "SeriesInstanceUID": "",
+        "SOPInstanceUID": ""
+    }
+  ]
+
+### Emergency DEBUG清單
+
+### ゆっくり DEBUG清單
+1. 重複功能寫獨立function(寫讀檔、resource_patch)
+2. 非axios功能的catch要抓好
+3. studiesDelete改QIDO
 
 ### 2023/05/07後端開啟的API
 
@@ -225,7 +208,7 @@ Authorization
 ```
 get localhost:9000/raccoonAPI/studies
 ```
-正常頁面響應：大量的StudyInstanceID列<br>
+正常頁面響應：dicom檔的指定8個tag列<br>
 ### params指定參數之定義
 1. **\*id(指定索引檔之id欄位)**
 ```
