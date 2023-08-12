@@ -178,55 +178,63 @@ exports.postPackageCreate = async (req, res) => {
 
 exports.postResourceCreate = async (req, res) => {
   try {
-    var success = []; 
-    var fail = [];
     // resourceFile is required or throw error response
-    if(req.files){
+    if(req.file){
       //做post請求的data參數
+      if(!req.body.package_id){
+        throw "package_id is required."
+      }
       const packageID = req.body.package_id;
+      if(!req.body.resourceName){
+        throw "resourceName is required."
+      }
+      const resourceName = req.body.resourceName;
+      var description = "";
+      if(req.body.description){
+        description = req.body.description;
+      }
       //前端post過來的OauthToken
+      if(!req.headers.authorization){
+        throw "token is required."
+      }
       const header = req.headers.authorization;
       //包成key-value
-      const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
+      const headers = 
+      {
+        Authorization: header,
+        "Content-Type": "multipart/form-data"
+      };
       // req.files.path 上傳後的臨時路徑
       // req.files.originalname 原本的檔名
-      const resourceFiles = req.files;
+      const resourceFile = req.file;
       // traverse每項上傳的檔案
       async function resourcesUpload(){
-        for (let resourceFile of resourceFiles) {
-          //宣告formdata物件
-          const formData = new FormData();
-          // 將檔案轉成blob屬性
-          const blob = new Blob([resourceFile.buffer], { type: resourceFile.mimetype });
-          formData.append('upload', blob, resourceFile.originalname);
-          // 砍檔案
-          fs.unlink(resourceFile.path, (error) => {
-            if(error){
-              throw "remove temporary resourceFile failed.";
-            }
-          });
-          // package_id is required
-          formData.append('package_id', packageID);
-          const name = resourceFile.originalname;
-          formData.append('name', name);
-  
-          // 對ckan平台做post請求
-          await axios.post(`${ckanPostResourceAppend}`,formData,{headers})
-          .then(getRes => {
-            const result = getRes.data.result.name;
-            success.push(result);
-          })
-          .catch(err =>{
-            fail.push(name)
-            console.log("err="+err);
-          })
-        }
-        var resData = {
-          success: success,
-          fail: fail
-        }
-        var resJSONdata = JSON.stringify(resData, null, 2);
-        res.send(resJSONdata)
+        //宣告formdata物件
+        const formData = new FormData();
+        // 將檔案轉成blob屬性
+        const resourceContent = fs.readFileSync(resourceFile.path)
+        const blob = new Blob([resourceContent], { type: resourceFile.mimetype });
+        // console.log(resourceFile)
+        formData.append('upload', blob, resourceName);
+        // 砍檔案
+        fs.unlink(resourceFile.path, (error) => {
+          if(error){
+            throw "remove temporary resourceFile failed.";
+          }
+        });
+        // package_id is required
+        formData.append('package_id', packageID);
+        formData.append('name', resourceName);
+        formData.append('description', description);
+
+        // 對ckan平台做post請求
+        await axios.post(`${ckanPostResourceAppend}`,formData,{headers})
+        .then(getRes => {
+          res.status(200).send()
+        })
+        .catch(err =>{
+          console.log("err="+err);
+        })
       }
       resourcesUpload();
     }else{

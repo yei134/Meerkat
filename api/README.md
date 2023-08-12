@@ -1,34 +1,33 @@
-# 2023/08/08變動
+# 2023/08/12變動
 
 ### 完成進度
-#### DEBUG
-1. package_create -> post json body issue
-> 需注意organization必填問題、name必填（小寫且標點符號限半形減號跟底線）、email要包含小老鼠
-2. /raccoonAPI/studies -> error會噴出去
-> error log參數設定錯誤
+#### DEBUG DONE
+/ckanAPI/resource_create -> 僅接收單檔案
+> 前端記得用迴圈呼叫此api
 
+### UPDATE DONE
+merge了一次swimmingpool的code
+
+### Discussion List
+#### /raccoonAPI/studiesDelete
+V 刪除會刪Raccoon
 
 ### UPDATE清單
-1. /raccoonAPI/studies -> 返回欄位增至指定8個欄位
-> [
-    {
-        "Type": "",
-        "AccessionNumber": "",
-        "PatientID": "",
-        "Modality": "",
-        "StudyDescription": "",
-        "StudyInstanceUID": "",
-        "SeriesInstanceUID": "",
-        "SOPInstanceUID": ""
-    }
-  ]
+#### /ckanAPI/
+1. 以組織管理身分的token，create維護人員的token
+2. index_create -> symptom 接收陣列
+#### /raccoonAPI/
+1. 以PatientID欄位刪除其複數個Study
+2. package_create -> public and private both
+3. studiesNew & studiesAppend -> single(為了讓前端有進度條)
 
-### Emergency DEBUG清單
+### High Priority DEBUG清單
 
-### ゆっくり DEBUG清單
+### Low Priority DEBUG清單
 1. 重複功能寫獨立function(寫讀檔、resource_patch)
 2. 非axios功能的catch要抓好
 3. studiesDelete改QIDO
+4. 必填欄位未填寫throw error和res.status(500).send({something})
 
 ### 2023/05/07後端開啟的API
 
@@ -134,7 +133,7 @@ post localhost:9000/ckanAPI/resource_create
 Authorization
 ```
 正常頁面響應：
-> {`success`: 成功的檔名陣列,`fail`: 失敗的檔名陣列}
+> 200
 
 <br>
 
@@ -142,7 +141,9 @@ Authorization
 ### form-data指定參數之定義
 1. **\*package_id(指定資料集之name欄位)**<br>
 2. resourceFile(檔案的欄位名稱)
->  附件命名規則：任意<br>
+  > 附件命名規則：任意<br>
+2. resourceName(檔案名稱)
+  > 請以file.name欄位代入填寫，中文檔名編譯問題，破問題。
 
 ## 對指定資料集添加索引
 ```

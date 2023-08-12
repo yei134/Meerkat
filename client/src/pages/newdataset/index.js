@@ -80,7 +80,7 @@ const NewDataset = () => {
   }, []);
 
   return (
-    <div className="app">
+    <div className="new_content">
       <Edit
         add={setDataset}
         symptomsAdd={setSymptoms} 

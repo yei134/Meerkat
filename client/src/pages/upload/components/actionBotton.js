@@ -38,10 +38,11 @@ function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
           ...prev,
         ];
       });
+      event.value={}
     }
   }
   return (
-    <div className="test">
+    <div>
       {/* className="upload" */}
       <label for='filenp'>
         <input type="file" id='filenp' onChange={add} accept=".dcm" multiple='true' />

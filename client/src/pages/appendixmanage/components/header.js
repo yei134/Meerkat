@@ -11,15 +11,14 @@ const Header = () => {
     console.log("file manage");
   }
   return (
-    <div className="flex-container-header">
-      {/* <img className="divimage" src="./LOGO.svg"></img> */}
-      <h1 className="h1"><a href="/">AI&nbsp;Data&nbsp;Sharing</a></h1>
-      <div className="rightdiv">
-        <button className="button"><a href="/fileUpload" className="a">上傳dicom</a></button>
-        <button className="button"><a href="/datasetInfo" className="a">管理dicom</a></button>
-        <button className="button"><a href="/datasetInfo" className="a">管理附件</a></button>
+    <header className="head container">
+      <div className="test">
+        <img src="../LOGO.svg" className="logo1"></img>
+        <h1><a href="/">AI&nbsp;Data&nbsp;Sharing</a></h1> 
+      </div>  
+      <div>
       </div>
-    </div>
+    </header>
   );
 };
 

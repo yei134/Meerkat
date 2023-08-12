@@ -21,11 +21,11 @@ textarea {
   /* height: 300px; */
 }
 
-.app {
-  width: 98%;
-  padding: 1%;
+.new_content {
+  width: 92%;
+  padding: 1% 3% 0 3%;
+  margin:0 3% 0 3%;
   border: 0px solid #000;
-  box-sizing: border-box;
   background-color: #ffffff30;
 }
 
