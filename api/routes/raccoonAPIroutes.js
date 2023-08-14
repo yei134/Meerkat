@@ -11,8 +11,8 @@ module.exports = app => {
 
   // post
   router.post("/", raccoonAPI.checkPost);
-  router.post("/studiesNew", upload.array('dicomFiles'), raccoonAPI.postStudiesNew);
-  router.post("/studiesAppend", upload.array('dicomFiles'), raccoonAPI.postStudiesAppend);
+  // router.post("/studiesNew", upload.array('dicomFiles'), raccoonAPI.postStudiesNew);
+  router.post("/studiesAppend", upload.single('dicomFile'), raccoonAPI.postStudiesAppend);
 
   // put
 

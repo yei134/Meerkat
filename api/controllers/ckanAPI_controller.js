@@ -10,6 +10,7 @@ const ckanPostPackageCreate = CKAN_BASE_URI+"package_create";
 
 const ckanGetPackageList = CKAN_BASE_URI+"package_list";
 const ckanGetPackageShow = CKAN_BASE_URI+"package_show";
+const ckanGetResourceShow = CKAN_BASE_URI + "resource_show";
 const ckanGetPackageSearch = CKAN_BASE_URI+"package_search";
 
 const ckanPostResourceAppend = CKAN_BASE_URI+"resource_create";
@@ -87,6 +88,42 @@ exports.getPackageShow = async (req, res) => {
   })
 }
 
+exports.getResourceShow = async (req, res) => {
+  //將request的查詢參數id拿出
+  var resourceID = '';
+  try{
+    if(req.query.id){
+      resourceID = req.query.id;
+    }else{
+      throw "id is required.";
+    }
+  }catch(e){
+    res.status(e).send(500)
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  //向ckan做get請求
+  axios.get(`${ckanGetResourceShow}`,
+  {
+    params: {
+      id: resourceID
+    },
+    headers: {
+      Authorization: header
+    }
+  })
+  .then(getRes => {
+    res.send(getRes.data);
+  })
+  .catch(err => {
+    console.log(err.response)
+    res.status(500).send(axiosErrMesJSON);
+  })
+}
+
 exports.getPackageSearch = async (req, res) => {
   /*
     ※CKAN API package_search params參數簡述
@@ -150,28 +187,43 @@ exports.checkPost = async (req, res) => {
   }
 }
 exports.postPackageCreate = async (req, res) => {
-  //做post請求的data參數
-  const data = req.body;
-  //前端post過來的ckanToken
-  const header = req.headers.authorization;
+  var data = "";
+  var header = "";
+  try{
+    //做post請求的data參數
+    if(!req.body){
+      throw "package infos are required.";
+    }else{
+      data = req.body;
+    }
+    //前端post過來的ckanToken
+    if(!req.headers.authorization){
+      throw "token is required.";
+    }else{
+      header = req.headers.authorization;
+    }
+  }catch(e){
+    res.status(500).send(e)
+  }
   //包成key-value
   const headers = {"Authorization": header};
 
-  // console.log(data);
-
-  //對ckan平台做post請求
-  axios.post(`${ckanPostPackageCreate}`,data,{headers})
-  .then(getRes => {
-    console.log(getRes.data);
-    const resData = 
-    {
-      package_id: getRes.data.result.id
-    }
-    const resDataJSON = JSON.stringify(resData, null, 2);
-    res.send(resDataJSON);
-  })
+  // 對ckan平台做post請求
+  // private
+  var privateData = JSON.parse(JSON.stringify(data));
+  privateData.name = privateData.name + "-type-private"
+  privateData.private = true
+  axios.post(`${ckanPostPackageCreate}`,privateData,{headers})
   .catch(err => {
-    console.log(err.response.data.error)
+    console.log(err.response)
+    res.status(500).send(axiosErrMesJSON);
+  })
+  
+  // public
+  axios.post(`${ckanPostPackageCreate}`,data,{headers})
+  .then(res.status(200).send())
+  .catch(err => {
+    console.log(err.response)
     res.status(500).send(axiosErrMesJSON);
   })
 }

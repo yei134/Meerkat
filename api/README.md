@@ -1,33 +1,35 @@
-# 2023/08/12變動
+# 2023/08/14變動
 
 ### 完成進度
 #### DEBUG DONE
-/ckanAPI/resource_create -> 僅接收單檔案
-> 前端記得用迴圈呼叫此api
 
 ### UPDATE DONE
-merge了一次swimmingpool的code
+package_create -> public and private both
+index_create -> symptom 接收陣列
+studiesAppend -> single call raccoon(為了讓前端有進度條)
+studiesAppend -> 對應空索引檔
+studiesNew -> 廢棄
+resource_show -> up
 
 ### Discussion List
-#### /raccoonAPI/studiesDelete
-V 刪除會刪Raccoon
 
 ### UPDATE清單
 #### /ckanAPI/
 1. 以組織管理身分的token，create維護人員的token
-2. index_create -> symptom 接收陣列
 #### /raccoonAPI/
 1. 以PatientID欄位刪除其複數個Study
-2. package_create -> public and private both
-3. studiesNew & studiesAppend -> single(為了讓前端有進度條)
+6. resource_delete -> 碰到特殊格式就噴錯誤
+7. resource_create -> 禁止特殊格式
 
 ### High Priority DEBUG清單
 
 ### Low Priority DEBUG清單
 1. 重複功能寫獨立function(寫讀檔、resource_patch)
 2. 非axios功能的catch要抓好
+2-1. 必填參數設throw
 3. studiesDelete改QIDO
 4. 必填欄位未填寫throw error和res.status(500).send({something})
+5. res.send() -> 簡潔化(多項目只回200、單項目僅回id)
 
 ### 2023/05/07後端開啟的API
 
@@ -160,7 +162,7 @@ Authorization
 
 ### application/json指定參數之定義
 1. **\*package_id(指定資料集之name欄位)**<br>
-2. symptom(病徵名稱)<br>
+2. symptoms(病徵名稱陣列)<br>
 > 非包含_[type]_的特殊命名方式
 
 ## 對指定附件更新資訊
@@ -219,7 +221,7 @@ localhost:9000/raccoonAPI/studies?id=0fff9e61-1a98-40e8-a3d4-3b5756e3a9d4
 
 
 
-# 對RACCOON做POST請求 & 新增索引檔
+# 【廢棄】對RACCOON做POST請求 & 新增索引檔
 ## 對空的病徵做新索引檔
 ```
 post localhost:9000/raccoonAPI/studiesNew
@@ -252,7 +254,7 @@ Authorization
 正常頁面響應：追加的dicom名稱列<br>
 ### form-data指定參數之定義
 > 要以`muiltipart/form-data`方式傳送，而不是`application/json`
-1. **\*dicomFiles(要上傳的dicom檔陣列)**<br>
+1. **\*dicomFile(要上傳的dicom檔陣列)**<br>
 2. **\*id(索引檔的resource_id)**<br>
 3. description(索引檔的敘述)<br>
 ```
@@ -266,7 +268,7 @@ localhost:9000/raccoonAPI/studiesAppend
 
 ## 對既有的病徵刪除影像
 ```
-post localhost:9000/raccoonAPI/studiesDelete
+delete localhost:9000/raccoonAPI/studiesDelete
 ```
 ### (必要)Header參數
 正常頁面響應：
@@ -276,9 +278,9 @@ post localhost:9000/raccoonAPI/studiesDelete
   deletedDICOM: 陣列
 }
 ```
-### form-data指定參數之定義
+### json指定參數之定義
 > 要以`application/json`方式傳送
-1. **\*id(索引檔的resource_id)**<br>
+1. **\*indexID(索引檔的resource_id)**<br>
 2. **\*StudyInstanceUID(要刪除的影像StudyInstanceUID)**<br>
 3. description(索引檔的敘述)<br>
 ```

@@ -22,3 +22,10 @@ CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/<br>
 MONGODB_BASE_URI=mongodb://Meerkat:MeerkatMongoDB@localhost:27017/Meerkat<br>
 RACCOON_BASE_URI=https://raccoon.dicom.org.tw/<br>
 > `CKAN_BASE_URI`為擁有最高權限之測試平台，若無特殊情況請使用這個網址。
+
+# Meerkat 對於 Ckan 的相關特殊命名格式
+
+#### 索引檔
+{package_id}\_[type]\_{symptom}
+#### 資料集
+-type-private
