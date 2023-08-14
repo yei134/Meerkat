@@ -125,6 +125,7 @@ Authorization
 7. note(資料集的描述說明欄位)<br>
 8. **\*owner_org(資料集的擁有組織)**<br>
 9. groups(資料集的擁有組織)<br>
+10. **\*private(請固定為false，私有的true由後端送出)**<br>
 
 ## 對指定資料集添加附件
 ```
