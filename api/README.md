@@ -4,12 +4,12 @@
 #### DEBUG DONE
 
 ### UPDATE DONE
-package_create -> public and private both
-index_create -> symptom 接收陣列
-studiesAppend -> single call raccoon(為了讓前端有進度條)
-studiesAppend -> 對應空索引檔
-studiesNew -> 廢棄
-resource_show -> up
+package_create -> public and private both<br>
+index_create -> symptom 接收陣列<br>
+studiesAppend -> single call raccoon(為了讓前端有進度條)<br>
+studiesAppend -> 對應空索引檔<br>
+studiesNew -> 廢棄<br>
+resource_show -> up<br>
 
 ### Discussion List
 
