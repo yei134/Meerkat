@@ -6,17 +6,17 @@ require('dotenv').config();
 //CKAN_BASE_URI: v6
 //CKAN_BASE_URI_2:  nycu
 const {CKAN_BASE_URI} = process.env;
-const ckanPostPackageCreate = CKAN_BASE_URI+"package_create";
+const ckanPostPackageCreate = CKAN_BASE_URI + "package_create";
 
-const ckanGetPackageList = CKAN_BASE_URI+"package_list";
-const ckanGetPackageShow = CKAN_BASE_URI+"package_show";
+const ckanGetPackageList = CKAN_BASE_URI + "package_list";
+const ckanGetPackageShow = CKAN_BASE_URI + "package_show";
 const ckanGetResourceShow = CKAN_BASE_URI + "resource_show";
-const ckanGetPackageSearch = CKAN_BASE_URI+"package_search";
+const ckanGetPackageSearch = CKAN_BASE_URI + "package_search";
 
-const ckanPostResourceAppend = CKAN_BASE_URI+"resource_create";
-const ckanPostResourcePatch = CKAN_BASE_URI+"resource_patch";//把patch改成update，因為url欄位不會自動更新
-const ckanPostResourceUpdate = CKAN_BASE_URI+"resource_update";
-const ckanPostResourceDelete = CKAN_BASE_URI+"resource_delete";
+const ckanPostResourceAppend = CKAN_BASE_URI + "resource_create";
+const ckanPostResourcePatch = CKAN_BASE_URI + "resource_patch";//把patch改成update，因為url欄位不會自動更新
+const ckanPostResourceUpdate = CKAN_BASE_URI + "resource_update";
+const ckanPostResourceDelete = CKAN_BASE_URI + "resource_delete";
 
 const tempDirectory = 'uploads/';
 const axiosErrMes = 
@@ -57,7 +57,7 @@ exports.getPackageList = async (req, res) => {
       res.send(getRes.data);
     })
     .catch(err => {
-      console.log(err.response.data.error)
+      console.log(err.response)
       res.status(500).send(axiosErrMesJSON);
     })
 }
@@ -83,7 +83,7 @@ exports.getPackageShow = async (req, res) => {
     res.send(getRes.data);
   })
   .catch(err => {
-    console.log(err.response.data.error)
+    console.log(err.response)
     res.status(500).send(axiosErrMesJSON);
   })
 }
@@ -132,7 +132,6 @@ exports.getPackageSearch = async (req, res) => {
     start: 第n個資料集開始顯示
     rows: 限制顯示n個資料集
     q: 搜尋相關字詞
-
   */
   var searchQuery = null;
   var start = 0;
@@ -170,7 +169,7 @@ exports.getPackageSearch = async (req, res) => {
     res.send(getRes.data);
   })
   .catch(err => {
-    console.log(err.response.data.error)
+    console.log(err.response)
     res.status(500).send(axiosErrMesJSON);
   })
 }
@@ -301,34 +300,63 @@ exports.postResourceCreate = async (req, res) => {
 
 exports.postIndexCreate = async (req, res) => {
   //做post請求的data參數
-  const packageID = req.body.package_id;
-  const symptom = req.body.symptom;
-  //前端post過來的OauthToken
-  const header = req.headers.authorization;
-  //包成key-value
-  const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
-  //宣告formdata物件
-  const formData = new FormData();
-  formData.append('package_id', packageID);
-  const indexName = packageID + "_[type]_" + symptom
-  formData.append('name', indexName);
-
-  //對ckan平台做post請求
-  axios.post(`${ckanPostResourceAppend}`,formData,{headers})
-  .then(getRes => {
-    var resData = 
-    {
-      id: getRes.data.result.id,
-      indexName: getRes.data.result.name
+  var packageID = "";
+  var symptoms = [];
+  //前端post過來的ckanToken
+  var header = "";
+  try{
+    if(req.body.package_id){
+      packageID = req.body.package_id
+    }else{
+      throw "package_id is required.";
     }
-    var resJSONdata = JSON.stringify(resData, null, 2);
-    // console.log(resJSONdata);
-    res.send(resJSONdata);
-  })
-  .catch(err => {
-    console.log(err.response.data.error)
-    res.status(500).send(axiosErrMesJSON);
-  })
+    if(req.body.symptoms){
+      symptoms = req.body.symptoms
+    }else{
+      throw "symptom(type:array) is required."
+    }
+    if(req.headers.authorization){
+      header = req.headers.authorization
+    }else{
+      throw "token is required."
+    }
+  }catch(e){
+    res.status(500).send(e)
+  }
+  var success = [] ;
+  var fail = [] ;
+  async function indexCreate(){
+    for(let i = 0 ; i < symptoms.length ; i++){
+      //包成key-value
+      const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
+      //宣告formdata物件
+      const formData = new FormData();
+      formData.append('package_id', packageID);
+      const indexName = packageID + "_[type]_" + symptoms[i]
+      formData.append('name', indexName);
+  
+      //對ckan平台做post請求
+      await axios.post(`${ckanPostResourceAppend}`,formData,{headers})
+      .then(getRes => {
+        success.push(symptoms[i]);
+      })
+      .catch(err => {
+        console.log(err.response);
+        fail.push(symptoms[i]);
+      })
+    }
+    // var resData = 
+    // {
+    //   status: 200,
+    //   package_id: packageID,
+    //   success: success,
+    //   fail: fail
+    // }
+    // var resJSONdata = JSON.stringify(resData, null, 2);
+    // res.send(resJSONdata);
+    res.status(200).send()
+  }
+  indexCreate();
 }
 
 // patch
@@ -389,13 +417,13 @@ exports.postResourcePatch = async (req, res) => {
     res.status(200).send(mesJSON);
   })
   .catch(err => {
-    console.log(err.response.data.error)
+    console.log(err.response)
     res.status(500).send(axiosErrMesJSON);
   })
 }
 
 //delete
-exports.postResourceDelete = async (req, res) => {
+exports.delResourceDelete = async (req, res) => {
   //做post請求的data參數
   const resourceID = req.body.resource_id;
   //前端post過來的OauthToken
@@ -414,7 +442,7 @@ exports.postResourceDelete = async (req, res) => {
       success.push(element);
     })
     .catch(err => {
-      console.log(err.response.data.error)
+      console.log(err.response)
       fail.push(element);
     })
   })
