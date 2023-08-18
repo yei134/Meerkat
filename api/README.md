@@ -1,27 +1,38 @@
-# 2023/08/14變動
+# 2023/08/18變動
 
 ### 完成進度
 #### DEBUG DONE
+1. README.md錯字修正
+> muiltipart -> multipart
 
-### UPDATE DONE
-package_create -> public and private both<br>
-index_create -> symptom 接收陣列<br>
-studiesAppend -> single call raccoon(為了讓前端有進度條)<br>
-studiesAppend -> 對應空索引檔<br>
-studiesNew -> 廢棄<br>
-resource_show -> up<br>
+#### UPDATE DONE
+1. /api/README.md
+> /api/.env 內的ldcm2csv相關參數做說明
+2. 修改API路徑（為往後部屬設定做準備）
+> /raccoonAPI/ -> /api/raccoon/
+<br>
+> /ckanAPI/ -> /api/ckan/
 
 ### Discussion List
+公私有同步更新 -> 管理以私有資料集呈現
+> 網頁程式主要對私有資料集更動，公開資料集是順便更動的感覺
 
 ### UPDATE清單
+2. package.json 的 proxy後端
 #### /ckanAPI/
 1. 以組織管理身分的token，create維護人員的token
+2. resource_create -> 公私有同步更新
+3. resource_delete -> 公私有同步更新
+4. resource_delete -> 碰到特殊格式就噴錯誤
+5. resource_create -> 禁止特殊格式
+6. package_patch -> up
+7. package_patch -> 公私有同步更新
 #### /raccoonAPI/
 1. 以PatientID欄位刪除其複數個Study
-6. resource_delete -> 碰到特殊格式就噴錯誤
-7. resource_create -> 禁止特殊格式
+2. studies -> limit(傳幾筆)begin(從第n開始)參數
 
 ### High Priority DEBUG清單
+1. 審視每個api的response
 
 ### Low Priority DEBUG清單
 1. 重複功能寫獨立function(寫讀檔、resource_patch)

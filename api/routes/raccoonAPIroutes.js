@@ -11,7 +11,6 @@ module.exports = app => {
 
   // post
   router.post("/", raccoonAPI.checkPost);
-  // router.post("/studiesNew", upload.array('dicomFiles'), raccoonAPI.postStudiesNew);
   router.post("/studiesAppend", upload.single('dicomFile'), raccoonAPI.postStudiesAppend);
 
   // put
@@ -19,5 +18,5 @@ module.exports = app => {
   // delete
   router.delete("/studiesDelete", raccoonAPI.postStudiesDelete);
 
-  app.use("/raccoonAPI", router);
+  app.use("/api/raccoon", router);
 };

@@ -27,5 +27,5 @@ module.exports = app => {
   // delete
   router.delete("/resource_delete", ckanAPI.delResourceDelete);
 
-  app.use("/ckanAPI", router);
+  app.use("/api/ckan", router);
 };
