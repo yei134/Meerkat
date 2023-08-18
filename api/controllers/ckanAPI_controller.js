@@ -19,6 +19,8 @@ const ckanPostResourceUpdate = CKAN_BASE_URI + "resource_update";
 const ckanPostResourceDelete = CKAN_BASE_URI + "resource_delete";
 
 const tempDirectory = 'uploads/';
+const resourceSplitName = "_[type]_"
+const packageSplitName = "-type-private"
 const axiosErrMes = 
 {
   success: false,
@@ -57,7 +59,7 @@ exports.getPackageList = async (req, res) => {
       res.send(getRes.data);
     })
     .catch(err => {
-      console.log(err.response)
+      console.log(err)
       res.status(500).send(axiosErrMesJSON);
     })
 }
@@ -83,7 +85,7 @@ exports.getPackageShow = async (req, res) => {
     res.send(getRes.data);
   })
   .catch(err => {
-    console.log(err.response)
+    console.log(err)
     res.status(500).send(axiosErrMesJSON);
   })
 }
@@ -119,7 +121,7 @@ exports.getResourceShow = async (req, res) => {
     res.send(getRes.data);
   })
   .catch(err => {
-    console.log(err.response)
+    console.log(err)
     res.status(500).send(axiosErrMesJSON);
   })
 }
@@ -169,7 +171,7 @@ exports.getPackageSearch = async (req, res) => {
     res.send(getRes.data);
   })
   .catch(err => {
-    console.log(err.response)
+    console.log(err)
     res.status(500).send(axiosErrMesJSON);
   })
 }
@@ -210,11 +212,11 @@ exports.postPackageCreate = async (req, res) => {
   // 對ckan平台做post請求
   // private
   var privateData = JSON.parse(JSON.stringify(data));
-  privateData.name = privateData.name + "-type-private"
+  privateData.name = privateData.name + packageSplitName
   privateData.private = true
   axios.post(`${ckanPostPackageCreate}`,privateData,{headers})
   .catch(err => {
-    console.log(err.response)
+    console.log(err)
     res.status(500).send(axiosErrMesJSON);
   })
   
@@ -222,7 +224,7 @@ exports.postPackageCreate = async (req, res) => {
   axios.post(`${ckanPostPackageCreate}`,data,{headers})
   .then(res.status(200).send())
   .catch(err => {
-    console.log(err.response)
+    console.log(err)
     res.status(500).send(axiosErrMesJSON);
   })
 }
@@ -232,41 +234,56 @@ exports.postResourceCreate = async (req, res) => {
     // resourceFile is required or throw error response
     if(req.file){
       //做post請求的data參數
-      if(!req.body.package_id){
+      var privatePackageID = "";
+      var publicPackageID = "";
+      if(req.body.package_id){
+        privatePackageID = req.body.package_id;
+        const str = privatePackageID.split(packageSplitName)
+        publicPackageID = str[0];
+      }else{
         throw "package_id is required."
       }
-      const packageID = req.body.package_id;
-      if(!req.body.resourceName){
+
+      var resourceName = "";
+      if(req.body.resourceName){
+        resourceName = req.body.resourceName;
+        const str = resourceName.split(resourceSplitName)
+        if(str.length > 1){
+          throw resourceName + " contains prohibited words."
+        }
+      }else{
         throw "resourceName is required."
       }
-      const resourceName = req.body.resourceName;
-      var description = "";
-      if(req.body.description){
-        description = req.body.description;
-      }
+
       //前端post過來的OauthToken
-      if(!req.headers.authorization){
+      var header = "";
+      if(req.headers.authorization){
+        header = req.headers.authorization; 
+      }else{
         throw "token is required."
       }
-      const header = req.headers.authorization;
+
       //包成key-value
       const headers = 
       {
         Authorization: header,
         "Content-Type": "multipart/form-data"
       };
+
+
       // req.files.path 上傳後的臨時路徑
       // req.files.originalname 原本的檔名
       const resourceFile = req.file;
       // traverse每項上傳的檔案
       async function resourcesUpload(){
         //宣告formdata物件
-        const formData = new FormData();
+        const privateFormData = new FormData();
+        const publicFormData = new FormData();
         // 將檔案轉成blob屬性
         const resourceContent = fs.readFileSync(resourceFile.path)
         const blob = new Blob([resourceContent], { type: resourceFile.mimetype });
-        // console.log(resourceFile)
-        formData.append('upload', blob, resourceName);
+        privateFormData.append('upload', blob, resourceName);
+        publicFormData.append('upload', blob, resourceName);
         // 砍檔案
         fs.unlink(resourceFile.path, (error) => {
           if(error){
@@ -274,27 +291,80 @@ exports.postResourceCreate = async (req, res) => {
           }
         });
         // package_id is required
-        formData.append('package_id', packageID);
-        formData.append('name', resourceName);
-        formData.append('description', description);
+        privateFormData.append('package_id', privatePackageID);
+        publicFormData.append('package_id', publicPackageID);
+        privateFormData.append('name', resourceName);
+        publicFormData.append('name', resourceName);
 
-        // 對ckan平台做post請求
-        await axios.post(`${ckanPostResourceAppend}`,formData,{headers})
-        .then(getRes => {
-          res.status(200).send()
-        })
+        var errLog = [];
+        var publicResourceUID = "";
+        var prefixDes = 'public resource uid:'
+        if(publicFlag){
+          // 對ckan平台做post請求(公有資料集)
+          await axios.post(`${ckanPostResourceAppend}`,publicFormData,{headers})
+          .then(getRes => {
+            publicResourceUID = getRes.data.result.id;
+            const completeDes = prefixDes + publicResourceUID
+            privateFormData.append('description', completeDes);
+          })
+          .catch(err =>{
+            console.log("err="+err);
+            errLog.push(err);
+          })
+        }else{
+          privateFormData.append('description', prefixDes);
+        }
+        // 對ckan平台做post請求(私有資料集)
+        await axios.post(`${ckanPostResourceAppend}`,privateFormData,{headers})
         .catch(err =>{
           console.log("err="+err);
+          errLog.push(err);
         })
+        if(errLog.length > 0){
+          res.status(500).send(errLog)
+        }else{
+          res.status(200).send()
+        }
       }
-      resourcesUpload();
+      var publicFlag = true;
+      async function checkPackageStatus(){
+        await axios.get(`${ckanGetPackageShow}`,
+          {
+            params: { id: privatePackageID },
+            headers
+          }
+        )
+        .then(getRes => {
+          console.log("private dataset exist.");
+        })
+        .catch(err => {
+          res.status(500).send("private dataset doesn't exist")
+        })
+
+        await axios.get(`${ckanGetPackageShow}`,
+        {
+          params: { id: publicPackageID },
+          headers
+        }
+        )
+        .then(getRes => {
+          console.log("public dataset exist.");
+          publicFlag = true;
+        })
+        .catch(err => {
+          console.log("public dataset doesn't exist")
+          publicFlag = false;
+        })
+        resourcesUpload();
+      }
+      checkPackageStatus()
     }else{
       throw "no resourceFile uploaded.";
     }
-  } catch (error) {
+  } catch (err) {
     //ckan返回請求錯誤的訊息
-    console.error(error);
-    res.status(500).send('Error fetching data from external API');
+    console.log(err);
+    res.status(500).send(err);
   }
 }
 
@@ -332,7 +402,7 @@ exports.postIndexCreate = async (req, res) => {
       //宣告formdata物件
       const formData = new FormData();
       formData.append('package_id', packageID);
-      const indexName = packageID + "_[type]_" + symptoms[i]
+      const indexName = packageID + resourceSplitName + symptoms[i]
       formData.append('name', indexName);
   
       //對ckan平台做post請求
@@ -341,7 +411,7 @@ exports.postIndexCreate = async (req, res) => {
         success.push(symptoms[i]);
       })
       .catch(err => {
-        console.log(err.response);
+        console.log(err);
         fail.push(symptoms[i]);
       })
     }
@@ -417,39 +487,114 @@ exports.postResourcePatch = async (req, res) => {
     res.status(200).send(mesJSON);
   })
   .catch(err => {
-    console.log(err.response)
+    console.log(err)
     res.status(500).send(axiosErrMesJSON);
   })
 }
 
 //delete
-exports.delResourceDelete = async (req, res) => {
-  //做post請求的data參數
-  const resourceID = req.body.resource_id;
-  //前端post過來的OauthToken
-  const header = req.headers.authorization;
-  //包成key-value
+exports.delResourceDelete = (req, res) => {
+  var resourceID = "";
+  var header = "";
+  try{
+    //做post請求的data參數
+    if(req.body.resource_id){
+      resourceID = req.body.resource_id;
+    }else{
+      throw "resource_id is required."
+    }
+    //前端post過來的OauthToken
+    if(req.headers.authorization){
+      header = req.headers.authorization;
+    }else{
+      throw "token is required."
+    }
+  }catch(e){
+    console.log(e)
+    res.status(500).send(e);
+  }
+
   const headers = {"Authorization": header};
 
+  var filteredResourceID =[]
   var success = []
   var fail = []
-
-  //對ckan平台做post請求
-  await resourceID.forEach(element => {
-    const postData = {id: element}
-    axios.post(`${ckanPostResourceDelete}`, postData, {headers})
-    .then(getRes => {
-      success.push(element);
-    })
-    .catch(err => {
-      console.log(err.response)
-      fail.push(element);
-    })
-  })
-  var resData = {
-    success: success,
-    fail: fail
+  var publicResourceUIDarray = []
+  
+  // 對ckan平台做get請求
+  // 先比對請求陣列中的名字有沒有特殊格式
+  // filteredResourceID是「沒有特殊格式」的附件ID
+  async function checkSplitName(){
+    for(var i = 0 ; i < resourceID.length ; i++){
+      const getData = { id: resourceID[i] }
+      await axios.get(`${ckanGetResourceShow}`, 
+        {
+          params: getData,
+          headers
+        }
+      )
+      .then(getRes => {
+        const resourceName = getRes.data.result.name;
+        const description = getRes.data.result.description;
+        const str = description.split(":");
+        const publicResourceUID = str[1];
+        const flag = resourceName.includes(resourceSplitName);
+        if(flag){
+          fail.push(resourceID[i])
+        }else{
+          filteredResourceID.push(resourceID[i])
+          publicResourceUIDarray.push(publicResourceUID)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+    delResource();
   }
-  var resJSONdata = JSON.stringify(resData, null, 2);
-  res.status(200).send(resJSONdata);
+  checkSplitName();
+
+  // 對ckan平台做post請求
+  // 以filteredResourceID陣列去做刪除請求
+  async function delResource(){
+    for(var i = 0 ; i < filteredResourceID.length ; i++){
+      const postPrivateData = { id: filteredResourceID[i] }
+      const postPublicData = { id: publicResourceUIDarray[i] }
+
+      if(publicResourceUIDarray[i]){
+        axios.post(`${ckanPostResourceDelete}`, 
+        postPublicData, 
+          {
+            headers
+          }
+        )
+        .then(getRes => {
+          success.push(publicResourceUIDarray[i]);
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
+
+      await axios.post(`${ckanPostResourceDelete}`, 
+      postPrivateData, 
+        {
+          headers
+        }
+      )
+      .then(getRes => {
+        success.push(filteredResourceID[i]);
+      })
+      .catch(err => {
+        console.log(err)
+        fail.push(filteredResourceID[i]);
+      })
+    }
+    var resData = {
+      success: success,
+      fail: fail
+    }
+    var resJSONdata = JSON.stringify(resData, null, 2);
+    res.status(200).send(resJSONdata);
+  }
 }

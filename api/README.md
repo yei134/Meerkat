@@ -1,46 +1,52 @@
-# 2023/08/18變動
+# api@1.0.0 變動
 
 ### 完成進度
 #### DEBUG DONE
-1. README.md錯字修正
-> muiltipart -> multipart
 
 #### UPDATE DONE
-1. /api/README.md
-> /api/.env 內的ldcm2csv相關參數做說明
-2. 修改API路徑（為往後部屬設定做準備）
-> /raccoonAPI/ -> /api/raccoon/
-<br>
-> /ckanAPI/ -> /api/ckan/
+1. /api/package.json
+> 上了版本號方便辨認，本次push是1.0.0
+2. resource_delete -> 碰到特殊格式就噴錯誤<br>
+3. resource_create -> 公私有同步更新 -> 移除前端的description欄位用做公開附件連結<br>
+4. resource_create -> 禁止特殊格式<br>
+5. resource_delete -> 公私有同步更新<br>
+6. resource_create -> 有考慮私有資料集only的case<br>
+7. resource_delete -> 有考慮私有資料集only的case<br>
 
 ### Discussion List
-公私有同步更新 -> 管理以私有資料集呈現
-> 網頁程式主要對私有資料集更動，公開資料集是順便更動的感覺
+1. 會有刪除共享資料集的時候嗎？<br>
+1-1. 有的話索引檔也要全部刪除？<br>
+2. ckan的package_delete非完全刪除。也就是說，刪除狀態的資料集還可以持續被更動，會需要徹底清除（dataset_purge）嗎？<br>
+3. resource_delete -> 公私有的附件關聯性怎麼處理？<br>
+> 暫時藉由private resource的description欄位存放public resource id
 
 ### UPDATE清單
-2. package.json 的 proxy後端
+1. DockerFile<br>
+2. DockerCompose<br>
+3. nginx.conf
+
 #### /ckanAPI/
-1. 以組織管理身分的token，create維護人員的token
-2. resource_create -> 公私有同步更新
-3. resource_delete -> 公私有同步更新
-4. resource_delete -> 碰到特殊格式就噴錯誤
-5. resource_create -> 禁止特殊格式
-6. package_patch -> up
-7. package_patch -> 公私有同步更新
+1. 以組織管理身分的token，create維護人員的token<br>
+2. package_patch -> up<br>
+3. package_patch -> 公私有同步更新<br>
+4. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
+5. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
+
 #### /raccoonAPI/
-1. 以PatientID欄位刪除其複數個Study
-2. studies -> limit(傳幾筆)begin(從第n開始)參數
+1. 以PatientID欄位刪除其複數個Study<br>
+2. studies -> limit(傳幾筆)begin(從第n開始)參數<br>
 
 ### High Priority DEBUG清單
-1. 審視每個api的response
 
 ### Low Priority DEBUG清單
-1. 重複功能寫獨立function(寫讀檔、resource_patch)
-2. 非axios功能的catch要抓好
-2-1. 必填參數設throw
-3. studiesDelete改QIDO
-4. 必填欄位未填寫throw error和res.status(500).send({something})
-5. res.send() -> 簡潔化(多項目只回200、單項目僅回id)
+1. 重複功能寫獨立function(寫讀檔、resource_patch)<br>
+2. 非axios功能的catch要抓好<br>
+2-1. 必填參數設throw<br>
+3. studiesDelete改QIDO<br>
+4. 必填欄位未填寫throw error和res.status(500).send({something})<br>
+5. res.send() -> 簡潔化(多項目只回200、單項目僅回id)<br>
+5-1. 審視每個api的response<br>
+6. 
 
 ### 2023/05/07後端開啟的API
 
@@ -118,9 +124,6 @@ post localhost:9000/ckanAPI/
 postlocalhost:9000/ckanAPI/package_create
 ```
 正常頁面響應：{`package_id`: 資料集id}<br>
-
-> 詳細參數說明請見redmine的`資料上傳介面`文件
-
 ### (必要)Header參數
 ```
 Authorization
@@ -151,12 +154,12 @@ Authorization
 
 <br>
 
-> 要以`muiltipart/form-data`方式傳送，而不是`application/json`
+> 要以`multipart/form-data`方式傳送，而不是`application/json`
 ### form-data指定參數之定義
-1. **\*package_id(指定資料集之name欄位)**<br>
-2. resourceFile(檔案的欄位名稱)
+1. **\*package_id(指定資料集之name欄位，需為私有資料集格式)**<br>
+2. **\*resourceFile(檔案的欄位名稱，單次呼叫僅接受單個檔案)**
   > 附件命名規則：任意<br>
-2. resourceName(檔案名稱)
+3. **\*resourceName(檔案名稱)**
   > 請以file.name欄位代入填寫，中文檔名編譯問題，破問題。
 
 ## 對指定資料集添加索引
@@ -191,7 +194,7 @@ Authorization
 
 <br>
 
-> 要以`muiltipart/form-data`方式傳送，而不是`application/json`
+> 要以`multipart/form-data`方式傳送，而不是`application/json`
 ### form-data指定參數之定義(非全數，\*為必填)
 1. **\*id(指定附件之id欄位)**<br>
 2. resourceFile(檔案的欄位名稱)<br>
@@ -215,7 +218,9 @@ Authorization
 <br>
 
 ### application/json指定參數之定義(非全數，\*為必填)
-1. **\*id(指定附件之id欄位)**<br>
+1. **\*resource_id(指定附件之id欄位，陣列型態)**<br>
+> ex. {"resource_id": ["id1","id2"]}
+> 僅需傳private的附件id即可
 
 
 
@@ -244,7 +249,7 @@ Authorization
 ```
 正常頁面響應：新增的dicom名稱列<br>
 ### form-data指定參數之定義
-> 要以`muiltipart/form-data`方式傳送，而不是`application/json`
+> 要以`multipart/form-data`方式傳送，而不是`application/json`
 1. **\*dicomFiles(要上傳的dicom檔陣列)**<br>
 2. **\*id(索引檔的resource_id)**<br>
 3. description(索引檔的敘述)<br>
@@ -265,7 +270,7 @@ Authorization
 ```
 正常頁面響應：追加的dicom名稱列<br>
 ### form-data指定參數之定義
-> 要以`muiltipart/form-data`方式傳送，而不是`application/json`
+> 要以`multipart/form-data`方式傳送，而不是`application/json`
 1. **\*dicomFile(要上傳的dicom檔陣列)**<br>
 2. **\*id(索引檔的resource_id)**<br>
 3. description(索引檔的敘述)<br>
