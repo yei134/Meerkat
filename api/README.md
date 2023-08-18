@@ -176,7 +176,7 @@ Authorization
 <br>
 
 ### application/json指定參數之定義
-1. **\*package_id(指定資料集之name欄位)**<br>
+1. **\*package_id(指定資料集之name欄位，需為私有資料集格式)**<br>
 2. symptoms(病徵名稱陣列)<br>
 > 非包含_[type]_的特殊命名方式
 
