@@ -4,14 +4,10 @@
 #### DEBUG DONE
 
 #### UPDATE DONE
-1. /api/package.json
-> 上了版本號方便辨認，本次push是1.0.0
-2. resource_delete -> 碰到特殊格式就噴錯誤<br>
-3. resource_create -> 公私有同步更新 -> 移除前端的description欄位用做公開附件連結<br>
-4. resource_create -> 禁止特殊格式<br>
-5. resource_delete -> 公私有同步更新<br>
-6. resource_create -> 有考慮私有資料集only的case<br>
-7. resource_delete -> 有考慮私有資料集only的case<br>
+1. /api/Dockerfile.backend & /client/Dockerfile.frontend
+> 上了各自的Dockerfile做部屬用（SSL未處理）
+2. /docker-compose.yml
+> 部屬用啟動文件
 
 ### Discussion List
 1. 會有刪除共享資料集的時候嗎？<br>
@@ -21,9 +17,8 @@
 > 暫時藉由private resource的description欄位存放public resource id
 
 ### UPDATE清單
-1. DockerFile<br>
-2. DockerCompose<br>
-3. nginx.conf
+1. nginx.conf
+2. SSL
 
 #### /ckanAPI/
 1. 以組織管理身分的token，create維護人員的token<br>
