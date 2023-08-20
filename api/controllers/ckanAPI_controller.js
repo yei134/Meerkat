@@ -9,6 +9,12 @@ const {CKAN_BASE_URI} = process.env;
 const ckanPostPackageCreate = CKAN_BASE_URI + "package_create";
 
 const ckanGetPackageList = CKAN_BASE_URI + "package_list";
+const ckanGetGroupList = CKAN_BASE_URI + "group_list";
+const ckanGetTagList = CKAN_BASE_URI + "group_list";
+const ckanGetOrgList = CKAN_BASE_URI + "organization_list";
+const ckanGetGroupPackageList = CKAN_BASE_URI + "group_package_show";
+const ckanGetTagPackageList = CKAN_BASE_URI + "tag_show";
+const ckanGetOrgPackageList = CKAN_BASE_URI + "organization_show";
 const ckanGetPackageShow = CKAN_BASE_URI + "package_show";
 const ckanGetResourceShow = CKAN_BASE_URI + "resource_show";
 const ckanGetPackageSearch = CKAN_BASE_URI + "package_search";
@@ -173,6 +179,206 @@ exports.getPackageSearch = async (req, res) => {
   .catch(err => {
     console.log(err)
     res.status(500).send(axiosErrMesJSON);
+  })
+}
+
+// 回傳指定層級陣列所帶的值
+function objTraverse(data, keys) {
+  let result = data;
+  for (const key of keys) {
+    if (result.hasOwnProperty(key)) {
+      result = result[key];
+    } else {
+      return undefined;
+    }
+  }
+  return result;
+}
+
+// params:{},URL,token,要的子層陣列
+async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
+  if(reqParams){
+    // for xxx_show
+    console.log(reqParams)
+    try{
+      const getRes = await axios.get(url,
+      {
+        params: reqParams,
+        headers: {
+          Authorization: token
+        }
+      });
+      const response = getRes.data.result;
+      var resData = {}
+      if(keys){
+        const responseINkeys = objTraverse(response,keys);
+        resData = 
+        {
+          success: 200,
+          data: responseINkeys
+        }
+      }else{
+        resData = 
+        {
+          success: 200,
+          data: response
+        }
+      }
+      return resData;
+    }catch(err){
+      console.log(err);
+      const resData = 
+      {
+        success: 500,
+        data: err
+      }
+      return resData;
+    }
+  }else{
+    // for xxxx_list
+    try{
+      const getRes = await axios.get(url,
+      {
+        headers: {
+          Authorization: token
+        }
+      });
+      const response = getRes.data.result;
+      var resData = {}
+      if(keys){
+        const responseINkeys = objTraverse(response,keys);
+        resData = 
+        {
+          success: 200,
+          data: responseINkeys
+        }
+      }else{
+        resData = 
+        {
+          success: 200,
+          data: response
+        }
+      }
+      return resData;
+    }catch(err){
+      console.log(err);
+      const resData = 
+      {
+        success: 500,
+        data: err
+      }
+      return resData;
+    }
+  }
+}
+
+exports.getGroupList = async (req, res) => {
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(null,ckanGetGroupList,null,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getTagList = async (req, res) => {
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(null,ckanGetTagList,null,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getOrgList = async (req, res) => {
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(null,ckanGetOrgList,null,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getGroupPackageList = async (req, res) => {
+  const id = req.query.groupID;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(params,ckanGetGroupPackageList,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getTagPackageList = async (req, res) => {
+  const id = req.query.tagID;
+  const params = {
+    id: id,
+    include_datasets: true
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  const keys = ["packages"]
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(params,ckanGetTagPackageList,header,keys)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getOrgPackageList = async (req, res) => {
+  const id = req.query.orgID;
+  const params = {
+    id: id,
+    include_datasets: true
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  const keys = ["packages"]
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(params,ckanGetOrgPackageList,header,keys)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
   })
 }
 

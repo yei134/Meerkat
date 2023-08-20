@@ -1,0 +1,15 @@
+version: '3'
+services:
+  express:
+    build:
+      context: ./
+      dockerfile: ./api/Dockerfile.backend
+    ports:
+      - "9000:9000"
+    volumes: 
+      - ./api:/api
+      - ./node_modules:/node_modules
+    environment:
+      - CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/
+      - DCMTK_TOOL_LDCM2CSV=/home/emily/build2/bin/ldcm2csv
+      - DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG=/home/emily/dicomweb.config

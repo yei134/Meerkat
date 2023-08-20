@@ -1,13 +1,24 @@
-# api@1.0.0 變動
+# api@1.1.0 變動
 
 ### 完成進度
 #### DEBUG DONE
+axios呼叫api的部分已function化，參數包含以下：<br>
+1. params:{}<br>
+2. **\*URL**<br>
+3. token<br>
+4. 要的子層陣列<br>
+有空再整理跟優化<br>
+<br>
+README.md文件已修改api路徑說明
 
 #### UPDATE DONE
-1. /api/Dockerfile.backend & /client/Dockerfile.frontend
-> 上了各自的Dockerfile做部屬用（SSL未處理）
-2. /docker-compose.yml
-> 部屬用啟動文件
+##### 篩選系列API up
+1. /api/ckan/group_list                -> getGroupList
+2. /api/ckan/tag_list                  -> getTagList
+3. /api/ckan/organization_list         -> getOrgList
+4. /api/ckan/group_package_list        -> getGroupPackageList
+5. /api/ckan/tag_package_list          -> getTagPackageList
+6. /api/ckan/organization_package_list -> getOrgPackageList
 
 ### Discussion List
 1. 會有刪除共享資料集的時候嗎？<br>
@@ -20,28 +31,27 @@
 1. nginx.conf
 2. SSL
 
-#### /ckanAPI/
+#### /api/ckan/
 1. 以組織管理身分的token，create維護人員的token<br>
 2. package_patch -> up<br>
 3. package_patch -> 公私有同步更新<br>
 4. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
 5. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
 
-#### /raccoonAPI/
+#### /api/raccoon/
 1. 以PatientID欄位刪除其複數個Study<br>
 2. studies -> limit(傳幾筆)begin(從第n開始)參數<br>
 
 ### High Priority DEBUG清單
 
 ### Low Priority DEBUG清單
-1. 重複功能寫獨立function(寫讀檔、resource_patch)<br>
+1. 重複功能寫獨立function(寫讀檔、resource_patch、axios)<br>
 2. 非axios功能的catch要抓好<br>
 2-1. 必填參數設throw<br>
 3. studiesDelete改QIDO<br>
 4. 必填欄位未填寫throw error和res.status(500).send({something})<br>
 5. res.send() -> 簡潔化(多項目只回200、單項目僅回id)<br>
 5-1. 審視每個api的response<br>
-6. 
 
 ### 2023/05/07後端開啟的API
 
@@ -54,19 +64,19 @@ get localhost:9000
 # 對CKAN的GET請求
 ## 確認GET API
 ```
-get localhost:9000/ckanAPI/
+get localhost:9000/api/ckan/
 ```
 正常頁面響應：ckan get api working well.<br>
 正常命令響應：ckan get api working well.<br>
 ## 獲得所有資料集列表
 ```
-get localhost:9000/ckanAPI/package_list
+get localhost:9000/api/ckan/package_list
 ```
 正常頁面響應：資料集之name的json格式<br>
 正常命令響應：200 or 304<br>
 ## 獲得指定資料集資訊
 ```
-get localhost:9000/ckanAPI/package_show
+get localhost:9000/api/ckan/package_show
 ```
 正常頁面響應：指定資料集之詳細資訊的json格式<br>
 正常命令響應：200 or 304<br>
@@ -79,11 +89,11 @@ Authorization(ckan token)
 
 ```
 ex.
-localhost:9000/ckanAPI/package_show?datasetName=x-ray
+localhost:9000/api/ckan/package_show?datasetName=x-ray
 ```
 ## 獲得資料集列表（附帶查詢、限制筆數等參數）
 ```
-get localhost:9000/ckanAPI/package_search
+get localhost:9000/api/ckan/package_search
 ```
 正常頁面響應：在限制數量的範圍下返回資料集之詳細資訊<br>
 正常命令響應：200 or 304<br>
@@ -103,20 +113,109 @@ Authorization(ckan token)
 
 ```
 ex.
-get localhost:9000/ckanAPI/package_search?limit=8
+get localhost:9000/api/ckan/package_search?limit=8
+```
+
+## 獲得群組列表
+```
+get localhost:9000/api/ckan/group_list
+```
+正常頁面響應：群組清單<br>
+正常命令響應：200 or 304<br>
+```
+ex.
+get localhost:9000/api/ckan/group_list
+```
+
+## 獲得標籤列表
+```
+get localhost:9000/api/ckan/tag_list
+```
+正常頁面響應：標籤清單<br>
+正常命令響應：200 or 304<br>
+```
+ex.
+get localhost:9000/api/ckan/ta_list
+```
+
+## 獲得組織列表
+```
+get localhost:9000/api/ckan/organization_package_list
+```
+正常頁面響應：群組清單<br>
+正常命令響應：200 or 304<br>
+```
+ex.
+get localhost:9000/api/ckan/organization_list
+```
+
+## 獲得指定群組資料集列表
+```
+get localhost:9000/api/ckan/group_package_list
+```
+正常頁面響應：指定群組的資料集清單<br>
+正常命令響應：200 or 304<br>
+#### headers
+Authorization(ckan token)
+### 指定參數之定義
+#### params
+1. groupID<br>
+  > 要查詢的group_id 或 group_name
+
+```
+ex.
+get localhost:9000/api/ckan/group_package_list?groupID=medical-image
+```
+
+## 獲得指定標籤資料集列表
+```
+get localhost:9000/api/ckan/tag_package_list
+```
+正常頁面響應：指定標籤的資料集清單<br>
+正常命令響應：200 or 304<br>
+
+#### headers
+Authorization(ckan token)
+### 指定參數之定義
+#### params
+1. tagID<br>
+  > 要查詢的tag_id 或 tag_name
+
+```
+ex.
+get localhost:9000/api/ckan/tag_package_list?tagID=mri
+```
+
+## 獲得指定組織資料集列表
+```
+get localhost:9000/api/ckan/organization_package_list
+```
+正常頁面響應：指定群組的資料集清單<br>
+正常命令響應：200 or 304<br>
+
+#### headers
+Authorization(ckan token)
+### 指定參數之定義
+#### params
+1. orgID<br>
+  > 要查詢的org_id 或 org_name
+
+```
+ex.
+get localhost:9000/api/ckan/organization_package_list?orgID=national-taipei-university-of-nursing-and-health-scienses
 ```
 
 # 對CKAN的POST請求
 ## 確認POST API
 ```
-post localhost:9000/ckanAPI/
+post localhost:9000/api/ckan/
 ```
 正常頁面響應：ckan post api working well.<br>
 正常命令響應：ckan post api working well.<br>
 
 ## 創建資料集
 ```
-postlocalhost:9000/ckanAPI/package_create
+postlocalhost:9000/api/ckan/package_create
 ```
 正常頁面響應：{`package_id`: 資料集id}<br>
 ### (必要)Header參數
@@ -138,7 +237,7 @@ Authorization
 
 ## 對指定資料集添加附件
 ```
-post localhost:9000/ckanAPI/resource_create
+post localhost:9000/api/ckan/resource_create
 ```
 ### (必要)Header參數
 ```
@@ -159,7 +258,7 @@ Authorization
 
 ## 對指定資料集添加索引
 ```
-post localhost:9000/ckanAPI/index_create
+post localhost:9000/api/ckan/index_create
 ```
 ### (必要)Header參數
 ```
@@ -177,7 +276,7 @@ Authorization
 
 ## 對指定附件更新資訊
 ```
-post localhost:9000/ckanAPI/resource_patch
+post localhost:9000/api/ckan/resource_patch
 ```
 ### (必要)Header參數
 ```
@@ -201,7 +300,7 @@ Authorization
 
 ## 對指定附件進行刪除
 ```
-delete localhost:9000/ckanAPI/resource_delete
+delete localhost:9000/api/ckan/resource_delete
 ```
 ### (必要)Header參數
 ```
@@ -221,14 +320,14 @@ Authorization
 
 # 對病徵索引做GET請求
 ```
-get localhost:9000/raccoonAPI/studies
+get localhost:9000/api/raccoon/studies
 ```
 正常頁面響應：dicom檔的指定8個tag列<br>
 ### params指定參數之定義
 1. **\*id(指定索引檔之id欄位)**
 ```
 ex.
-localhost:9000/raccoonAPI/studies?id=0fff9e61-1a98-40e8-a3d4-3b5756e3a9d4
+localhost:9000/api/raccoon/studies?id=0fff9e61-1a98-40e8-a3d4-3b5756e3a9d4
 ```
 
 
@@ -236,7 +335,7 @@ localhost:9000/raccoonAPI/studies?id=0fff9e61-1a98-40e8-a3d4-3b5756e3a9d4
 # 【廢棄】對RACCOON做POST請求 & 新增索引檔
 ## 對空的病徵做新索引檔
 ```
-post localhost:9000/raccoonAPI/studiesNew
+post localhost:9000/api/raccoon/studiesNew
 ```
 ### (必要)Header參數
 ```
@@ -252,12 +351,12 @@ Authorization
   > 請直接回傳resources中的name欄位
 ```
 ex.
-localhost:9000/raccoonAPI/studiesNew
+localhost:9000/api/raccoon/studiesNew
 ```
 
 ## 對既有的病徵追加影像
 ```
-post localhost:9000/raccoonAPI/studiesAppend
+post localhost:9000/api/raccoon/studiesAppend
 ```
 ### (必要)Header參數
 ```
@@ -271,7 +370,7 @@ Authorization
 3. description(索引檔的敘述)<br>
 ```
 ex.
-localhost:9000/raccoonAPI/studiesAppend
+localhost:9000/api/raccoon/studiesAppend
 ```
 
 
@@ -280,7 +379,7 @@ localhost:9000/raccoonAPI/studiesAppend
 
 ## 對既有的病徵刪除影像
 ```
-delete localhost:9000/raccoonAPI/studiesDelete
+delete localhost:9000/api/raccoon/studiesDelete
 ```
 ### (必要)Header參數
 正常頁面響應：
@@ -297,5 +396,5 @@ delete localhost:9000/raccoonAPI/studiesDelete
 3. description(索引檔的敘述)<br>
 ```
 ex.
-localhost:9000/raccoonAPI/studiesDelete
+localhost:9000/api/raccoon/studiesDelete
 ```

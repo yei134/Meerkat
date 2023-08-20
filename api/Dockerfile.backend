@@ -1,0 +1,9 @@
+FROM node:18.14.2-alpine
+# 18.14.2-slim
+COPY ../api/ /api
+COPY ../node_modules/ /node_modules
+WORKDIR /api
+# 上線要移除
+RUN mv ./.env2 ./.env
+RUN npm install
+CMD ["npm","start"]

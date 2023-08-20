@@ -1,0 +1,7 @@
+FROM node:18.14.2-alpine
+# 18.14.2-slim
+COPY ../client/ /client
+COPY ../node_modules/ /node_modules
+WORKDIR /client
+RUN npm install
+CMD ["npm","start"]

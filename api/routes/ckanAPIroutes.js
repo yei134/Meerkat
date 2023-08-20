@@ -14,6 +14,12 @@ module.exports = app => {
   router.get("/package_show", ckanAPI.getPackageShow);
   router.get("/package_search", ckanAPI.getPackageSearch);
   router.get("/resource_show", ckanAPI.getResourceShow);
+  router.get("/group_list", ckanAPI.getGroupList);
+  router.get("/tag_list", ckanAPI.getTagList);
+  router.get("/organization_list", ckanAPI.getOrgList);
+  router.get("/group_package_list", ckanAPI.getGroupPackageList);
+  router.get("/tag_package_list", ckanAPI.getTagPackageList);
+  router.get("/organization_package_list", ckanAPI.getOrgPackageList);
 
   // post
   router.post("/", ckanAPI.checkPost);
