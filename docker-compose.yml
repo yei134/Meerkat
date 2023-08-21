@@ -1,6 +1,6 @@
 version: '3'
 services:
-  meerkat-express:
+  express:
     container_name: meerkat_backend
     build:
       context: ./
@@ -14,3 +14,17 @@ services:
       - CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/
       - DCMTK_TOOL_LDCM2CSV=/home/emily/build2/bin/ldcm2csv
       - DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG=/home/emily/dicomweb.config
+
+  react:
+    container_name: meerkat_frontend
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    volumes: 
+      - ./client:/client
+      - ./node_modules:/node_modules
+    environment:
+      - REACT_APP_BACKEND_URI=http://meerkat.dna64.com/
+      - REACT_APP_CKAN_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJFUnI3MkpHUmdBaUt3T0FsdE5JeVhRNGUyUS1kSTAyX2J1VXFNZFNsZkJVdTNidlBvT3lXWUVWV0IyeTN1TUhSSUlvVWNaelNlVE96aVVYYyIsImlhdCI6MTY4MzE5OTA1MH0.LK0VQp8BmR_wzF5p-jAnkvX_IQVqPajeM-zM7USsvv4

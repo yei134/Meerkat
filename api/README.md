@@ -2,11 +2,18 @@
 
 ### 完成進度
 #### DEBUG DONE
+1. /client/.env
+> 設置了`BROWSER=none`參數，不利docker部屬
 
 #### UPDATE DONE
-1. backend -> nginx.conf
-> 可以將localhost:9000/api/~反向代理到{url}/api/~了
-2. 把organization_package_list、group_package_list、tag_package_list的params參數統一改成id<br>
+1. backend -> meerkat.conf
+> 可以將`localhost:9000/api/*`反向代理到`{url}/api/*`了
+2. 把`organization_package_list、group_package_list、tag_package_list`的`params`參數統一改成id<br>
+3. merge with `shanyun`<br>
+4. frontend -> meerkat.conf
+> 可以將`localhost:3000/*`反向代理到`{url}/api/*`了
+5. /client/Dockerfile.frontend & /docker-compose.yml
+> 可以將docker-compose環境變數輸出到/client/.env了
 
 ### Discussion List
 1. 會有刪除共享資料集的時候嗎？<br>
@@ -14,6 +21,7 @@
 2. ckan的package_delete非完全刪除。也就是說，刪除狀態的資料集還可以持續被更動，會需要徹底清除（dataset_purge）嗎？<br>
 3. resource_delete -> 公私有的附件關聯性怎麼處理？<br>
 > 暫時藉由private resource的description欄位存放public resource id
+4. keycloak版本正式機跟測試機的差異?<br>
 
 ### UPDATE清單
 1. SSL<br>
