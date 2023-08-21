@@ -1,6 +1,7 @@
 version: '3'
 services:
-  express:
+  meerkat-express:
+    container_name: meerkat_backend
     build:
       context: ./
       dockerfile: ./api/Dockerfile.backend

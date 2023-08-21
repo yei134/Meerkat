@@ -1,24 +1,12 @@
-# api@1.1.0 變動
+# api@1.1.1 變動
 
 ### 完成進度
 #### DEBUG DONE
-axios呼叫api的部分已function化，參數包含以下：<br>
-1. params:{}<br>
-2. **\*URL**<br>
-3. token<br>
-4. 要的子層陣列<br>
-有空再整理跟優化<br>
-<br>
-README.md文件已修改api路徑說明
 
 #### UPDATE DONE
-##### 篩選系列API up
-1. /api/ckan/group_list                -> getGroupList
-2. /api/ckan/tag_list                  -> getTagList
-3. /api/ckan/organization_list         -> getOrgList
-4. /api/ckan/group_package_list        -> getGroupPackageList
-5. /api/ckan/tag_package_list          -> getTagPackageList
-6. /api/ckan/organization_package_list -> getOrgPackageList
+1. backend -> nginx.conf
+> 可以將localhost:9000/api/~反向代理到{url}/api/~了
+2. 把organization_package_list、group_package_list、tag_package_list的params參數統一改成id<br>
 
 ### Discussion List
 1. 會有刪除共享資料集的時候嗎？<br>
@@ -28,8 +16,8 @@ README.md文件已修改api路徑說明
 > 暫時藉由private resource的description欄位存放public resource id
 
 ### UPDATE清單
-1. nginx.conf
-2. SSL
+1. SSL<br>
+2. cmake<br>
 
 #### /api/ckan/
 1. 以組織管理身分的token，create維護人員的token<br>
@@ -159,12 +147,12 @@ get localhost:9000/api/ckan/group_package_list
 Authorization(ckan token)
 ### 指定參數之定義
 #### params
-1. groupID<br>
+1. id<br>
   > 要查詢的group_id 或 group_name
 
 ```
 ex.
-get localhost:9000/api/ckan/group_package_list?groupID=medical-image
+get localhost:9000/api/ckan/group_package_list?id=medical-image
 ```
 
 ## 獲得指定標籤資料集列表
@@ -178,12 +166,12 @@ get localhost:9000/api/ckan/tag_package_list
 Authorization(ckan token)
 ### 指定參數之定義
 #### params
-1. tagID<br>
+1. id<br>
   > 要查詢的tag_id 或 tag_name
 
 ```
 ex.
-get localhost:9000/api/ckan/tag_package_list?tagID=mri
+get localhost:9000/api/ckan/tag_package_list?id=mri
 ```
 
 ## 獲得指定組織資料集列表
@@ -197,12 +185,12 @@ get localhost:9000/api/ckan/organization_package_list
 Authorization(ckan token)
 ### 指定參數之定義
 #### params
-1. orgID<br>
+1. id<br>
   > 要查詢的org_id 或 org_name
 
 ```
 ex.
-get localhost:9000/api/ckan/organization_package_list?orgID=national-taipei-university-of-nursing-and-health-scienses
+get localhost:9000/api/ckan/organization_package_list?id=national-taipei-university-of-nursing-and-health-scienses
 ```
 
 # 對CKAN的POST請求

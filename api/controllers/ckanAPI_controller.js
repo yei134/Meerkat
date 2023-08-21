@@ -312,7 +312,7 @@ exports.getOrgList = async (req, res) => {
   })
 }
 exports.getGroupPackageList = async (req, res) => {
-  const id = req.query.groupID;
+  const id = req.query.id;
   const params = {
     id: id
   }
@@ -334,7 +334,7 @@ exports.getGroupPackageList = async (req, res) => {
   })
 }
 exports.getTagPackageList = async (req, res) => {
-  const id = req.query.tagID;
+  const id = req.query.id;
   const params = {
     id: id,
     include_datasets: true
@@ -358,7 +358,7 @@ exports.getTagPackageList = async (req, res) => {
   })
 }
 exports.getOrgPackageList = async (req, res) => {
-  const id = req.query.orgID;
+  const id = req.query.id;
   const params = {
     id: id,
     include_datasets: true
