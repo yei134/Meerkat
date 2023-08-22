@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const seq = require('seq');
 require('dotenv').config();
 
 //CKAN_BASE_URI: v6
@@ -10,14 +11,18 @@ const ckanPostPackageCreate = CKAN_BASE_URI + "package_create";
 
 const ckanGetPackageList = CKAN_BASE_URI + "package_list";
 const ckanGetGroupList = CKAN_BASE_URI + "group_list";
-const ckanGetTagList = CKAN_BASE_URI + "group_list";
+const ckanGetTagList = CKAN_BASE_URI + "tag_list";
 const ckanGetOrgList = CKAN_BASE_URI + "organization_list";
+
+const ckanGetGroupInfo = CKAN_BASE_URI + "group_show";
 const ckanGetGroupPackageList = CKAN_BASE_URI + "group_package_show";
-const ckanGetTagPackageList = CKAN_BASE_URI + "tag_show";
-const ckanGetOrgPackageList = CKAN_BASE_URI + "organization_show";
+const ckanGetTagShow = CKAN_BASE_URI + "tag_show";
+const ckanGetOrgShow = CKAN_BASE_URI + "organization_show";
 const ckanGetPackageShow = CKAN_BASE_URI + "package_show";
 const ckanGetResourceShow = CKAN_BASE_URI + "resource_show";
+
 const ckanGetPackageSearch = CKAN_BASE_URI + "package_search";
+const ckanGetPackageSearchForName = CKAN_BASE_URI + "package_autocomplete";
 
 const ckanPostResourceAppend = CKAN_BASE_URI + "resource_create";
 const ckanPostResourcePatch = CKAN_BASE_URI + "resource_patch";//把patch改成update，因為url欄位不會自動更新
@@ -37,6 +42,94 @@ const axiosErrMes =
     ]
 }
 const axiosErrMesJSON = JSON.stringify(axiosErrMes, null, 2);
+
+// 回傳指定層級陣列所帶的值
+function objTraverse(data, keys) {
+  let result = data;
+  for (const key of keys) {
+    if (result.hasOwnProperty(key)) {
+      result = result[key];
+    } else {
+      return undefined;
+    }
+  }
+  return result;
+}
+// params:{},URL,token,要的子層陣列
+async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
+  if(reqParams){
+    // for xxx_show
+    try{
+      const getRes = await axios.get(url,
+      {
+        params: reqParams,
+        headers: {
+          Authorization: token
+        }
+      });
+      const response = getRes.data.result;
+      var resData = {}
+      if(keys){
+        const responseINkeys = objTraverse(response,keys);
+        resData = 
+        {
+          success: 200,
+          data: responseINkeys
+        }
+      }else{
+        resData = 
+        {
+          success: 200,
+          data: response
+        }
+      }
+      return resData;
+    }catch(err){
+      console.log(err);
+      const resData = 
+      {
+        success: 500,
+        data: err
+      }
+      return resData;
+    }
+  }else{
+    // for xxxx_list
+    try{
+      const getRes = await axios.get(url,
+      {
+        headers: {
+          Authorization: token
+        }
+      });
+      const response = getRes.data.result;
+      var resData = {}
+      if(keys){
+        const responseINkeys = objTraverse(response,keys);
+        resData = 
+        {
+          success: 200,
+          data: responseINkeys
+        }
+      }else{
+        resData = 
+        {
+          success: 200,
+          data: response
+        }
+      }
+      return resData;
+    }catch(err){
+      console.log(err);
+      const resData = 
+      {
+        success: 500,
+        data: err
+      }
+      return resData;
+    }
+  }
+}
 
 // get
 exports.checkGet = async (req, res) => {
@@ -131,7 +224,6 @@ exports.getResourceShow = async (req, res) => {
     res.status(500).send(axiosErrMesJSON);
   })
 }
-
 exports.getPackageSearch = async (req, res) => {
   /*
     ※CKAN API package_search params參數簡述
@@ -159,119 +251,33 @@ exports.getPackageSearch = async (req, res) => {
   if(req.headers.authorization){
     header = req.headers.authorization;
   }
-  //向ckan做get請求
-  axios.get(`${ckanGetPackageSearch}`,
+
+  const reqParams = 
   {
-    params: {
-      include_private: true,
-      start: start,
-      rows: rows,
-      q:searchQuery
-    },
-    headers: {
-      'Authorization': header
-    }
-  })
+    include_private: true,
+    start: start,
+    rows: rows,
+    q:searchQuery
+  }
+
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  //向ckan做get請求
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(reqParams,ckanGetPackageSearch,header,null)
   .then(getRes => {
-    // console.log(getRes.data);
-    res.send(getRes.data);
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
   })
   .catch(err => {
     console.log(err)
-    res.status(500).send(axiosErrMesJSON);
+    res.status(500).send(err);
   })
 }
-
-// 回傳指定層級陣列所帶的值
-function objTraverse(data, keys) {
-  let result = data;
-  for (const key of keys) {
-    if (result.hasOwnProperty(key)) {
-      result = result[key];
-    } else {
-      return undefined;
-    }
-  }
-  return result;
-}
-
-// params:{},URL,token,要的子層陣列
-async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
-  if(reqParams){
-    // for xxx_show
-    console.log(reqParams)
-    try{
-      const getRes = await axios.get(url,
-      {
-        params: reqParams,
-        headers: {
-          Authorization: token
-        }
-      });
-      const response = getRes.data.result;
-      var resData = {}
-      if(keys){
-        const responseINkeys = objTraverse(response,keys);
-        resData = 
-        {
-          success: 200,
-          data: responseINkeys
-        }
-      }else{
-        resData = 
-        {
-          success: 200,
-          data: response
-        }
-      }
-      return resData;
-    }catch(err){
-      console.log(err);
-      const resData = 
-      {
-        success: 500,
-        data: err
-      }
-      return resData;
-    }
-  }else{
-    // for xxxx_list
-    try{
-      const getRes = await axios.get(url,
-      {
-        headers: {
-          Authorization: token
-        }
-      });
-      const response = getRes.data.result;
-      var resData = {}
-      if(keys){
-        const responseINkeys = objTraverse(response,keys);
-        resData = 
-        {
-          success: 200,
-          data: responseINkeys
-        }
-      }else{
-        resData = 
-        {
-          success: 200,
-          data: response
-        }
-      }
-      return resData;
-    }catch(err){
-      console.log(err);
-      const resData = 
-      {
-        success: 500,
-        data: err
-      }
-      return resData;
-    }
-  }
-}
-
 exports.getGroupList = async (req, res) => {
   // params:{},URL,token,要的子層陣列
   await getCommonListOrCommonPackageList(null,ckanGetGroupList,null,null)
@@ -346,7 +352,7 @@ exports.getTagPackageList = async (req, res) => {
   }
   const keys = ["packages"]
   // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetTagPackageList,header,keys)
+  await getCommonListOrCommonPackageList(params,ckanGetTagShow,header,keys)
   .then(getRes => {
     const status = getRes.success;
     const data = getRes.data;
@@ -370,7 +376,73 @@ exports.getOrgPackageList = async (req, res) => {
   }
   const keys = ["packages"]
   // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetOrgPackageList,header,keys)
+  await getCommonListOrCommonPackageList(params,ckanGetOrgShow,header,keys)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getGroupInfo = async (req, res) =>{
+  const id = req.query.id;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列v
+  await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getTagInfo = async (req, res) =>{
+  const id = req.query.id;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(params,ckanGetTagShow,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getOrgInfo = async (req, res) =>{
+  const id = req.query.id;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(params,ckanGetOrgShow,header,null)
   .then(getRes => {
     const status = getRes.success;
     const data = getRes.data;
@@ -434,7 +506,6 @@ exports.postPackageCreate = async (req, res) => {
     res.status(500).send(axiosErrMesJSON);
   })
 }
-
 exports.postResourceCreate = async (req, res) => {
   try {
     // resourceFile is required or throw error response
@@ -573,7 +644,6 @@ exports.postResourceCreate = async (req, res) => {
     res.status(500).send(err);
   }
 }
-
 exports.postIndexCreate = async (req, res) => {
   //做post請求的data參數
   var packageID = "";
@@ -633,6 +703,142 @@ exports.postIndexCreate = async (req, res) => {
     res.status(200).send()
   }
   indexCreate();
+}
+exports.getFilteredPackageList = async (req, res) => {
+  var response = []
+  var header = "";
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    step1(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    step2(function() {seq_this();});
+  })
+
+  var searchFlag = false
+  var conditions = [];
+
+  async function step1(callback){
+    if(req.body.package_search){
+      searchFlag = true
+      const searchQuery = req.body.package_search.searchQuery;
+      const begin = req.body.package_search.begin;
+      const limit = req.body.package_search.limit;
+      const reqParams = 
+      {
+        q: searchQuery,
+        start: begin,
+        rows: limit
+      }
+      const condition = {
+        package_search: reqParams
+      }
+      conditions.push(condition)
+      const keys = ["results"]
+      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageSearch,header,keys);
+      // params:{},URL,token,要的子層陣列
+      const packageResults = result.data;
+      var packageArray = []
+      packageResults.forEach(dataset => {
+        packageArray.push(dataset.id);
+      })
+      response.push(packageArray)
+    }
+    if(req.body.group_package_list){
+      searchFlag = true
+      const id = req.body.group_package_list.id;
+      const reqParams = 
+      {
+        id: id
+      }
+      const condition = {
+        group_package_list: reqParams
+      }
+      conditions.push(condition)
+      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetGroupPackageList,header,null)
+      const packageResults = result.data;
+      var packageArray = []
+      packageResults.forEach(dataset => {
+        packageArray.push(dataset.id);
+      })
+      response.push(packageArray)
+    }
+    if(req.body.tag_package_list){
+      searchFlag = true
+      const id = req.body.tag_package_list.id;
+      const reqParams = 
+      {
+        id: id,
+        include_datasets: true
+      }
+      const condition = {
+        group_package_list: id
+      }
+      conditions.push(condition)
+      const keys = ["packages"]
+      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetTagShow,header,keys)
+      const packageResults = result.data;
+      var packageArray = []
+      packageResults.forEach(dataset => {
+        packageArray.push(dataset.id);
+      })
+      response.push(packageArray)
+    }
+    if(req.body.organization_package_list){
+      searchFlag = true
+      const id = req.body.organization_package_list.id;
+      const reqParams = 
+      {
+        id: id,
+        include_datasets: true
+      }
+      const condition = {
+        organization_package_list: id
+      }
+      conditions.push(condition)
+      const keys = ["packages"]
+      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,header,keys)
+      const packageResults = result.data;
+      var packageArray = []
+      packageResults.forEach(dataset => {
+        packageArray.push(dataset.id);
+      })
+      response.push(packageArray)
+    }
+    callback();
+  }
+  function step2(callback){
+    try{
+      if(searchFlag){
+        // 以第0陣列為基準
+        const result = response[0].filter(element => {
+          // 使用every方法檢查id是否在其他子陣列存在
+          return response.slice(1).every(subArray => subArray.includes(element));
+        });
+        const resData = 
+        {
+          success: 200,
+          conditions: conditions,
+          data: result
+        }
+        const resJSONdata = JSON.stringify(resData, null, 2);
+        res.status(200).send(resJSONdata);
+      }else{
+        throw "At least one filter condition is required."
+      }
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+    callback();
+  }
 }
 
 // patch

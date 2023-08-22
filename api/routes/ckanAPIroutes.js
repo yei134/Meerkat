@@ -20,12 +20,16 @@ module.exports = app => {
   router.get("/group_package_list", ckanAPI.getGroupPackageList);
   router.get("/tag_package_list", ckanAPI.getTagPackageList);
   router.get("/organization_package_list", ckanAPI.getOrgPackageList);
+  router.get("/group_info", ckanAPI.getGroupInfo);
+  router.get("/tag_info", ckanAPI.getTagInfo);
+  router.get("/organization_info", ckanAPI.getOrgInfo);
 
   // post
   router.post("/", ckanAPI.checkPost);
   router.post("/package_create", ckanAPI.postPackageCreate);
   router.post("/resource_create", upload.single('resourceFile'), ckanAPI.postResourceCreate);
   router.post("/index_create", ckanAPI.postIndexCreate);
+  router.post("/package_filter", ckanAPI.getFilteredPackageList);
 
   // patch
   router.post("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);

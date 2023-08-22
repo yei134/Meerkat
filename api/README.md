@@ -1,19 +1,15 @@
-# api@1.1.1 變動
+# api@1.2.0 變動
 
 ### 完成進度
 #### DEBUG DONE
-1. /client/.env
-> 設置了`BROWSER=none`參數，不利docker部屬
+1. 修改呼叫`tag_list`卻跑出`group_list`的BUG
 
 #### UPDATE DONE
-1. backend -> meerkat.conf
-> 可以將`localhost:9000/api/*`反向代理到`{url}/api/*`了
-2. 把`organization_package_list、group_package_list、tag_package_list`的`params`參數統一改成id<br>
-3. merge with `shanyun`<br>
-4. frontend -> meerkat.conf
-> 可以將`localhost:3000/*`反向代理到`{url}/api/*`了
-5. /client/Dockerfile.frontend & /docker-compose.yml
-> 可以將docker-compose環境變數輸出到/client/.env了
+##### 篩選資訊系列
+1. organization_info -> up<br>
+2. tag_info -> up<br>
+3. group_info -> up<br>
+4. package_filter -> up<br>
 
 ### Discussion List
 1. 會有刪除共享資料集的時候嗎？<br>
@@ -201,6 +197,63 @@ ex.
 get localhost:9000/api/ckan/organization_package_list?id=national-taipei-university-of-nursing-and-health-scienses
 ```
 
+## 獲得指定群組資訊
+```
+get localhost:9000/api/ckan/group_info
+```
+正常頁面響應：指定群組資訊列表<br>
+正常命令響應：200 or 304<br>
+
+#### headers
+Authorization(ckan token)
+### 指定參數之定義
+#### params
+1. id<br>
+  > 要查詢的`group_id`或`group_name`
+
+```
+ex.
+get localhost:9000/api/ckan/group_info?id=drone
+```
+
+## 獲得指定標籤資訊
+```
+get localhost:9000/api/ckan/tag_info
+```
+正常頁面響應：指定標籤資訊列表<br>
+正常命令響應：200 or 304<br>
+
+#### headers
+Authorization(ckan token)
+### 指定參數之定義
+#### params
+1. id<br>
+  > 要查詢的`tag_id`或`tag_name`
+
+```
+ex.
+get localhost:9000/api/ckan/tag_info?id=mri
+```
+
+## 獲得指定群組資訊
+```
+get localhost:9000/api/ckan/organization_info
+```
+正常頁面響應：指定組織資訊列表<br>
+正常命令響應：200 or 304<br>
+
+#### headers
+Authorization(ckan token)
+### 指定參數之定義
+#### params
+1. id<br>
+  > 要查詢的`org_id`或`org_name`
+
+```
+ex.
+get localhost:9000/api/ckan/organization_info?id=national-taipei-university-of-nursing-and-health-scienses
+```
+
 # 對CKAN的POST請求
 ## 確認POST API
 ```
@@ -312,7 +365,21 @@ Authorization
 > ex. {"resource_id": ["id1","id2"]}
 > 僅需傳private的附件id即可
 
+## 獲得篩選條件資料集列表
+```
+get localhost:9000/api/ckan/package_filter
+```
+正常頁面響應：{success:200,data:[資料集列表]}<br>
+正常命令響應：200 or 304<br>
 
+#### headers
+Authorization(ckan token)
+### application/json指定參數之定義
+1. package_search:{searchQuery,begin,limit}<br>
+2. group_package_list:{`id`}<br>
+3. tag_package_list:{`id`}<br>
+4. organization_package_list:{`id`}<br>
+> 若不存在上述任何一個條件，則會被回傳`403`
 
 # 對病徵索引做GET請求
 ```
@@ -325,8 +392,6 @@ get localhost:9000/api/raccoon/studies
 ex.
 localhost:9000/api/raccoon/studies?id=0fff9e61-1a98-40e8-a3d4-3b5756e3a9d4
 ```
-
-
 
 # 【廢棄】對RACCOON做POST請求 & 新增索引檔
 ## 對空的病徵做新索引檔
