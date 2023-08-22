@@ -1,15 +1,16 @@
-# api@1.2.0 變動
+# api@1.2.1 變動
 
 ### 完成進度
 #### DEBUG DONE
-1. 修改呼叫`tag_list`卻跑出`group_list`的BUG
 
 #### UPDATE DONE
-##### 篩選資訊系列
-1. organization_info -> up<br>
-2. tag_info -> up<br>
-3. group_info -> up<br>
-4. package_filter -> up<br>
+1. /api/Dockerfile.backend
+> 功能完整，studies系列可正常使用
+2. /docker-compose.yml
+> 把raccoonURL參數附上了
+3. /cmake/
+> 放入跟ldcm2csv相關的檔案
+
 
 ### Discussion List
 1. 會有刪除共享資料集的時候嗎？<br>
@@ -21,7 +22,6 @@
 
 ### UPDATE清單
 1. SSL<br>
-2. cmake<br>
 
 #### /api/ckan/
 1. 以組織管理身分的token，create維護人員的token<br>
