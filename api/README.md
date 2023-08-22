@@ -369,7 +369,7 @@ Authorization
 ```
 get localhost:9000/api/ckan/package_filter
 ```
-正常頁面響應：{success:200,data:[資料集列表]}<br>
+正常頁面響應：{success:200,conditions:[條件列表],data:[資料集列表]}<br>
 正常命令響應：200 or 304<br>
 
 #### headers
