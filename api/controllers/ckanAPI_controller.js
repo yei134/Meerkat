@@ -142,25 +142,24 @@ exports.checkGet = async (req, res) => {
   }
 }
 exports.getPackageList = async (req, res) => {
-    //前端post過來的ckanToken
-    var header = '';
-    if(req.headers.authorization){
-      header = req.headers.authorization;
-    }
-    //向ckan做get請求
-    axios.get(`${ckanGetPackageList}`,
-    {
-      headers: {
-        Authorization: header
-      }
-    })
-    .then(getRes => {
-      res.send(getRes.data);
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).send(axiosErrMesJSON);
-    })
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  
+  //向ckan做get請求
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(null,ckanGetPackageList,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
 }
 exports.getPackageShow = async (req, res) => {
   //將request的查詢參數datasetName拿出
@@ -170,22 +169,22 @@ exports.getPackageShow = async (req, res) => {
   if(req.headers.authorization){
     header = req.headers.authorization;
   }
-  //向ckan做get請求
-  axios.get(`${ckanGetPackageShow}`,
+  const reqParams = 
   {
-    params: {
-      id: searchQuery
-    },
-    headers: {
-      Authorization: header
-    }
-  })
+    id: searchQuery
+  }
+
+  //向ckan做get請求
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,header,null)
   .then(getRes => {
-    res.send(getRes.data);
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
   })
   .catch(err => {
     console.log(err)
-    res.status(500).send(axiosErrMesJSON);
+    res.status(500).send(err);
   })
 }
 
@@ -206,22 +205,23 @@ exports.getResourceShow = async (req, res) => {
   if(req.headers.authorization){
     header = req.headers.authorization;
   }
-  //向ckan做get請求
-  axios.get(`${ckanGetResourceShow}`,
+
+  const reqParams = 
   {
-    params: {
-      id: resourceID
-    },
-    headers: {
-      Authorization: header
-    }
-  })
+    id: resourceID
+  }
+
+  //向ckan做get請求
+  // params:{},URL,token,要的子層陣列
+  await getCommonListOrCommonPackageList(reqParams,ckanGetResourceShow,header,null)
   .then(getRes => {
-    res.send(getRes.data);
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
   })
   .catch(err => {
     console.log(err)
-    res.status(500).send(axiosErrMesJSON);
+    res.status(500).send(err);
   })
 }
 exports.getPackageSearch = async (req, res) => {

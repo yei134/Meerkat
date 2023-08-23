@@ -5,7 +5,6 @@ RUN apt install g++ gcc wget curl -y
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 
-
 ################################################################################
 
 # FROM node:18.14.2 as backend-env
@@ -14,7 +13,6 @@ COPY ../node_modules/ /node_modules
 
 WORKDIR /api
 COPY ../api/cmake/dicom.dic /usr/local/share/dcmtk-3.6.7-DEV/dicom.dic
-# 上線要移除
-# RUN mv .env2 .env
+
 RUN npm install
 CMD ["npm","start"]

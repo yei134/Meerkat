@@ -1,15 +1,13 @@
-# api@1.2.1 變動
+# api@1.2.2 變動
 
 ### 完成進度
 #### DEBUG DONE
+1. /api/ckan/的所有get系列，response異動
+> `response.data.result.results` -> `response.data.results`
 
 #### UPDATE DONE
-1. /api/Dockerfile.backend
-> 功能完整，studies系列可正常使用
-2. /docker-compose.yml
-> 把raccoonURL參數附上了
-3. /cmake/
-> 放入跟ldcm2csv相關的檔案
+1. client & api .env
+> docker-compose環境變數僅依照.env輸入
 
 
 ### Discussion List

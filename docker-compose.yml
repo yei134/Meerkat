@@ -2,6 +2,7 @@ version: '3'
 services:
   express:
     container_name: meerkat_backend
+    # restart: always
     build:
       context: ./
       dockerfile: ./api/Dockerfile.backend
@@ -16,6 +17,7 @@ services:
 
   react:
     container_name: meerkat_frontend
+    # restart: always
     build:
       context: ./
       dockerfile: ./client/Dockerfile.frontend
