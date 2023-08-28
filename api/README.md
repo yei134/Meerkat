@@ -32,10 +32,8 @@
 
 #### /api/ckan/
 1. 以組織管理身分的token，create維護人員的token<br>
-2. package_patch -> up<br>
-3. package_patch -> 公私有同步更新<br>
-4. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
-5. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
+2. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
+3. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
 
 #### /api/raccoon/
 1. 以PatientID欄位刪除其複數個Study<br>
@@ -271,7 +269,7 @@ post localhost:9000/api/ckan/
 
 ## 創建資料集
 ```
-postlocalhost:9000/api/ckan/package_create
+post localhost:9000/api/ckan/package_create
 ```
 正常頁面響應：{`package_id`: 資料集id}<br>
 ### (必要)Header參數
@@ -286,10 +284,31 @@ Authorization
 4. author_email(資料集的作者電郵欄位)<br>
 5. **\*maintainer(資料集的維護者欄位)**<br>
 6. **\*maintainer_email(資料集的維護者電郵欄位)**<br>
-7. note(資料集的描述說明欄位)<br>
+7. notes(資料集的描述說明欄位)<br>
 8. **\*owner_org(資料集的擁有組織)**<br>
 9. groups(資料集的擁有組織)<br>
 10. **\*private(請固定為false，私有的true由後端送出)**<br>
+
+## 編輯資料集
+```
+post localhost:9000/api/ckan/package_patch
+```
+正常頁面響應：{`status`: {`private`: `200`},{`public`: `200`}}<br>
+### (必要)Header參數
+```
+Authorization
+```
+
+### body指定參數之定義(非全數，\*為必填)
+1. **\*id(資料集的name/id欄位)**<br>
+2. title(資料集的標題欄位)<br>
+3. author(資料集的作者欄位)<br>
+4. author_email(資料集的作者電郵欄位)<br>
+5. maintainer(資料集的維護者欄位)<br>
+6. maintainer_email(資料集的維護者電郵欄位)<br>
+7. notes(資料集的描述說明欄位)<br>
+8. owner_org(資料集的擁有組織)<br>
+9. groups(資料集的擁有組織)<br>
 
 ## 對指定資料集添加附件
 ```
@@ -374,7 +393,7 @@ Authorization
 
 ## 獲得篩選條件資料集列表
 ```
-get localhost:9000/api/ckan/package_filter
+post localhost:9000/api/ckan/package_filter
 ```
 正常頁面響應：{success:200,conditions:[條件列表],data:[資料集列表]}<br>
 正常命令響應：200 or 304<br>
