@@ -1,22 +1,31 @@
-# api@1.2.2 變動
+# api@1.3.0 變動 2023/08/28
 
 ### 完成進度
 #### DEBUG DONE
-1. /api/ckan/的所有get系列，response異動
-> `response.data.result.results` -> `response.data.results`
+1. package_create
+  > package_name禁止含有`-type-private`字樣
+2. package_create欄位修改
+  > 修改描述文欄位 note -> notes
+3. package_create & package_patch
+  > axios.post function化
 
 #### UPDATE DONE
-1. client & api .env
-> docker-compose環境變數僅依照.env輸入
-
+1. package_patch -> up<br>
+2. package_patch -> 公私有同步更新<br>
+2-1. package_patch -> 檢視是否傳送私有格式<br>
 
 ### Discussion List
-1. 會有刪除共享資料集的時候嗎？<br>
-1-1. 有的話索引檔也要全部刪除？<br>
-2. ckan的package_delete非完全刪除。也就是說，刪除狀態的資料集還可以持續被更動，會需要徹底清除（dataset_purge）嗎？<br>
-3. resource_delete -> 公私有的附件關聯性怎麼處理？<br>
-> 暫時藉由private resource的description欄位存放public resource id
-4. keycloak版本正式機跟測試機的差異?<br>
+1. 會有刪除共享資料集的時候嗎？
+  > 會
+1-1. 有的話索引檔也要全部刪除？
+  > 對，僅索引檔
+2. ckan的package_delete非完全刪除。也就是說，刪除狀態的資料集還可以持續被更動，會需要徹底清除（dataset_purge）嗎？
+  > 會，目前僅需要purge
+3. resource_delete -> 公私有的附件關聯性怎麼處理？
+  > 暫時藉由private resource的description欄位存放public resource id
+  > 用private去depend public，要delete public only的時候要考慮一下檔案先cretae回private再刪掉
+4. keycloak版本正式機跟測試機的差異？
+  > 正式ver.16.1.1
 
 ### UPDATE清單
 1. SSL<br>

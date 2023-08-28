@@ -8,6 +8,7 @@ require('dotenv').config();
 //CKAN_BASE_URI_2:  nycu
 const {CKAN_BASE_URI} = process.env;
 const ckanPostPackageCreate = CKAN_BASE_URI + "package_create";
+const ckanPostPackagePatch = CKAN_BASE_URI + "package_patch";
 
 const ckanGetPackageList = CKAN_BASE_URI + "package_list";
 const ckanGetGroupList = CKAN_BASE_URI + "group_list";
@@ -25,7 +26,7 @@ const ckanGetPackageSearch = CKAN_BASE_URI + "package_search";
 const ckanGetPackageSearchForName = CKAN_BASE_URI + "package_autocomplete";
 
 const ckanPostResourceAppend = CKAN_BASE_URI + "resource_create";
-const ckanPostResourcePatch = CKAN_BASE_URI + "resource_patch";//把patch改成update，因為url欄位不會自動更新
+const ckanPostResourcePatch = CKAN_BASE_URI + "resource_patch";
 const ckanPostResourceUpdate = CKAN_BASE_URI + "resource_update";
 const ckanPostResourceDelete = CKAN_BASE_URI + "resource_delete";
 
@@ -130,7 +131,27 @@ async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
     }
   }
 }
-
+// 要post的資料,URL,token
+async function postDataFunction(reqData, url, token){
+  //包成key-value
+  const headers = {"Authorization": token};
+  var resData = {}
+  await axios.post(url, reqData, {headers})
+  .then(getRes => {
+    resData = {
+      success: 200
+    }
+  })
+  .catch(err => {
+    const log = err.response
+    console.log(log)
+    resData = {
+      success: 500,
+      log: log
+    }
+  })
+  return resData;
+}
 // get
 exports.checkGet = async (req, res) => {
   try {
@@ -187,7 +208,6 @@ exports.getPackageShow = async (req, res) => {
     res.status(500).send(err);
   })
 }
-
 exports.getResourceShow = async (req, res) => {
   //將request的查詢參數id拿出
   var resourceID = '';
@@ -468,43 +488,135 @@ exports.checkPost = async (req, res) => {
 exports.postPackageCreate = async (req, res) => {
   var data = "";
   var header = "";
-  try{
-    //做post請求的data參數
-    if(!req.body){
-      throw "package infos are required.";
-    }else{
-      data = req.body;
-    }
-    //前端post過來的ckanToken
-    if(!req.headers.authorization){
-      throw "token is required.";
-    }else{
-      header = req.headers.authorization;
-    }
-  }catch(e){
-    res.status(500).send(e)
-  }
-  //包成key-value
-  const headers = {"Authorization": header};
 
-  // 對ckan平台做post請求
-  // private
-  var privateData = JSON.parse(JSON.stringify(data));
-  privateData.name = privateData.name + packageSplitName
-  privateData.private = true
-  axios.post(`${ckanPostPackageCreate}`,privateData,{headers})
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(axiosErrMesJSON);
-  })
-  
-  // public
-  axios.post(`${ckanPostPackageCreate}`,data,{headers})
-  .then(res.status(200).send())
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(axiosErrMesJSON);
-  })
+  checkRequest(packageCreate);
+
+  function checkRequest(callback){
+    try{
+      //做post請求的data參數
+      if(!req.body){
+        throw "package infos are required.";
+      }else{
+        if(!req.body.name){
+          throw "package name is required.";
+        }else{
+          const packageName = req.body.name
+          if(packageName.includes(packageSplitName)){
+            throw "package name is including prohibited words.";
+          }
+        }
+        if(!req.body.title){
+          throw "package title is required.";
+        }
+        if(!req.body.maintainer){
+          throw "maintainer field is required.";
+        }
+        if(!req.body.maintainer_email){
+          throw "maintainer_email field is required.";
+        }
+        if(!req.body.owner_org){
+          throw "owner_org field is required.";
+        }
+        if(!req.body.private){
+          throw "private field is required.";
+        }
+        data = req.body;
+      }
+      //前端post過來的ckanToken
+      if(!req.headers.authorization){
+        throw "token is required.";
+      }else{
+        header = req.headers.authorization;
+      }
+      callback();
+    }catch(e){
+      res.status(500).send(e)
+    }
+  }
+  async function packageCreate(){
+    // 對ckan平台做post請求
+    // private
+    var privateData = JSON.parse(JSON.stringify(data));
+    privateData.name = privateData.name + packageSplitName
+    privateData.private = true
+    // 要post的資料,URL,token
+    const privateRes = await postDataFunction(privateData, ckanPostPackageCreate, header)
+    // public
+    // 要post的資料,URL,token
+    const publicRes = await postDataFunction(data, ckanPostPackageCreate, header)
+
+    const response = {
+      status:{
+        private:privateRes,
+        public:publicRes
+      }
+    }
+    res.status(200).send(response)
+  }
+}
+exports.postPackagePatch = async (req, res) => {
+  var data = "";
+  var header = "";
+
+  checkRequest(packagePatch);
+
+  // 先檢查req各種欄位
+  function checkRequest(callback){
+    try{
+      //做post請求的data參數
+      if(!req.body){
+        throw "package infos are required.";
+      }else{
+        if(!req.body.id){
+          throw "package name/id is required.";
+        }else{
+          const privatePakcageName = req.body.id;
+          // 檢查傳過來的package_name是不是私有資料集的name
+          if(!privatePakcageName.includes(packageSplitName)){
+            throw "package name does not inlcude the field of private dataset.";
+          }
+        }
+        if(req.body.private){
+          throw "private field is prohibited here.";
+        }
+        if(req.body.state){
+          throw "state field is prohibited here.";
+        }
+        data = req.body;
+      }
+      //前端post過來的ckanToken
+      if(!req.headers.authorization){
+        throw "token is required.";
+      }else{
+        header = req.headers.authorization;
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(500).send(e)
+    }
+  }
+  async function packagePatch(){
+    // private
+    // 要post的資料,URL,token
+    const privateRes = await postDataFunction(data, ckanPostPackagePatch, header)
+    
+    // public
+    var publicData = JSON.parse(JSON.stringify(data));
+    const publicPackageName = publicData.id;
+    publicData.id = publicPackageName.split(packageSplitName);
+    publicData.id = publicData.id[0];
+    // 要post的資料,URL,token
+    const publicRes = await postDataFunction(publicData, ckanPostPackagePatch, header)
+    
+    const response = {
+      status:{
+        private:privateRes,
+        public:publicRes
+      }
+    }
+    res.status(200).send(response)
+  }
 }
 exports.postResourceCreate = async (req, res) => {
   try {

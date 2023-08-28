@@ -27,6 +27,7 @@ module.exports = app => {
   // post
   router.post("/", ckanAPI.checkPost);
   router.post("/package_create", ckanAPI.postPackageCreate);
+  router.post("/package_patch", ckanAPI.postPackagePatch);
   router.post("/resource_create", upload.single('resourceFile'), ckanAPI.postResourceCreate);
   router.post("/index_create", ckanAPI.postIndexCreate);
   router.post("/package_filter", ckanAPI.getFilteredPackageList);
