@@ -24,6 +24,7 @@
   > 會，目前僅需要purge
 3. resource_delete -> 公私有的附件關聯性怎麼處理？
   > 暫時藉由private resource的description欄位存放public resource id
+
   > 用private去depend public，要delete public only的時候要考慮一下檔案先cretae回private再刪掉
 4. keycloak版本正式機跟測試機的差異？
   > 正式ver.16.1.1
