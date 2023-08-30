@@ -1,11 +1,17 @@
-# api@1.3.3 變動 2023/08/30 PM
+# api@1.3.4 變動 2023/08/31
 
 ### 完成進度
 #### DEBUG DONE
-1. Dockerfile.backend & Dockerfile.frontend
-  > 將`.context`指向目錄由`./node_module`改為`package.json`
+1. Ddockerfile.backend & Ddockerfile.frontend & docker-compose
+  > 修改了`node_modules`和主機的相對關係
 
 #### UPDATE DONE
+1. get package_collaborator_list -> 列出該資料集的協作者列表
+  > {*id:<package_id>, capacity:<member/editor/admin>}
+2. get package_collaborator_list_for_user -> 列出該使用者有參與協作的列表
+  > {*id:<package_id>, capacity:<member/editor/admin>}
+3. get organization_list_for_user -> 列出該使用者有隸屬的組織列表
+  > {*id:<package_id>, permission:<read/create_dataset>}
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token
@@ -13,17 +19,12 @@
 ### UPDATE清單
 1. SSL<br>
 2. 跟目錄的README部屬手續<br>
+3. nginx的dockerfile和docker-compose<br>
 
 #### /api/ckan/
 1. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
 2. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
 ##### 管理系列
-1. get package_collaborator_list -> 列出該資料集的協作者列表
-  > {*id:<package_id>, capacity:<member/editor/admin>}
-2. get package_collaborator_list_for_user -> 列出該使用者有參與協作的列表
-  > {*id:<package_id>, capacity:<member/editor/admin>}
-3. get organization_list_for_user -> 列出該使用者有隸屬的組織列表
-  > {*id:<package_id>, permission:<read/create_dataset>}
 4. post api_token_create -> 給該使用者創建token
   > 我要怎麼在meerkat不知道token的情況下創token?
 5. post package_collaborator_create -> 給資料集添加協作者/編輯該成員權限
@@ -43,6 +44,7 @@
 ### Low Priority DEBUG清單
 1. resource_delete dependency issue<br>
 2. studiesDelete改QIDO<br>
+3. postgresql<br>
 
 ### Memo 清單
 1. 重複功能寫獨立function(寫讀檔、resource_patch、axios)<br>

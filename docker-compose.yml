@@ -4,13 +4,13 @@ services:
     container_name: meerkat_backend
     # restart: always
     build:
-      context: ./
-      dockerfile: ./api/Dockerfile.backend
+      context: ./api
+      dockerfile: ./Dockerfile.backend
     ports:
       - "9000:9000"
     volumes: 
       - ./api:/api
-      - ./node_modules:/node_modules
+      - /api/node_modules
     environment:
       - CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/
       - RACCOON_BASE_URI=https://raccoon.dicom.org.tw/
@@ -19,13 +19,13 @@ services:
     container_name: meerkat_frontend
     # restart: always
     build:
-      context: ./
-      dockerfile: ./client/Dockerfile.frontend
+      context: ./client
+      dockerfile: ./Dockerfile.frontend
     ports:
       - "3000:3000"
     volumes: 
       - ./client:/client
-      - ./node_modules:/node_modules
+      - /client/node_modules
     environment:
-      - REACT_APP_BACKEND_URI=http://meerkat.dna64.com/
+      - REACT_APP_BACKEND_URI=http://localhost:9000/
       - REACT_APP_CKAN_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJFUnI3MkpHUmdBaUt3T0FsdE5JeVhRNGUyUS1kSTAyX2J1VXFNZFNsZkJVdTNidlBvT3lXWUVWV0IyeTN1TUhSSUlvVWNaelNlVE96aVVYYyIsImlhdCI6MTY4MzE5OTA1MH0.LK0VQp8BmR_wzF5p-jAnkvX_IQVqPajeM-zM7USsvv4

@@ -8,14 +8,10 @@ RUN apt-get install -y nodejs
 ################################################################################
 
 # FROM node:18.14.2 as backend-env
-CMD mkdir /project
-COPY ../api/ /project/api
-COPY ../package.json /project/package.json
-COPY ../api/cmake/dicom.dic /usr/local/share/dcmtk-3.6.7-DEV/dicom.dic
+RUN mkdir /api
+COPY . /api/
+COPY ./cmake/dicom.dic /usr/local/share/dcmtk-3.6.7-DEV/dicom.dic
 
-WORKDIR /project
-RUN npm install
-
-WORKDIR /project/api/
+WORKDIR /api
 RUN npm install
 CMD ["npm","start"]

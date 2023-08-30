@@ -15,6 +15,10 @@ const ckanGetGroupList = CKAN_BASE_URI + "group_list";
 const ckanGetTagList = CKAN_BASE_URI + "tag_list";
 const ckanGetOrgList = CKAN_BASE_URI + "organization_list";
 
+const ckanGetCollaboratorList = CKAN_BASE_URI + "package_collaborator_list";
+const ckanGetUserCollaboratorList = CKAN_BASE_URI + "package_collaborator_list_for_user";
+const ckanGetUserOrgList = CKAN_BASE_URI + "organization_list_for_user";
+
 const ckanGetGroupInfo = CKAN_BASE_URI + "group_show";
 const ckanGetGroupPackageList = CKAN_BASE_URI + "group_package_show";
 const ckanGetTagShow = CKAN_BASE_URI + "tag_show";
@@ -23,12 +27,17 @@ const ckanGetPackageShow = CKAN_BASE_URI + "package_show";
 const ckanGetResourceShow = CKAN_BASE_URI + "resource_show";
 
 const ckanGetPackageSearch = CKAN_BASE_URI + "package_search";
-const ckanGetPackageSearchForName = CKAN_BASE_URI + "package_autocomplete";
+// const ckanGetPackageSearchForName = CKAN_BASE_URI + "package_autocomplete";
 
 const ckanPostResourceAppend = CKAN_BASE_URI + "resource_create";
 const ckanPostResourcePatch = CKAN_BASE_URI + "resource_patch";
-const ckanPostResourceUpdate = CKAN_BASE_URI + "resource_update";
-const ckanPostResourceDelete = CKAN_BASE_URI + "resource_delete";
+// const ckanPostResourceUpdate = CKAN_BASE_URI + "resource_update";
+
+const ckanPostCollaboratorEdit = CKAN_BASE_URI + "package_collaborator_create";
+const ckanPostOrgMemberEdit = CKAN_BASE_URI + "organization_member_create";
+const ckanDelOrgMemberDelete = CKAN_BASE_URI + "organization_member_delete";
+const ckanDelCollaboratorDelete = CKAN_BASE_URI + "package_collaborator_delete";
+const ckanDelResourceDelete = CKAN_BASE_URI + "resource_delete";
 
 const tempDirectory = 'uploads/';
 const resourceSplitName = "_[type]_"
@@ -464,6 +473,72 @@ exports.getOrgInfo = async (req, res) =>{
   }
   // params:{},URL,token,要的子層陣列
   await getCommonListOrCommonPackageList(params,ckanGetOrgShow,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getCollaboratorList = async (req, res) => {
+  const id = req.query.id;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列v
+  await getCommonListOrCommonPackageList(params,ckanGetCollaboratorList,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getUserCollaboratorList = async (req, res) => {
+  const id = req.query.id;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列v
+  await getCommonListOrCommonPackageList(params,ckanGetUserCollaboratorList,header,null)
+  .then(getRes => {
+    const status = getRes.success;
+    const data = getRes.data;
+    res.status(status).send(data);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send(err);
+  })
+}
+exports.getUserOrgList = async (req, res) => {
+  const id = req.query.id;
+  const params = {
+    id: id
+  }
+  //前端post過來的ckanToken
+  var header = '';
+  if(req.headers.authorization){
+    header = req.headers.authorization;
+  }
+  // params:{},URL,token,要的子層陣列v
+  await getCommonListOrCommonPackageList(params,ckanGetUserOrgList,header,null)
   .then(getRes => {
     const status = getRes.success;
     const data = getRes.data;
@@ -911,7 +986,7 @@ exports.getFilteredPackageList = async (req, res) => {
         include_datasets: true
       }
       const condition = {
-        group_package_list: id
+        tag_package_list: id
       }
       conditions.push(condition)
       const keys = ["packages"]
@@ -1106,7 +1181,7 @@ exports.delResourceDelete = (req, res) => {
       const postPublicData = { id: publicResourceUIDarray[i] }
 
       if(publicResourceUIDarray[i]){
-        axios.post(`${ckanPostResourceDelete}`, 
+        axios.post(`${ckanDelResourceDelete}`, 
         postPublicData, 
           {
             headers
@@ -1120,7 +1195,7 @@ exports.delResourceDelete = (req, res) => {
         })
       }
 
-      await axios.post(`${ckanPostResourceDelete}`, 
+      await axios.post(`${ckanDelResourceDelete}`, 
       postPrivateData, 
         {
           headers

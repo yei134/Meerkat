@@ -1,14 +1,13 @@
 FROM node:18.14.2-alpine
 # 18.14.2-slim
-CMD mkdir /project
-COPY ../client/ /project/client
-COPY ../package.json /project/package.json
+RUN mkdir /client
+COPY . /client
 
-WORKDIR /project
-RUN npm install
+WORKDIR /client
+# 處理react.env的參數
+ENV REACT_APP_BACKEND_URI=$REACT_APP_BACKEND_URI
+ENV REACT_APP_CKAN_TOKEN=$REACT_APP_CKAN_TOKEN
 
-WORKDIR /project/client/
 RUN npm install
 RUN chmod +x node_modules/.bin/react-scripts
-
 CMD ["npm","start"]
