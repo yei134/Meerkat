@@ -1,12 +1,10 @@
-# api@1.3.1 變動 2023/08/29
+# api@1.3.2 變動 2023/08/30
 
 ### 完成進度
 #### DEBUG DONE
-1. studies -> limit(傳幾筆)begin(從第n開始)參數
-  > 交由前端處理
-
-2. studies -> id & authorization為必填參數 otherwise error
-3. resource_create -> id傳非私有資料集格式會回報error
+1. package_filter -> response欄位修改
+  > 修正`tag_package_list`
+2. 移除api目錄的`./node_module`，並列入`.gitignore`
 
 #### UPDATE DONE
 
