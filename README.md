@@ -1,19 +1,20 @@
 # 執行Meerkat專案步驟
 ```
-1. Meerkat/client執行npm install進行安裝前端套件
-2. Meerkat/api執行npm install進行安裝後端套件
-3. Meerkat/client執行npm start啟動前端
-4. Meerkat/api執行npm start啟動後端
+1. Meerkat/執行npm install進行安裝CORS套件
+2. Meerkat/client執行npm install進行安裝前端套件
+3. Meerkat/api執行npm install進行安裝後端套件
+4. Meerkat/client執行npm start啟動前端
+5. Meerkat/api執行npm start啟動後端
 ```
 
-# 前端(client)環境變數設置
+# 前端(client)環境變數開發設置
 ```
 Meerkat/client/.env
 ```
 REACT_APP_BACKEND_URI=http://localhost:9000/<br>
 > 開發環境訪問時請設置`localhost`
 
-# 後端(api)環境變數設置
+# 後端(api)環境變數開發設置
 ```
 Meerkat/api/.env
 ```
