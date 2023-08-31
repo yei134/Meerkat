@@ -2,13 +2,12 @@
   display: flex;
   flex-direction: row;
 }
-.rightdiv{
+/*.rightdiv{
   margin-top: 8%;
   margin-bottom: 0px;
   padding-top: 0;
-}
+}*/
 .a {
-  font-size: 20px;
   text-decoration:none;
   color: #e6e2d2;
   font-weight:bold;
@@ -17,43 +16,62 @@
   /* width: 100px; */
   height: 100px;
 }
-.pagediv{
+/*.pagediv{
   position: relative;
   left: 20px;
   right: 20px;
-}
-.div{
+}*/
+/*.div{
   margin: 10px 10px 10px 10px;
   font-family:Microsoft JhengHei;
   text-indent: 2em;
   letter-spacing:1.5px;
   color: #575141;
   line-height:25px;
+}*/
+.container{
+  display: flex;
+  flex-direction: column;
 }
 .button {
-  float:right;
-  background-color: #575140;
+  font-size:16px;
+  width: 100px;
+  height: 30px;
+  float: right;
+  background-color: #6699A4;
   border: none;
   border-radius: 5px;
-  padding: 1%;
-  margin-right: 20px;
+  margin:0 10px 10px 0;
   box-shadow: 0 3px 3px 0 #6C757D
 }
 .button:hover {
   box-shadow: 0 6px 6px 0 rgba(0,0,0,0.24), 0 10px 10px 0 rgba(0,0,0,0.19);
 }
 .conleft{
-  margin: 25px;
-  width: 30%;
-  margin: 100px 10px 10px 10px ;
-}
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  max-width: 15%;
+  margin:2% 20px 0 4%;
+  }
 .conright{
-  width: 70%;
+  max-width: 80%;
+  margin:0 8% 0 20px;
+  padding: 2% 4% 2% 4%;
+  background-color: #EDE2C4;
+  border: 1.5px solid #dad0b5;
+  border-radius: 3px;
+}
+.test{
+  display: flex;
+  flex-direction: row;
 }
 .flex-container {
   display: flex;
   flex-direction: row;
-  background-color: #FCD9AF;
+  word-wrap:break-word;
+  white-space:pre-wrap;
+  margin-top: 2%;
 }
 .flex-container-header {
   display: flex;
@@ -70,23 +88,135 @@
 .h6{
   color: #b7aa7e;  
   margin:10px 0px 0px 0px;
-  font-family:Microsoft JhengHei
+  font-family:"Helvetica","Microsoft JhengHei";
 }
 .h3{
   margin:0px 0px 10px 0px;
-  font-family:Microsoft JhengHei
+  font-family:"Helvetica","Microsoft JhengHei";
 }
 .h2{
   text-indent: 2em;
+  font-family:"Helvetica","Microsoft JhengHei";
 }
-.h1{
-  /* color: #ffff; */
-  font-size: 40px;
-  font-family:Microsoft JhengHei;
-  height: 100px;
-  margin: 0;
-  padding:30px;
-  align-content: center;
-  text-shadow: 0.05em 0.05em 0.1em #575141
+.logo1{
+  width: 90px;
+  float: left;
+  position: relative;
+  right:11px;
+  top:4px;
 }
-/*上右下左*/
+.note{
+  text-indent:40px;
+  font-size: larger;
+  margin-top: 20px;
+  color: #5D5B53;
+}
+.note a{
+  text-decoration:underline;
+  color:#4b70bf;
+}
+.font-package-title{
+  font-size:xx-large;
+  font-weight: bold;
+}
+.page{
+  color: #6699A4;
+}
+.float-left{
+  display: flex;
+  flex-wrap :nowrap;
+}
+.file-container {
+  display: flex;
+  flex-direction: row;
+  word-wrap:break-word;
+  white-space:pre-wrap;
+  max-width: 80%;
+  margin:2% 8% 0 20px;
+  padding: 2% 4% 0 4%;
+  background-color: #EDE2C4;
+  border: 1.5px solid #dad0b5;
+  border-radius: 3px;
+}
+.formate-style{
+  width: 70%;
+  float: right;
+  justify-content: center;
+  margin-right: 10%;
+}
+.formate-a-style{
+  flex: 1;
+}
+.format-font-title-style{
+  color: #595959;
+  font-size: large;
+  font-weight:bold;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* 顯示的行數 */
+  overflow: hidden;
+  text-overflow: ellipsis; /* 加上省略號 */
+}
+.format-font-time-style{
+  font-size: small;
+}
+.file-float-row{
+  display: flex;
+  float: right;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+.file-float-column{
+  justify-content: center;
+  display: flex;
+  flex:10;
+  flex-direction: column;
+  border-left-style: solid;
+  border-color: #b9b6a3;
+  text-indent:10px;
+}
+.conright-file-title{
+  color: #595959;
+  font-size:x-large;
+  font-weight:bold;
+  background-color: rgb(236, 225, 195);
+}
+.file-hr-style{
+  width:70%;
+  float: left;
+}
+.info-div-container{
+  display: flex;
+  flex-direction: row;
+  background-color: #f5f1e5;
+  padding: 2%;
+}
+.info-div-left{
+  display: flex;
+  flex:1;
+  align-items: end;
+}
+.info-div-right{
+  display: flex;
+  flex:1;
+  align-items: end;
+}
+.conleft-title-style{
+  text-align: center;
+  margin-top: 5%;
+  background-color: #b5a57f;
+  font-size: larger;
+  font-weight: bold;
+  padding: 2%;
+}
+.conleft-datasetname-style{
+  text-align: center;
+  background-color: #f5f1e5;
+  font-size: x-large;
+  font-weight: bold;
+  padding: 2%;
+}
+.conleft-org-container{
+  background-color: #f5f1e5;
+  padding: 2%;
+}

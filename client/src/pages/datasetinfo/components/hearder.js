@@ -1,6 +1,6 @@
 import React from "react";
 
-const Header = () => {
+const Header = ({datasetName}) => {
   function switchDicomUpload() {
     console.log("dicom upload");
   }
@@ -11,21 +11,18 @@ const Header = () => {
     console.log("file manage");
   }
   return (
-    <div className="flex-container-header">
-      {/* <img className="divimage" src="./LOGO.svg"></img> */}
-      <h1 className="h1"><a href="/">AI&nbsp;Data&nbsp;Sharing</a></h1>
-      <div className="rightdiv">
-        <button className="button"><a href="/fileUpload" className="a">上傳dicom</a></button>
-        <button className="button"><a href="/datasetInfo" className="a">管理dicom</a></button>
+    <header className="head container">
+      <div className="test">
+        <a href="/"><img src="../LOGO.svg" className="logo1"></img></a>
+        <h1><a href="/">AI&nbsp;Data&nbsp;Sharing</a></h1>
+      </div>  
+      <div>
         <button className="button"><a href="/datasetInfo" className="a">管理附件</a></button>
+        <button className="button"><a href={`/datasetInfo/${datasetName}/dicomManage`} className="a">管理dicom</a></button>
+        <button className="button"><a href="/datasetInfo" className="a">申請資料集</a></button>
       </div>
-    </div>
+    </header>
   );
 };
 
 export default Header;
-/*
-        <button onClick={switchDicomUpload}>上傳dicom</button>
-        <button onClick={switchDicomManage}>管理dicom</button>
-        <button onClick={switchFileManage}>管理附件</button>
-        */
