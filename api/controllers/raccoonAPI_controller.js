@@ -60,7 +60,7 @@ function readCSVFile(filePath, columns) {
     .on('end', () => {
       resolve(extractedColumns);
       //console.log('extractedColumns:'+extractedColumns);
-      console.log('CSV file processing is complete.');
+      // console.log('CSV file processing is complete.');
     })
     .on('error', (error) => {
       reject(error);
@@ -81,7 +81,7 @@ exports.checkGet = async (req, res) => {
 exports.getStudiesList = async (req, res) => {
   try {
     var fileUrl = '';   // 要下載的檔案 URL
-    var fileName = '';  // 檔案名稱
+    var fileName = 'index.csv';  // 檔案名稱
     var filePath = '';  // 要儲存的檔案路徑
 
     //主線佇列
@@ -103,7 +103,8 @@ exports.getStudiesList = async (req, res) => {
     function step1(callback){
       // 索引檔resource_id
       const index = req.query.id;
-      const header = req.body.authorization;
+      const header = req.headers.authorization;
+      
       //拉csv的下載URL
       axios.get(`${ckanGetResource}`,
       {
@@ -115,19 +116,13 @@ exports.getStudiesList = async (req, res) => {
         }
       })
       .then(getRes => {
-        fileName = getRes.data.result.name;
-        const keyword = '_[type]_';                                     // 要拿來分割的字串
-        const splitWords = fileName.split(keyword);                     // 進行分割存成長度為2的陣列
-        //console.log(fileName)
-        const symptomGet = splitWords.length > 1 ? splitWords[1] : '';  // 有割到東西的話就直接等於第二個值
-        console.log('step.1 get symptom index file downloading url');
         fileUrl = getRes.data.result.url;
-        filePath = `${csvTempDirectory}${symptomGet[1]}`;
-        
+        filePath = `${csvTempDirectory}${fileName}`;
+        console.log('step.1 get index successful.')
         callback();
       })
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }
@@ -145,25 +140,37 @@ exports.getStudiesList = async (req, res) => {
       })
       .then(
         writer.on('finish', () => {
-          console.log('step.2 assign the downloading path');
-          console.log(`download completed: ${filePath}`);
+          console.log(`step.2 download completed: ${filePath}`);
           callback();
         })
       )
       .catch(err => {
-        console.log(err.response.data.error)
-        res.status(500).send(axiosErrMesJSON);
+        console.log(err)
+        res.status(500).send(err);
       })
     }
 
     // 4.打開step.3拉到的csv，將特定欄位逐一讀出
     function step3(callback){
+      const readColumns = ["Type","AccessionNumber","PatientID","Modality","StudyDescription","StudyInstanceUID","SeriesInstanceUID","SOPInstanceUID"]
+      var tableData = []
       // 讀取csv檔案
-      readCSVFile(filePath, ['StudyInstanceUID'])
+      readCSVFile(filePath, readColumns)
       .then((data) => {
-        console.log('step.5 read csv column');
-        console.log('csv processing successed');
-        res.send(data); 
+        console.log('step.3 csv processing successed');
+        for (let i = 0; i < data.length; i += readColumns.length) {
+          const rowData = data.slice(i , i + readColumns.length)
+          tableData.push(rowData);
+        }
+        // const resData = {
+        //   StudyInstanceUID: data
+        // }
+        const resData = tableData.map(row => {
+          const [Type,AccessionNumber,PatientID,Modality,StudyDescription,StudyInstanceUID,SeriesInstanceUID,SOPInstanceUID] = row;
+          return {Type,AccessionNumber,PatientID,Modality,StudyDescription,StudyInstanceUID,SeriesInstanceUID,SOPInstanceUID}
+        });
+        const resJSONdata = JSON.stringify(resData, null, 2);
+        res.send(resJSONdata); 
       })
       .then(() => {
         // 砍暫存檔案
@@ -180,9 +187,6 @@ exports.getStudiesList = async (req, res) => {
     }    
   } catch (error) {
     console.error(error);
-    // console.error(error);
-    // console.log('-------------------------------------------------------------------------\n');
-    // console.error(req);
     res.status(500).send(error)
   }
 }
@@ -201,13 +205,13 @@ exports.checkPost = async (req, res) => {
 exports.postStudiesNew = async (req, res) => {
   try {
     /*
-    V 0. 把接到的symptom建成暫存資料夾
-    V 1. 把接到的dicom們丟在暫存資料夾底下
-    V 2. 對暫存資料夾執行ldcm2csv
-    V 3. 將產生的csv檔post到ckan
-    V 4. 刪除csv檔
-    V 5. 以form-data傳送dicom array
-    V 6. 刪除暫存資料夾底下的dicom
+      V 0. 把接到的symptom建成暫存資料夾
+      V 1. 把接到的dicom們丟在暫存資料夾底下
+      V 2. 對暫存資料夾執行ldcm2csv
+      V 3. 將產生的csv檔post到ckan
+      V 4. 刪除csv檔
+      V 5. 以form-data傳送dicom array
+      V 6. 刪除暫存資料夾底下的dicom
     */
     // 索引資料夾變數
     var symptomFolder = "";
@@ -342,7 +346,7 @@ exports.postStudiesNew = async (req, res) => {
         callback();
       })
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }
@@ -391,7 +395,7 @@ exports.postStudiesNew = async (req, res) => {
         callback();
       })
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }
@@ -459,14 +463,15 @@ exports.postStudiesAppend = async (req, res) => {
     })
 
     /*
-    V 1. 根據收到的symptomName創建暫存資料夾
-    V 2. 把接到的dicom們丟在暫存資料夾底下
+    V 1. 創建暫存資料夾
+    V 2. 把接到的dicom丟在暫存資料夾底下
     V 3. 對暫存資料夾執行ldcm2csv[append_csv]
     V 4. 針對接到的resource_id，抓下csv檔URL
-    V 5. 將上項的CSV URL存到csv_temp[index_csv]
-    V 6. 讀取append_csv資料列，SOPinstanceUID不重複的話，append進index_csv[new_csv]
-    V 7. 將new_csv patch到ckan
-    V 8. 將暫存資料夾及其底下的dicompost到raccoon
+    C V 5. 將上項的CSV URL存到csv_temp[index_csv]
+    C V 6. 讀取append_csv資料列，SOPinstanceUID不重複的話，append進index_csv[new_csv]
+    V 6-1. 刪除暫存資料夾底下的重複dicom
+    V 7. 將暫存資料夾及其底下的dicompost到raccoon
+    C V 8. 將new_csv patch到ckan
     V 9. 刪除暫存資料夾及其底下的dicom
     V 10. 刪除csv_temp底下所有檔案
     */
@@ -479,7 +484,7 @@ exports.postStudiesAppend = async (req, res) => {
     var symptomCSVname = "";
 
 
-    // 1. 根據收到的symptomName創建暫存資料夾
+    // 1. 創建暫存資料夾
     function step1(callback){
       try{
         symptomFolder = tempDirectory + "temp/";
@@ -499,20 +504,18 @@ exports.postStudiesAppend = async (req, res) => {
       try{
         // 2. 把接到的dicom們丟在暫存資料夾底下
         //把dicom traverse 到暫存資料夾底下
-        const files = req.files;
+        const file = req.file;
         // 沒有收到dicom檔就噴error
-        if(!req.files){
-          throw "no dicom files uploaded.";
+        if(!req.file){
+          throw "no dicom file uploaded.";
         }
-        // Traverse dicom array 到指定暫存資料夾
-        files.forEach((file, index) => {
-          const filePath = file.path;
-          const fileOriginalname = symptomFolder + file.originalname;
-          fs.rename(filePath, fileOriginalname, (err) => {
-            if (err) {
-              throw "move dicom to temporary folder failed." ;
-            }
-          });
+        // dicom move 到指定暫存資料夾
+        const filePath = file.path;
+        const fileOriginalname = symptomFolder + file.originalname;
+        fs.rename(filePath, fileOriginalname, (err) => {
+          if (err) {
+            throw "move dicom to temporary folder failed." ;
+          }
         });
         console.log(`step.2 move dicom to temporary folder.`);
         callback();
@@ -549,9 +552,23 @@ exports.postStudiesAppend = async (req, res) => {
 
     // 4. 針對接到的resource_id，抓下csv檔URL
     function step4(callback){
-      // 索引檔resource_id
-      const index = req.body.id;
-      const header = req.headers.authorization;
+      try{
+        // 索引檔resource_id
+        var index = "";
+        if(req.body.id){
+          index = req.body.id;
+        }else{
+          throw "id is required."
+        }
+        var header = "";
+        if(req.headers.authorization){
+          header = req.body.authorization;
+        }else{
+          throw "token is required."
+        }
+      }catch(e){
+        res.status(500).send(e)
+      }
       //拉csv的下載URL
       axios.get(`${ckanGetResource}`,
       {
@@ -567,129 +584,142 @@ exports.postStudiesAppend = async (req, res) => {
         indexFileUrl = getRes.data.result.url;
         indexFilePath = `${csvTempDirectory}${indexFileName}`;
         indexFileUploadName = getRes.data.result.name;
-        
         callback();
       })
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }
 
     // 5. 將上項的CSV URL存到csv_temp[index_csv]
     function step5(callback){
-      const writer = fs.createWriteStream(indexFilePath);
-      const header = req.headers.authorization;
-      axios({
-        method: 'GET',
-        url: indexFileUrl,
-        responseType: 'stream',
-        headers:{
-          Authorization: header
-        }
-      })
-      .then(response =>{
-        response.data.pipe(writer)
-      })
-      .then(
-        writer.on('finish', () => {
-          console.log(`step.5 download completed: ${indexFilePath}`);
-          callback();
+      if(indexFileUrl){
+        const writer = fs.createWriteStream(indexFilePath);
+        const header = req.headers.authorization;
+        axios({
+          method: 'GET',
+          url: indexFileUrl,
+          responseType: 'stream',
+          headers:{
+            Authorization: header
+          }
         })
-      )
-      .catch(err => {
-        console.log(err.response.data.error)
-        res.status(500).send(axiosErrMesJSON);
-      })
+        .then(response =>{
+          response.data.pipe(writer)
+        })
+        .then(
+          writer.on('finish', () => {
+            console.log(`step.5 download completed: ${indexFilePath}`);
+            callback();
+          })
+        )
+        .catch(err => {
+          console.log(err.response)
+          res.status(500).send(axiosErrMesJSON);
+        })
+      }else{
+        console.log(`step.5 no exist index to append.`);
+        callback();
+      }
     }
     
     // 6. 讀取append_csv資料列，append進index_csv[new_csv]
-    // 要判斷SOPinstanceUID不重複
+    // 要判斷StudyInstanceUID不重複
+    var appendStudiesInstanceFiltered =[]
     function step6(callback){
-      // 讀取append.csv
+      if(indexFileUrl){
+        // 讀取append.csv
       var appendCSVdata = [];
       var appendCSVdataString = [];
+      // 讀取index.csv
+      var indexCSVdata = [];
 
+      //read append
       fs.createReadStream(symptomCSVname)
+      .on('data', (row) => {
+        appendCSVdataString.push(row);
+      })
+      .pipe(csv({ skipEmptyLines: true }))
       .on('data', (row) => {
         appendCSVdata.push(row);
       })
       .on('end' , () => {
-        // console.log('step.6 append.csv read complete.');
-        appendCSVdataString = appendCSVdata.toString().split('\n')
-        try{
-          // i=1:排除header column
-          for(var i = 1 ; i < appendCSVdataString.length; i++){
-            var newline = "";
-            if(i != appendCSVdataString.length - 1){
-              newline = "\n";
-            }else{
-              newline = "";
+        appendCSVdataString = appendCSVdataString.toString().split('\n')
+        // read index
+        fs.createReadStream(indexFilePath)
+        .pipe(csv({ skipEmptyLines: true }))
+        .on('data', (rowIndex) => {
+          indexCSVdata.push(rowIndex);
+        })
+        .on('end' , () => {
+          // 用 filter 過濾在原索引內的影像
+          const studiesInstanceFiltered = appendCSVdata.filter(item => {
+            // 用 some 檢查添加的影像列，有沒有包含任何原本在索引檔內的UID
+            // 只 return 「包含在原索引的影像列」
+            return indexCSVdata.some(indexItem => indexItem.StudyInstanceUID === item.StudyInstanceUID);
+          });
+
+          // 提取要刪除的元素
+          const deleteStudiesInstanceFiltered = studiesInstanceFiltered;
+          // 把暫存目錄下的dicom檔砍光
+          deleteStudiesInstanceFiltered.forEach(file => {
+            fs.unlinkSync(file.ID);
+          })
+
+          appendStudiesInstanceFiltered = appendCSVdata.filter(item => {
+            // 用 some 檢查添加的影像列，有沒有包含任何原本在索引檔內的UID
+            // 只 return 「包含在原索引的影像列」
+            return !indexCSVdata.some(indexItem => indexItem.StudyInstanceUID === item.StudyInstanceUID);
+          });
+
+          // 把append.csv內的「包含在原索引的影像列」過濾掉
+          const studiesInstanceFilteredString = appendCSVdataString.filter(appendStr => {
+            // 用 some 檢查添加的影像列，有沒有包含任何原本在索引檔內的UID
+            // 只 return 「不包含在原索引的影像列」
+            return !studiesInstanceFiltered.some(item => appendStr.includes(item.StudyInstanceUID));
+          });
+
+          try{
+            // i = 1 跳過header_column
+            for(var i = 1 ; i < studiesInstanceFilteredString.length; i++){
+              var newline = "";
+              if(i != studiesInstanceFilteredString.length - 1){
+                newline = "\n";
+              }else{
+                newline = "";
+              }
+              fs.appendFileSync(indexFilePath, studiesInstanceFilteredString[i] + newline);
             }
-            fs.appendFileSync(indexFilePath, appendCSVdataString[i] + newline);
+            console.log("step.6 index.csv is appended.")
+            callback()
+          }catch(e){
+            console.log("fail to append index.csv")
           }
-          console.log("step.6 index.csv is appended.")
-          callback()
-        }catch(e){
-          console.log("fail to append index.csv")
-        }
+        })
       })
       .on('error', (error) => console.log(error));
+      }else{
+        console.log("step.6 no repeat index to delete.")
+        callback()
+      }
     }
 
-    // 7. 將new_csv patch到ckan
+    var noDCMflag = false;
+    // 7. 將暫存資料夾及其底下的dicompost到raccoon
     function step7(callback){
-      try{
-        if(!req.body.id){
-          throw "id of index is required.";
-        }
-      }catch(e){
-        console.error(e);
-        res.sendStatus(500);
-      }
-      const indexID = req.body.id;
-
-      //前端post過來的OauthToken
-      const header = req.headers.authorization;
-      //包成key-value
-      const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
-
-      //宣告formdata物件
-      const formData = new FormData();
-      formData.append('id', indexID);
-      if(req.body.description){
-        const description = req.body.description;
-        formData.append('description', description);
-      }
-      formData.append('name', indexFileUploadName);
-      const indexFile = fs.readFileSync(indexFilePath);
-      const blob = new Blob([indexFile])
-      formData.append('upload', blob, indexFileUploadName+".csv")
-
-      axios.post(`${ckanPostResourcePatch}`,formData,{headers})
-      .then(getRes => {
-        // console.log("ckan patch index file status:"+getRes.data.success);
-        console.log("step.7 index patched.")
-        callback();
-      })
-      .catch(err => {
-        console.log(err.response.data.error)
-        res.status(500).send(axiosErrMesJSON);
-      })
-    }
-
-    // 8. 將暫存資料夾及其底下的dicompost到raccoon
-    function step8(callback){
       const formData = new FormData();
       const dcmFiles = fs.readdirSync(symptomFolder);
       try{
         // 把暫存目錄下的dicom檔丟進formdata
-        for(let i = 0 ; i < dcmFiles.length ; i++){
-          // console.log(dcmFiles[i]);
-          const fileStream = fs.readFileSync(symptomFolder+dcmFiles[i]);
-          const blob = new Blob([fileStream]);
-          formData.append('file', blob, dcmFiles[i]);
-          //console.log(symptomFolder+dcmFiles[i]+" appended.")
+        if(dcmFiles.length > 0){
+          for(let i = 0 ; i < dcmFiles.length ; i++){
+            const fileStream = fs.readFileSync(symptomFolder+dcmFiles[i]);
+            const blob = new Blob([fileStream]);
+            formData.append('file', blob, dcmFiles[i]);
+          }
+        }else{
+          noDCMflag = true;
         }
       }catch(e){
         const ErrMes = 
@@ -707,35 +737,110 @@ exports.postStudiesAppend = async (req, res) => {
       
       const headers = {'Content-Type': 'application/dicom', 'Accept': 'application/dicom'};
 
-      // post到raccoon出問題
-      axios.post(`${raccoonPost}`, formData, {
-        headers: headers
-      })
-      .then(getRes => {
+      if(!noDCMflag){
+        axios.post(`${raccoonPost}`, formData, {
+          headers: headers
+        })
+        .then(getRes => {
+          // var appendArray =[]
+          // appendStudiesInstanceFiltered.forEach(item => {
+          //   appendArray.push(item.StudyInstanceUID)
+          // })
+          // const resData ={
+          //   uploaded_StudyInstanceUID: appendArray
+          // }
+          // const resJSONdata = JSON.stringify(resData, null, 2);
+          // res.send(resJSONdata)
+          res.status(200).send()
+          //console.log("successFHIR="+JSON.stringify(getRes.data.successFHIR));
+          console.log("step.7 post dicom to pacs done.")
+          callback();
+        })
+        .catch(err => {
+          console.log(raccoonErrMesJSON)
+          res.status(500).send(raccoonErrMesJSON);
+        })
+      }else{
         const resData ={
-          uploaded_StudyInstanceUID: getRes.data.successFHIR
+          step: "post to raccoon",
+          uploaded_StudyInstanceUID: "nothing_to_upload"
         }
         const resJSONdata = JSON.stringify(resData, null, 2);
         res.send(resJSONdata)
-        //console.log("successFHIR="+JSON.stringify(getRes.data.successFHIR));
-        console.log("step.8 post dicom to pacs done.")
         callback();
-      })
-      .catch(err => {
-        console.log(raccoonErrMesJSON)
-        res.status(500).send(raccoonErrMesJSON);
-      })
+      }
+    }
+
+    // 8. 將new_csv patch到ckan
+    function step8(callback){
+      try{
+        if(!req.body.id){
+          throw "id of index is required.";
+        }
+      }catch(e){
+        console.error(e);
+        res.sendStatus(500);
+      }
+      if(!noDCMflag){
+        const indexID = req.body.id;
+
+        //前端post過來的OauthToken
+        const header = req.headers.authorization;
+        //包成key-value
+        const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
+
+        //宣告formdata物件
+        const formData = new FormData();
+        formData.append('id', indexID);
+        if(req.body.description){
+          const description = req.body.description;
+          formData.append('description', description);
+        }
+        // 有既有索引檔
+        if(indexFileUrl){
+          formData.append('name', indexFileUploadName);
+          const indexFile = fs.readFileSync(indexFilePath);
+          const blob = new Blob([indexFile])
+          formData.append('upload', blob, indexFileUploadName+".csv")
+        }else{
+        // 沒既有索引檔
+          formData.append('name', indexFileUploadName);
+          const appendFile = fs.readFileSync(symptomCSVname);
+          const blob = new Blob([appendFile])
+          formData.append('upload', blob, appendFileName)
+          formData.append('format', "csv")
+        }
+
+        axios.post(`${ckanPostResourcePatch}`,formData,{headers})
+        .then(getRes => {
+          // console.log("ckan patch index file status:"+getRes.data.success);
+          console.log("step.8 index patched.")
+          callback();
+        })
+        .catch(err => {
+          console.log(err.response)
+          res.status(500).send(axiosErrMesJSON);
+        })
+      }else{
+        const resData ={
+          step: 8,
+          uploaded_StudyInstanceUID: "nothing_to_upload"
+        }
+        const resJSONdata = JSON.stringify(resData, null, 2);
+        console.log(resJSONdata)
+        callback();
+      }
     }
 
     // 9. 刪除暫存資料夾及其底下的dicom
     function step9(callback){
       try{
-        const dcmFiles = fs.readdirSync(symptomFolder);
-        // 把暫存目錄下的dicom檔砍光
-        for(let i = 0 ; i < dcmFiles.length ; i++){
-          // console.log(dcmFiles[i]);
-          fs.unlinkSync(symptomFolder + dcmFiles[i]);
-          // console.log(symptomFolder + dcmFiles[i]+" deleted.")
+        if(!noDCMflag){
+          const dcmFiles = fs.readdirSync(symptomFolder);
+          // 把暫存目錄下的dicom檔砍光
+          for(let i = 0 ; i < dcmFiles.length ; i++){
+            fs.unlinkSync(symptomFolder + dcmFiles[i]);
+          }
         }
         // 砍掉暫存資料夾
         fs.rmdirSync(symptomFolder);
@@ -751,11 +856,9 @@ exports.postStudiesAppend = async (req, res) => {
     function step10(callback){
       try{
         const csvFiles = fs.readdirSync(csvTempDirectory);
-        // 把暫存目錄下的dicom檔砍光
+        // 把暫存目錄下的csv檔砍光
         for(let i = 0 ; i < csvFiles.length ; i++){
-          // console.log(csvFiles[i]);
           fs.unlinkSync(csvTempDirectory + csvFiles[i]);
-          // console.log(csvTempDirectory + csvFiles[i]+" deleted.")
         }
         console.log('step.10 remove temporary index file done.');
         console.log("***\nall studies append procedure are done.\n***")
@@ -845,7 +948,7 @@ exports.postStudiesDelete = async (req, res) => {
         callback();
       })
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }
@@ -867,7 +970,7 @@ exports.postStudiesDelete = async (req, res) => {
         })
       )
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }
@@ -932,7 +1035,7 @@ exports.postStudiesDelete = async (req, res) => {
         callback();
       })
       .catch(err => {
-        console.log(err.response.data.error)
+        console.log(err.response)
         res.status(500).send(axiosErrMesJSON);
       })
     }

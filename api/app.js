@@ -7,11 +7,6 @@ const logger = require('morgan');
 const cors = require("cors");//載入跨域套件
 
 const indexRouter = require('./routes/index');
-
-// var raccoonAPI = require("./routes/raccoonAPI");
-// var ckanAPI = require("./routes/ckanAPI");
-// var doc = require("./routes/doc")
-
 const app = express();
 
 // view engine setup
@@ -27,10 +22,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 //ckan
-// app.use("/ckanAPI", ckanAPI);
 require("./routes/ckanAPIroutes")(app);
 //raccoon
-// app.use("/raccoonAPI", raccoonAPI);
 require("./routes/raccoonAPIroutes")(app);
 //Mongo
 // app.use("/document", doc);

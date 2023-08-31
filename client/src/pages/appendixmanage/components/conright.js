@@ -1,10 +1,20 @@
-import React, { useState } from "react";
-const ConRight = ({ resources, selectedItems, setSelectedItems }) => {
+import React, { useState,useEffect } from "react";
+const ConRight = ({ resources, selectedItems, setSelectedItems ,}) => {
+ 
+  
+  
     // 若資源(resources)為空，則不顯示內容，返回 null
   if (!resources) {
     return null;
   }
   let visibleindex=0;
+  
+  // const handleDownload = (downloadUrl, fileName) => {
+  //   const link = document.createElement('a');
+  //   link.href = downloadUrl;
+  //   link.download = fileName;
+  //   link.click();
+  // };
     //勾選框事件
   const handleCheckboxChange = (event, resourceId) => {
     const isChecked = event.target.checked;
@@ -21,6 +31,7 @@ const ConRight = ({ resources, selectedItems, setSelectedItems }) => {
     console.log("Checkbox checked:", isChecked);
     console.log("Selected resourceId:", resourceId); // 在console中顯示資源的ID
   };
+  
   return (
     <>
 
@@ -30,36 +41,45 @@ const ConRight = ({ resources, selectedItems, setSelectedItems }) => {
             <th>NO.</th>
             <th>FileName</th>
             <th>FileSize</th>
+            {/* <th>Description</th> */}
+            <th>Created Time</th>
             <th>Operation</th>
           </tr>
         </thead>
         <tbody>
         
-          {resources.map((resource, index) => {
-            const fileName = resource.name;
-            const format = resource.format;
+          {resources.map((resources, index) => {
+            const utcTime = new Date(resources.created); // 假設 resources.created 是 UTC 時間
+            const gmtPlus8Time = new Date(utcTime.getTime() + 8 * 60 * 60 * 1000); // 轉換成 GMT+8 時區的時間
+            const fileName = resources.name;
+            // const description = resources.description || "NULL"; // 如果 description 沒有值，顯示 "NULL"
+            const timeOptions = { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hour12: true,  timeZone: "Asia/Taipei", // 設定時區為台北時區
+          };
+          const formattedTime = gmtPlus8Time.toLocaleString("zh-TW", timeOptions);
+          const format = resources.format;
             const displayedFileName = `${fileName}.${format}`;
-            const downloadUrl = resource.url;
-            const isChecked = selectedItems.includes(resource.id);
-              // 如果格式為 "CSV"，則不顯示
+            // const downloadUrl = resources.url;
+            const isChecked = selectedItems.includes(resources.id);
             if (format === "CSV") {
-              return null;
+            if(displayedFileName.includes("_[type]_"))
+            {
+               return null;
             }
+          }
             visibleindex++;
             return (
               <tr key={index}>
                 <td>{visibleindex}</td>
                 <td>{fileName}</td>
-                <td>{(resource.size / (1024 * 1024)).toFixed(1)}MB</td>
+                <td>{(resources.size / (1024*1024)).toFixed(1)}MB</td>
+                {/* <td>{description}</td> */}
+                <td>{formattedTime}</td>
                 <td>
                   <input
                     type="checkbox"
                     checked={isChecked}
-                    onChange={(event) => handleCheckboxChange(event, resource.id)}
+                    onChange={(event) => handleCheckboxChange(event, resources.id)}
                   />
-                  <a href={downloadUrl} download={displayedFileName}>
-                    Download
-                  </a>
                 </td>
               </tr>
             );
@@ -69,5 +89,4 @@ const ConRight = ({ resources, selectedItems, setSelectedItems }) => {
     </>
   );
 };
-//resources.map((resource, index) => { ... })map 函式，用於對 resources 陣列中的每個元素進行處理。resource->正在處理的資源物件，index->在陣列中的索引。
 export default ConRight;

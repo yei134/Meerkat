@@ -11,8 +11,8 @@ import Content from "./components/content"
 function DatasetList() {
   const[list,setList]=useState([])
   useEffect(()=>{
-    axios.get(`${process.env.REACT_APP_BACKEND_URI}ckanAPI/package_list`)
-      .then(response=>setList(response.data.result))
+    axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/package_list`)
+      .then(response=>setList(response.data))
       .catch(error=>console.log(error));
   },[])
   return(
