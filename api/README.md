@@ -8,10 +8,10 @@
   > 所有CKAN-GET
 
 #### UPDATE DONE
-1. /api/ckan/collaborator_edit -> up<br>
-2. /api/ckan/organization_member_edit -> up<br>
-3. /api/ckan/collaborator_delete -> up<br>
-4. /api/ckan/organization_member_delete -> up<br>
+1. [/api/ckan/collaborator_edit](https://github.com/yei134/Meerkat/wiki/Post-CKAN-API#對指定資料集更新指定使用者之權限) -> up<br>
+2. [/api/ckan/organization_member_edit](https://github.com/yei134/Meerkat/wiki/Post-CKAN-API#對指定組織更新指定使用者之權限) -> up<br>
+3. [/api/ckan/collaborator_delete](https://github.com/yei134/Meerkat/wiki/Post-CKAN-API#對指定資料集刪除指定使用者之權限) -> up<br>
+4. [/api/ckan/organization_member_delete](https://github.com/yei134/Meerkat/wiki/Post-CKAN-API#對指定組織刪除指定使用者之權限) -> up<br>
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token
