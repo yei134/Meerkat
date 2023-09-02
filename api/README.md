@@ -1,11 +1,17 @@
-# api@1.3.4 變動 2023/09/01
+# api@1.3.5 變動 2023/09/02
 
 ### 完成進度
 #### DEBUG DONE
+1. 修改`getCommonListOrCommonPackageList` & `postDataFunction` 的error-response層級
+  > 前端使用方法無異
+2. 改善呼叫API的寫法
+  > 所有CKAN-GET
 
 #### UPDATE DONE
-1. 專案根目錄之啟動手續文件（部分）<br>
-2. API文件移至github wiki頁面
+1. /api/ckan/collaborator_edit -> up<br>
+2. /api/ckan/organization_member_edit -> up<br>
+3. /api/ckan/collaborator_delete -> up<br>
+4. /api/ckan/organization_member_delete -> up<br>
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token
@@ -21,19 +27,14 @@
 ##### 管理系列
 4. post api_token_create -> 給該使用者創建token
   > 我要怎麼在meerkat不知道token的情況下創token?
-5. post package_collaborator_create -> 給資料集添加協作者/編輯該成員權限
-  > {*id:<package_id>, user_id:<user_id>, capacity:<member/editor/admin>}
-6. post organization_member_create -> 給組織添加成員/編輯該成員權限
-  > {*id:<organization_id>, username:<user_id>, role:<member/editor/admin>}
-7. delete organization_member_delete -> 把該組織的指定成員剔除
-  > {*id:<organization_id>, username:<user_id>}
-8. delete package_collaborator_delete -> 把該資料集的指定成員剔除
-  > {*id:<package_id>, user_id:<user_id>}
+9. get api_token_list -> 列出該使用者名下的token
+  > {headers:<token>}
 
 #### /api/raccoon/
 1. 以PatientID欄位刪除其複數個Study<br>
 
 ### High Priority DEBUG清單
+1. package_create -> needapply 
 
 ### Low Priority DEBUG清單
 1. resource_delete dependency issue<br>

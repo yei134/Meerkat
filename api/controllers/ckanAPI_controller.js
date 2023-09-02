@@ -96,11 +96,11 @@ async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
       }
       return resData;
     }catch(err){
-      console.log(err);
+      const log = err.response.data.error
       const resData = 
       {
         success: 500,
-        data: err
+        data: log
       }
       return resData;
     }
@@ -131,11 +131,11 @@ async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
       }
       return resData;
     }catch(err){
-      console.log(err);
+      const log = err.response.data.error
       const resData = 
       {
         success: 500,
-        data: err
+        data: log
       }
       return resData;
     }
@@ -153,7 +153,7 @@ async function postDataFunction(reqData, url, token){
     }
   })
   .catch(err => {
-    const log = err.response
+    const log = err.response.data.error
     console.log(log)
     resData = {
       success: 500,
@@ -173,86 +173,93 @@ exports.checkGet = async (req, res) => {
   }
 }
 exports.getPackageList = async (req, res) => {
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  async function packageList(){
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(null,ckanGetPackageList,null,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  
-  //向ckan做get請求
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(null,ckanGetPackageList,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
+  packageList()
 }
 exports.getPackageShow = async (req, res) => {
   //將request的查詢參數datasetName拿出
-  const searchQuery = req.query.datasetName;
+  var searchQuery = ""
   //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      if(!req.query.datasetName){
+        throw "datasetName is required."
+      }else{
+        searchQuery = req.query.datasetName
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  const reqParams = 
-  {
-    id: searchQuery
+  checkReq(packageShow)
+  async function packageShow(){
+    const reqParams = 
+    {
+      id: searchQuery
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-
-  //向ckan做get請求
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getResourceShow = async (req, res) => {
   //將request的查詢參數id拿出
-  var resourceID = '';
-  try{
-    if(req.query.id){
-      resourceID = req.query.id;
-    }else{
-      throw "id is required.";
-    }
-  }catch(e){
-    res.status(e).send(500)
-  }
+  var resourceID = ""
   //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      if(!req.query.id){
+        throw "id is required."
+      }else{
+        resourceID = req.query.id
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-
-  const reqParams = 
-  {
-    id: resourceID
+  checkReq(resourceShow)
+  async function resourceShow(){
+    const reqParams = 
+    {
+      id: resourceID
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetResourceShow,header,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-
-  //向ckan做get請求
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(reqParams,ckanGetResourceShow,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getPackageSearch = async (req, res) => {
   /*
@@ -266,288 +273,406 @@ exports.getPackageSearch = async (req, res) => {
   var searchQuery = null;
   var start = 0;
   var rows = null;
-  //將request的查詢參數們拿出
-  if(req.query.searchQuery){
-    searchQuery = req.query.searchQuery;
-  }
-  if(req.query.begin){
-    start = req.query.begin;
-  }
-  if(req.query.limit){
-    rows = req.query.limit;
-  }
-  //前端傳過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
-  }
-
-  const reqParams = 
-  {
-    include_private: true,
-    start: start,
-    rows: rows,
-    q:searchQuery
-  }
-
   //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.searchQuery){
+        searchQuery = req.query.searchQuery;
+      }
+      if(req.query.begin){
+        start = req.query.begin;
+      }
+      if(req.query.limit){
+        rows = req.query.limit;
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //向ckan做get請求
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(reqParams,ckanGetPackageSearch,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
+  checkReq(packageSearch)
+  async function packageSearch(){
+    const reqParams = 
+    {
+      include_private: true,
+      start: start,
+      rows: rows,
+      q:searchQuery
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageSearch,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
+  }
 }
 exports.getGroupList = async (req, res) => {
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(null,ckanGetGroupList,null,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
+  groupList()
+  async function groupList(){
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(null,ckanGetGroupList,null,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
+  }
 }
 exports.getTagList = async (req, res) => {
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(null,ckanGetTagList,null,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
+  tagList()
+  async function tagList(){
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(null,ckanGetTagList,null,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
+  }
 }
 exports.getOrgList = async (req, res) => {
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(null,ckanGetOrgList,null,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
+  orgList()
+  async function orgList(){
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(null,ckanGetOrgList,null,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
+  }
 }
 exports.getGroupPackageList = async (req, res) => {
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (group) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(groupPackageList)
+  async function groupPackageList(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetGroupPackageList,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetGroupPackageList,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getTagPackageList = async (req, res) => {
-  const id = req.query.id;
-  const params = {
-    id: id,
-    include_datasets: true
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (tag) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(tagPackageList)
+  async function tagPackageList(){
+    const reqParams = {
+      id: id,
+      include_datasets: true
+    }
+    const keys = ["packages"]
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetTagShow,token,keys)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  const keys = ["packages"]
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetTagShow,header,keys)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getOrgPackageList = async (req, res) => {
-  const id = req.query.id;
-  const params = {
-    id: id,
-    include_datasets: true
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (organization) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(orgPackageList)
+  async function orgPackageList(){
+    const reqParams = {
+      id: id,
+      include_datasets: true
+    }
+    const keys = ["packages"]
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,token,keys)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  const keys = ["packages"]
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetOrgShow,header,keys)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getGroupInfo = async (req, res) =>{
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (group) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(groupInfo)
+  async function groupInfo(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetGroupInfo,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列v
-  await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getTagInfo = async (req, res) =>{
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (tag) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(tagInfo)
+  async function tagInfo(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetTagShow,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetTagShow,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getOrgInfo = async (req, res) =>{
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (organization) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(orgInfo)
+  async function orgInfo(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列
-  await getCommonListOrCommonPackageList(params,ckanGetOrgShow,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getCollaboratorList = async (req, res) => {
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (package) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(collaboratorList)
+  async function collaboratorList(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetCollaboratorList,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列v
-  await getCommonListOrCommonPackageList(params,ckanGetCollaboratorList,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getUserCollaboratorList = async (req, res) => {
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (user) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(userCollaboratorList)
+  async function userCollaboratorList(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetUserCollaboratorList,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列v
-  await getCommonListOrCommonPackageList(params,ckanGetUserCollaboratorList,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 exports.getUserOrgList = async (req, res) => {
-  const id = req.query.id;
-  const params = {
-    id: id
+  var id = ""
+  var token = ""
+  function checkReq(callback){
+    try{
+      //將request的查詢參數們拿出
+      if(req.query.id){
+        id = req.query.id;
+      }else{
+        throw "id/name (user) is required."
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
   }
-  //前端post過來的ckanToken
-  var header = '';
-  if(req.headers.authorization){
-    header = req.headers.authorization;
+  checkReq(userOrgList)
+  async function userOrgList(){
+    const reqParams = {
+      id: id
+    }
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetUserOrgList,token,null)
+    if(resData.success == 200){
+      res.status(resData.success).send(resData.data)
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
   }
-  // params:{},URL,token,要的子層陣列v
-  await getCommonListOrCommonPackageList(params,ckanGetUserOrgList,header,null)
-  .then(getRes => {
-    const status = getRes.success;
-    const data = getRes.data;
-    res.status(status).send(data);
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).send(err);
-  })
 }
 
 // post
@@ -1047,7 +1172,113 @@ exports.getFilteredPackageList = async (req, res) => {
     callback();
   }
 }
-
+exports.postCollaboratorEdit = async (req, res) => {
+  var packageID = ""
+  var userID = ""
+  var role = ""
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      if(!req.body){
+        throw "the body is required."
+      }else{
+        if(!req.body.id){
+          throw "the id(package) is required.";
+        }else{
+          packageID = req.body.id
+        }
+        if(!req.body.userID){
+          throw "the userID is required.";
+        }else{
+          userID = req.body.userID
+        }
+        if(!req.body.role){
+          throw "the role is required.";
+        }else{
+          role = req.body.role
+        }
+      }
+      if(!req.headers.authorization){
+        throw "the token is required.";
+      }else{
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+  checkReq(collaborateEdit)
+  async function collaborateEdit(){
+    const reqData = {
+      id: packageID,
+      user_id: userID,
+      capacity: role
+    }
+    const resData = await postDataFunction(reqData,ckanPostCollaboratorEdit,token)
+    if(resData.success == 200){
+      res.status(resData.success).send()
+    }else if(resData.success == 500){
+      res.status(resData.success).send(resData.log)
+    }
+  }
+}
+exports.postOrgMemberEdit = async (req, res) => {  
+  var orgID = ""
+  var userID = ""
+  var role = ""
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      if(!req.body){
+        throw "the body is required."
+      }else{
+        if(!req.body.id){
+          throw "the id(organization) is required.";
+        }else{
+          orgID = req.body.id
+        }
+        if(!req.body.userID){
+          throw "the userID is required.";
+        }else{
+          userID = req.body.userID
+        }
+        if(!req.body.role){
+          throw "the role is required.";
+        }else{
+          role = req.body.role
+        }
+      }
+      if(!req.headers.authorization){
+        throw "the token is required.";
+      }else{
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+  checkReq(orgMemberEdit)
+  async function orgMemberEdit(){
+    const reqData = {
+      id: orgID,
+      username: userID,
+      role: role
+    }
+    const resData = await postDataFunction(reqData,ckanPostOrgMemberEdit,token)
+    if(resData.success == 200){
+      res.status(resData.success).send()
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
+  }
+}
 // patch
 exports.postResourcePatch = async (req, res) => {
   //做post請求的data參數
@@ -1143,7 +1374,7 @@ exports.delResourceDelete = (req, res) => {
   // 對ckan平台做get請求
   // 先比對請求陣列中的名字有沒有特殊格式
   // filteredResourceID是「沒有特殊格式」的附件ID
-  async function checkSplitName(){
+  async function checkSplitName(callback){
     for(var i = 0 ; i < resourceID.length ; i++){
       const getData = { id: resourceID[i] }
       await axios.get(`${ckanGetResourceShow}`, 
@@ -1169,10 +1400,8 @@ exports.delResourceDelete = (req, res) => {
         console.log(err)
       })
     }
-    delResource();
+    callback();
   }
-  checkSplitName();
-
   // 對ckan平台做post請求
   // 以filteredResourceID陣列去做刪除請求
   async function delResource(){
@@ -1215,5 +1444,98 @@ exports.delResourceDelete = (req, res) => {
     }
     var resJSONdata = JSON.stringify(resData, null, 2);
     res.status(200).send(resJSONdata);
+  }
+  checkSplitName(delResource);
+}
+exports.delCollaboratorDelete = async (req, res) => {  
+  var packageID = ""
+  var userID = ""
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      if(!req.body){
+        throw "the body is required."
+      }else{
+        if(!req.body.id){
+          throw "the id(organization) is required.";
+        }else{
+          packageID = req.body.id
+        }
+        if(!req.body.userID){
+          throw "the userID is required.";
+        }else{
+          userID = req.body.userID
+        }
+      }
+      if(!req.headers.authorization){
+        throw "the token is required.";
+      }else{
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+  checkReq(collaboratorDelete)
+  async function collaboratorDelete(){
+    const reqData = {
+      id: packageID,
+      user_id: userID
+    }
+    const resData = await postDataFunction(reqData,ckanDelCollaboratorDelete,token)
+    if(resData.success == 200){
+      res.status(resData.success).send()
+    }else if(resData.success == 500){
+      res.status(resData.success).send(resData.log)
+    }
+  }
+}
+exports.delOrgMemberDelete = async (req, res) => {  
+  var orgID = ""
+  var userID = ""
+  var token = ""
+  
+  function checkReq(callback){
+    try{
+      if(!req.body){
+        throw "the body is required."
+      }else{
+        if(!req.body.id){
+          throw "the id(organization) is required.";
+        }else{
+          orgID = req.body.id
+        }
+        if(!req.body.userID){
+          throw "the userID is required.";
+        }else{
+          userID = req.body.userID
+        }
+      }
+      if(!req.headers.authorization){
+        throw "the token is required.";
+      }else{
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+  checkReq(orgMemberDelete)
+  async function orgMemberDelete(){
+    const reqData = {
+      id: orgID,
+      username: userID
+    }
+    const resData = await postDataFunction(reqData,ckanDelOrgMemberDelete,token)
+    if(resData.success == 200){
+      res.status(resData.success).send()
+    }else if(resData.success == 500){
+      res.status(resData.success).send(resData.log)
+    }
   }
 }

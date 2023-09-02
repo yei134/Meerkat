@@ -35,16 +35,16 @@ module.exports = app => {
   router.post("/resource_create", upload.single('resourceFile'), ckanAPI.postResourceCreate);
   router.post("/index_create", ckanAPI.postIndexCreate);
   router.post("/package_filter", ckanAPI.getFilteredPackageList);
-  // router.post("/collaborator_edit", ckanAPI.ckanPostCollaboratorEdit);
-  // router.post("/organization_member_edit", ckanAPI.ckanPostOrgMemberEdit);
+  router.post("/collaborator_edit", ckanAPI.postCollaboratorEdit);
+  router.post("/organization_member_edit", ckanAPI.postOrgMemberEdit);
 
   // patch
   router.post("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
 
   // delete
   router.delete("/resource_delete", ckanAPI.delResourceDelete);
-  // router.delete("/organization_member_delete", ckanAPI.ckanDelOrgMemberDelete);
-  // router.delete("/collaborator_delete", ckanAPI.ckanDelCollaboratorDelete);
+  router.delete("/organization_member_delete", ckanAPI.delOrgMemberDelete);
+  router.delete("/collaborator_delete", ckanAPI.delCollaboratorDelete);
 
   app.use("/api/ckan", router);
 };
