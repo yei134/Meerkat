@@ -23,10 +23,10 @@ module.exports = app => {
   router.get("/group_info", ckanAPI.getGroupInfo);
   router.get("/tag_info", ckanAPI.getTagInfo);
   router.get("/organization_info", ckanAPI.getOrgInfo);
-
   router.get("/collaborator_list", ckanAPI.getCollaboratorList);
   router.get("/collaborator_list_for_user", ckanAPI.getUserCollaboratorList);
   router.get("/organization_list_for_user", ckanAPI.getUserOrgList);
+
 
   // post
   router.post("/", ckanAPI.checkPost);
@@ -37,14 +37,21 @@ module.exports = app => {
   router.post("/package_filter", ckanAPI.getFilteredPackageList);
   router.post("/collaborator_edit", ckanAPI.postCollaboratorEdit);
   router.post("/organization_member_edit", ckanAPI.postOrgMemberEdit);
+  router.post("/group_member_edit", ckanAPI.postGroupMemberEdit);
+  router.post("/organization_group_append", ckanAPI.postOrgGroupAppend);
 
   // patch
-  router.post("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
+  // router.patch("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
+  router.patch("/group_organization_patch", ckanAPI.patchGroupOrgChange);
 
   // delete
   router.delete("/resource_delete", ckanAPI.delResourceDelete);
   router.delete("/organization_member_delete", ckanAPI.delOrgMemberDelete);
   router.delete("/collaborator_delete", ckanAPI.delCollaboratorDelete);
+  router.delete("/group_purge", ckanAPI.delGroupPurge);
+
+  // router.delete("/package_purge", ckanAPI.delPackagePurge);
+  router.delete("/group_member_delete", ckanAPI.delGroupMemberDelete);
 
   app.use("/api/ckan", router);
 };
