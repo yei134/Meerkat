@@ -1,23 +1,16 @@
-# api@1.4.0 變動 2023/09/05
+# api@1.4.1 變動 2023/09/05
 
 ### 完成進度
 #### DEBUG DONE
-1. organization_member_edit｜修改欄位名稱
-  > `userID` -> `user`
-2. resource_patch｜修改CRUD類型
+1. package_patch｜修改CRUD類型
   > `POST` -> `PATCH`
-3. package_create｜移除`private`必填欄位<br>
+2. organization_group_append​ -> 支援5種情況<br>
+3. package_create -> 有包含public資料集name就不建立dataset<br>
+4. package_purge -> up<br>
+5. package_create -> 若已有同name私有資料集，噴error
 
 
 #### UPDATE DONE
-1. organization_group_append -> up<br>
-2. group_member_edit -> up <br>
-3. group_purge -> up<br>
-4. group_organization_patch -> up<br>
-5. group_member_delete -> up<br>
-6. group_list -> params支援指定組織<br>
-7. package_create -> 新增`group`必填欄位<br>
-  > 指定的`needapply`欄位由後端新增
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token
@@ -44,8 +37,7 @@
 
 ### High Priority DEBUG清單
 1. resource_patch｜對應公私有資料集
-2. package_purge -> 設想條件/只砍public/兩邊都砍（功能已up）<br>
-3. package_create -> package_search.map(name)有包含名稱就不建立dataset<br>
+2. package_create -> 若遇到remain的私有資料集要怎麼判斷？
 
 ### Low Priority DEBUG清單
 1. resource_delete dependency issue<br>

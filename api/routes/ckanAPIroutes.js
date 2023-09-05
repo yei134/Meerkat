@@ -31,7 +31,6 @@ module.exports = app => {
   // post
   router.post("/", ckanAPI.checkPost);
   router.post("/package_create", ckanAPI.postPackageCreate);
-  router.post("/package_patch", ckanAPI.postPackagePatch);
   router.post("/resource_create", upload.single('resourceFile'), ckanAPI.postResourceCreate);
   router.post("/index_create", ckanAPI.postIndexCreate);
   router.post("/package_filter", ckanAPI.getFilteredPackageList);
@@ -41,6 +40,7 @@ module.exports = app => {
   router.post("/organization_group_append", ckanAPI.postOrgGroupAppend);
 
   // patch
+  router.patch("/package_patch", ckanAPI.postPackagePatch);
   // router.patch("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
   router.patch("/group_organization_patch", ckanAPI.patchGroupOrgChange);
 
@@ -49,8 +49,7 @@ module.exports = app => {
   router.delete("/organization_member_delete", ckanAPI.delOrgMemberDelete);
   router.delete("/collaborator_delete", ckanAPI.delCollaboratorDelete);
   router.delete("/group_purge", ckanAPI.delGroupPurge);
-
-  // router.delete("/package_purge", ckanAPI.delPackagePurge);
+  router.delete("/package_purge", ckanAPI.delPackagePurge);
   router.delete("/group_member_delete", ckanAPI.delGroupMemberDelete);
 
   app.use("/api/ckan", router);

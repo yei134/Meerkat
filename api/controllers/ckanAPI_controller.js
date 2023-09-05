@@ -324,21 +324,6 @@ exports.getPackageSearch = async (req, res) => {
   }
 }
 exports.getGroupList = async (req, res) => {
-  //主線佇列
-  // seq()
-  // .seq(function(){
-  //   var seq_this = this;
-  //   checkReq(function() {seq_this();});
-  // })
-  // .seq(function(){
-  //   var seq_this = this;
-  //   getOrgShow(function() {seq_this();});
-  // })
-  // .seq(function(){
-  //   var seq_this = this;
-  //   groupList(function() {seq_this();});
-  // })
-
   var id = ""
   checkReq();
   function checkReq(){
@@ -749,7 +734,7 @@ exports.postPackageCreate = async (req, res) => {
 
   checkRequest(packageCreate);
 
-  function checkRequest(callback){
+  async function checkRequest(callback){
     try{
       //做post請求的data參數
       if(!req.body){
@@ -780,7 +765,6 @@ exports.postPackageCreate = async (req, res) => {
         }
         data = req.body;
         data["private"] = false
-        //"extras":[{"key":"needapply","value":"true"}]
         data["extras"] = [{"key":"needapply","value":"true"}]
         const group = req.body.group
         data["groups"] = [{name:group}]
@@ -798,27 +782,39 @@ exports.postPackageCreate = async (req, res) => {
     }
   }
   async function packageCreate(){
+    var publicRes = {}
+    var privateRes = {}
     // 對ckan平台做post請求
     // private
     var privateData = JSON.parse(JSON.stringify(data));
     privateData.name = privateData.name + packageSplitName
     privateData.private = true
     delete privateData.extras;
-    // console.log("privateData = " + JSON.stringify(privateData))
-    // console.log("data = " + JSON.stringify(data))
     // 要post的資料,URL,token
-    const privateRes = await postDataFunction(privateData, ckanPostPackageCreate, header)
-    // public
-    // 要post的資料,URL,token
-    const publicRes = await postDataFunction(data, ckanPostPackageCreate, header)
-    
-    const response = {
-      status:{
-        private:privateRes,
-        public:publicRes
+    privateRes = await postDataFunction(privateData, ckanPostPackageCreate, header)
+    try{
+      // public
+      // 要post的資料,URL,token
+      if(privateRes.success == 200){
+        publicRes = await postDataFunction(data, ckanPostPackageCreate, header)
+        if(publicRes.success == 200){
+          const response = {
+            status:{
+              private:privateRes,
+              public:publicRes
+            }
+          }
+          res.status(200).send(response)
+        }else{
+          throw "this dataset name is used by others.";
+        }
+      }else{
+        throw "this dataset name is used by others.";
       }
+    }catch(e){
+      console.log(e)
+      res.status(500).send(e)
     }
-    res.status(200).send(response)
   }
 }
 exports.postPackagePatch = async (req, res) => {
@@ -1404,6 +1400,7 @@ exports.postOrgGroupAppend = async (req, res) => {
   var org = ""
   var title = ""
   var token = ""
+  var existFlag = false
 
   //主線佇列
   seq()
@@ -1413,14 +1410,22 @@ exports.postOrgGroupAppend = async (req, res) => {
   })
   .seq(function(){
     var seq_this = this;
-    groupCreate(function() {seq_this();});
+    groupExistCheck(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    groupCreateOrCheckOrg(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    appendOrgGroups(function() {seq_this();});
   })
   .seq(function(){
     var seq_this = this;
     groupOrgAppend(function() {seq_this();});
   })
   
-  function checkReq(callback){
+  async function checkReq(callback){
     try{
       if(!req.body){
         throw "the body is required."
@@ -1433,11 +1438,17 @@ exports.postOrgGroupAppend = async (req, res) => {
         if(!req.body.owner_org){
           throw "the owner_org is required.";
         }else{
-          org = req.body.owner_org
+          const params = {
+            id: req.body.owner_org
+          }
+          const resData = await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,null,null)
+          if(resData.success == 200){
+            org = req.body.owner_org
+          }else{
+            throw "organization not found."
+          }
         }
-        if(!req.body.title){
-          throw "the title(group) is required.";
-        }else{
+        if(req.body.title){
           title = req.body.title
         }
       }
@@ -1452,27 +1463,119 @@ exports.postOrgGroupAppend = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  async function groupCreate(callback){
-    const extras = [{"key":"owner_org","value":org}]
-    const reqData = {
-      name: name,
-      title: title,
-      extras: extras
+  async function groupExistCheck(callback){
+    const params = {
+      id: name
     }
-    const resData = await postDataFunction(reqData,ckanPostGroupCreate,token)
+    const keys = ["state"]
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,null,null)
     if(resData.success == 200){
+      existFlag = true
+    }else if(resData.success == 500){
+      existFlag = false
+    }
+    callback()
+  }
+  
+  async function groupCreateOrCheckOrg(callback){
+    // 對象為不存在群組的話，創建群組
+    if(existFlag == false){
+      try{
+        if(!title){
+          throw "the title(group) is required.";
+        }
+        const extras = [{"key":"owner_org","value":org}]
+        const reqData = {
+          name: name,
+          title: title,
+          extras: extras
+        }
+        const resData = await postDataFunction(reqData,ckanPostGroupCreate,token)
+        if(resData.success == 200){
+          console.log("continue")
+          callback();
+        }else if(resData.success == 500){
+          console.log(resData)
+          res.status(resData.success).send(resData.log)
+        }
+      }catch(e){
+        console.log(e)
+        res.status(403).send(e)
+      }
+    // 對象是既存群組的話，改檢查該群組的owner_org是否擁有組織
+    }else{
+      const params = {
+        id: name
+      }
+      const keys = ["extras"]
+      // params:{},URL,token,要的子層陣列
+      const resData = await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,null,keys)
+      if(resData.success == 200){
+        const extras = resData.data
+        var result = extras.find((item) => item.key === "owner_org");
+        if (result && Object.prototype.hasOwnProperty.call(result, "value")) {
+          result = result.value;
+        } else {
+          result = "";
+        }
+        const owner_org = result;
+        try{
+          // 確認組織有沒有撞到
+          if(owner_org != org && owner_org){
+            throw "this group has the organization already.";
+          }else if(owner_org == org && owner_org){
+            throw "this group is already in the organization.";
+          // 沒有撞到就添加組織
+          }else{
+            const extras = [{"key":"owner_org","value":org}]
+            const reqData = {
+              id: name,
+              extras: extras
+            }
+            const resData = await postDataFunction(reqData,ckanPostGroupPatch,token)
+            callback();
+          }
+        }catch(e){
+          console.log(e)
+          res.status(403).send(e)
+        }
+      }else if(resData.success == 500){
+        console.log(resData)
+        res.status(resData.success).send(resData.log)
+      }
+    }
+  }
+
+  // 將對象組織的groups欄位拉出來append
+  var appendedGroups = []
+  async function appendOrgGroups(callback){
+    const params = {
+      id: org
+    }
+    const keys = ["groups"]
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(params,ckanGetOrgShow,null,keys)
+    if(resData.success == 200){
+      const org2Groups = resData.data
+      const appendGroup = {"name":name}
+      org2Groups.push(appendGroup);
+      appendedGroups = org2Groups
       callback();
     }else if(resData.success == 500){
       console.log(resData)
-      res.status(resData.success).send(resData.log)
+      res.status(resData.success).send(resData)
     }
   }
+
+  // 把新的groups清單patch回組織
   async function groupOrgAppend(){
-    const groups = [{"name":name}]
+    const groups = appendedGroups
     const reqData = {
       id: org,
       groups: groups
     }
+    console.log(groups)
     const resData = await postDataFunction(reqData,ckanPostOrgPatch,token)
     if(resData.success == 200){
       res.status(resData.success).send()
@@ -1892,8 +1995,24 @@ exports.delOrgMemberDelete = async (req, res) => {
   }
 }
 exports.delPackagePurge = async (req, res) => {  
-  var id = ""
+  var privateID = ""
+  var publicID = ""
+  var use = ""
   var token = ""
+
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    packagePurge(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendResponse(function() {seq_this();});
+  })
   
   function checkReq(callback){
     try{
@@ -1903,7 +2022,18 @@ exports.delPackagePurge = async (req, res) => {
         if(!req.body.id){
           throw "the id(package) is required.";
         }else{
-          id = req.body.id
+          privateID = req.body.id
+          const str = privateID.split(packageSplitName)
+          publicID = str[0]
+          const flag = privateID.includes(packageSplitName)
+          if(!flag){
+            throw "please send private package_name."
+          }
+        }
+        if(!req.body.use_in_private){
+          throw "use_in_private is required.";
+        }else{
+          use = req.body.use_in_private
         }
       }
       if(!req.headers.authorization){
@@ -1917,17 +2047,36 @@ exports.delPackagePurge = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  checkReq(packagePurge)
-  async function packagePurge(){
-    const reqData = {
-      id: id
+
+  var privateRes = {}
+  var publicRes = {}
+  async function packagePurge(callback){
+    const reqPublicData = {
+      id: publicID
     }
-    const resData = await postDataFunction(reqData,ckanDelPackagePurge,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      res.status(resData.success).send(resData.log)
+    publicRes = await postDataFunction(reqPublicData,ckanDelPackagePurge,token)
+    if(use == "false"){
+      const reqPrivateData = {
+        id: privateID
+      }
+      privateRes = await postDataFunction(reqPrivateData,ckanDelPackagePurge,token)
     }
+    callback()
+  }
+  function sendResponse(){
+    var private = ""
+    if(use == "true"){
+      private = "remain"
+    }else{
+      private = privateRes.success
+    }
+    const response = {
+      status: {
+        private: private,
+        public: publicRes.success,
+      }
+    }
+    res.status(200).send(response)
   }
 }
 exports.delGroupPurge = async (req, res) => {  
