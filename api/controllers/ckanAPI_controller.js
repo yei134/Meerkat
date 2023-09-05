@@ -1042,61 +1042,96 @@ exports.postIndexCreate = async (req, res) => {
   //做post請求的data參數
   var packageID = "";
   var symptoms = [];
+  var existSymptoms = []
   //前端post過來的ckanToken
   var header = "";
-  try{
-    if(req.body.package_id){
-      packageID = req.body.package_id
-    }else{
-      throw "package_id is required.";
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    indexCreate(function() {seq_this();});
+  })
+
+  async function checkReq(callback){
+    try{
+      if(req.body.package_id){
+        const flag = req.body.package_id.includes(packageSplitName)
+        if(flag){
+          packageID = req.body.package_id
+        }else{
+          throw "package_id doesn't include the essential private characters.";
+        }
+      }else{
+        throw "package_id is required.";
+      }
+      if(req.body.symptoms){
+        const tmpSymptoms = req.body.symptoms
+        const reqParams = {
+          id: req.body.package_id
+        }
+        const token = req.headers.authorization
+        const keys = ["resources"]
+        // params:{},URL,token,要的子層陣列
+        const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,token,keys);
+        const results = resData.data
+        const packageResourcesList = results.map(item => item.name);
+        const appendSymptomsFiltered = tmpSymptoms.filter(symptom => !packageResourcesList.some(resource => resource.includes(symptom)));
+        existSymptoms = tmpSymptoms.filter(symptom => packageResourcesList.some(resource => resource.includes(symptom)));
+        symptoms = appendSymptomsFiltered
+        if(symptoms.length == 0){
+          throw "all symptoms were included by dataset."
+        }
+      }else{
+        throw "symptom(type:array) is required."
+      }
+      if(req.headers.authorization){
+        header = req.headers.authorization
+      }else{
+        throw "token is required."
+      }
+      callback()
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
     }
-    if(req.body.symptoms){
-      symptoms = req.body.symptoms
-    }else{
-      throw "symptom(type:array) is required."
-    }
-    if(req.headers.authorization){
-      header = req.headers.authorization
-    }else{
-      throw "token is required."
-    }
-  }catch(e){
-    res.status(500).send(e)
   }
-  var success = [] ;
-  var fail = [] ;
+  //包成key-value
+  // const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
   async function indexCreate(){
+    var count = 0
     for(let i = 0 ; i < symptoms.length ; i++){
-      //包成key-value
-      const headers = {"Authorization": header, "Content-Type": "multipart/form-data"};
       //宣告formdata物件
       const formData = new FormData();
       formData.append('package_id', packageID);
-      const indexName = packageID + resourceSplitName + symptoms[i]
+      const str = packageID.split(packageSplitName)
+      const public = str[0]
+      const indexName = public + resourceSplitName + symptoms[i]
       formData.append('name', indexName);
   
-      //對ckan平台做post請求
-      await axios.post(`${ckanPostResourceAppend}`,formData,{headers})
-      .then(getRes => {
-        success.push(symptoms[i]);
-      })
-      .catch(err => {
-        console.log(err);
-        fail.push(symptoms[i]);
-      })
+      // 要post的資料,URL,token
+      const resData = await postDataFunction(formData, ckanPostResourceAppend, header)
+      if(resData.success == 200){
+        count++
+      }
     }
-    // var resData = 
-    // {
-    //   status: 200,
-    //   package_id: packageID,
-    //   success: success,
-    //   fail: fail
-    // }
-    // var resJSONdata = JSON.stringify(resData, null, 2);
-    // res.send(resJSONdata);
-    res.status(200).send()
+    if(count == symptoms.length){
+      const response = {
+        append: symptoms,
+        exist: existSymptoms
+      }
+      res.status(200).send(response)
+    }else{
+      const response = {
+        append: symptoms,
+        exist: existSymptoms
+      }
+      res.status(500).send(response)
+    }
   }
-  indexCreate();
 }
 exports.getFilteredPackageList = async (req, res) => {
   var response = []

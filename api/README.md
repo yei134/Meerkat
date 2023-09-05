@@ -1,14 +1,8 @@
-# api@1.4.1 變動 2023/09/05
+# api@1.4.2 變動 2023/09/06
 
 ### 完成進度
 #### DEBUG DONE
-1. package_patch｜修改CRUD類型
-  > `POST` -> `PATCH`
-2. organization_group_append​ -> 支援5種情況<br>
-3. package_create -> 有包含public資料集name就不建立dataset<br>
-4. package_purge -> up<br>
-5. package_create -> 若已有同name私有資料集，噴error
-
+1. index_create -> 比對symptom
 
 #### UPDATE DONE
 
