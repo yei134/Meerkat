@@ -102,8 +102,46 @@ table {
     /* 與元素內的距離 */
     white-space: nowrap;
   }
-  
+  .file-hr-style{
+    width:70%;
+    float: left;
+  }
+  .info-div-container{
+    display: flex;
+    flex-direction: row;
+    background-color: #f5f1e5;
+    padding: 2%;
+  }
+  .info-div-left{
+    display: flex;
+    flex:1;
+    align-items: end;
+  }
+  .info-div-right{
+    display: flex;
+    flex:1;
+    align-items: end;
+  }
 .modal-content p {
   margin: 0;
   flex: 1; /* 讓文字平均分配空間 */
+}
+.conleft-title-style{
+  text-align: center;
+  margin-top: 5%;
+  background-color: #b5a57f;
+  font-size: larger;
+  font-weight: bold;
+  padding: 2%;
+}
+.conleft-datasetname-style{
+  text-align: center;
+  background-color: #f5f1e5;
+  font-size: x-large;
+  font-weight: bold;
+  padding: 2%;
+}
+.conleft-org-container{
+  background-color: #f5f1e5;
+  padding: 2%;
 }
