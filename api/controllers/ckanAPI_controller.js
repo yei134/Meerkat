@@ -2092,7 +2092,7 @@ exports.delCollaboratorDelete = async (req, res) => {
         throw "the body is required."
       }else{
         if(!req.body.id){
-          throw "the id(organization)) is required.";
+          throw "the id(package) is required.";
         }else{
           packageID = req.body.id
         }

@@ -1,4 +1,4 @@
-# api@1.4.3 變動 2023/09/10
+# api@1.4.3 變動 2023/09/
 
 ### 完成進度
 #### DEBUG DONE
@@ -16,13 +16,13 @@
   > {"id":<organization_id>,"role":"admin","users":["aaa","bbb","ccc"]}
 2. group_member_edit -> 陣列
   > {"id":<group_id>,"role":"admin","users":["aaa","bbb","ccc"]}
-3. package_member_edit -> 陣列
+3. collaborator_edit -> 陣列
   > {"id":<package_id>,"role":"admin","users":["aaa","bbb","ccc"]}
 4. organization_member_delete -> 陣列
   > {"id":<organization_id>,"users":["aaa","bbb","ccc"]}
 5. group_member_delete -> 陣列
   > {"id":<group_id>,"users":["aaa","bbb","ccc"]}
-6. package_member_delete -> 陣列
+6. collaborator_delete -> 陣列
   > {"id":<package_id>,"users":["aaa","bbb","ccc"]}
 
 ### Discussion List
