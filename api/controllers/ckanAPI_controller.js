@@ -1002,6 +1002,10 @@ exports.postResourceCreate = async (req, res) => {
       publicFormData.append('package_id', publicPackageID);
       privateFormData.append('name', resourceName);
       publicFormData.append('name', resourceName);
+      const parts = resourceName.split(".");
+      const format = parts[parts.length - 1];
+      privateFormData.append('format', format);
+      publicFormData.append('format', format);
 
       var errLog = [];
       var publicResourceUID = "";
@@ -1271,9 +1275,24 @@ exports.getFilteredPackageList = async (req, res) => {
 }
 exports.postCollaboratorEdit = async (req, res) => {
   var packageID = ""
-  var userID = ""
+  var users = ""
   var role = ""
   var token = ""
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    collaborateEdit(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
   
   function checkReq(callback){
     try{
@@ -1283,12 +1302,17 @@ exports.postCollaboratorEdit = async (req, res) => {
         if(!req.body.id){
           throw "the id(package) is required.";
         }else{
-          packageID = req.body.id
+          const flag = (req.body.id).includes(packageSplitName)
+          if(flag){
+            packageID = req.body.id
+          }else{
+            throw "id(package) doesn't include the private dataset format."
+          }
         }
-        if(!req.body.userID){
-          throw "the userID is required.";
+        if(!req.body.users){
+          throw "the users is required.";
         }else{
-          userID = req.body.userID
+          users = req.body.users
         }
         if(!req.body.role){
           throw "the role is required.";
@@ -1307,26 +1331,84 @@ exports.postCollaboratorEdit = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  checkReq(collaborateEdit)
-  async function collaborateEdit(){
-    const reqData = {
-      id: packageID,
-      user_id: userID,
-      capacity: role
+  var privateSuccess = []
+  var privateFail = []
+  var publicSuccess = []
+  var publicFail = []
+  async function collaborateEdit(callback){
+    for(let i = 0 ; i < users.length ; i++){
+      // private
+      const privateReqData = {
+        id: packageID,
+        user_id: users[i],
+        capacity: role
+      }
+      const privateResData = await postDataFunction(privateReqData,ckanPostCollaboratorEdit,token)
+      if(privateResData.success == 200){
+        privateSuccess.push(users[i])
+      }else if(privateResData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:privateResData.log
+        }
+        privateFail.push(error)
+      }
+      // public
+      const publicPackageID = packageID.slice(0, -(packageSplitName.length))
+      const publicReqData = {
+        id: publicPackageID,
+        user_id: users[i],
+        capacity: role
+      }
+      const publicResData = await postDataFunction(publicReqData,ckanPostCollaboratorEdit,token)
+      if(publicResData.success == 200){
+        publicSuccess.push(users[i])
+      }else if(publicResData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:publicResData.log
+        }
+        publicFail.push(error)
+      }
+      if(i == (users.length - 1)){
+        callback();
+      }
     }
-    const resData = await postDataFunction(reqData,ckanPostCollaboratorEdit,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      res.status(resData.success).send(resData.log)
+  }
+  function sendRes(){
+    const response = {
+      public:{
+        success:publicSuccess,
+        fail:publicFail
+      },
+      private:{
+        success:privateSuccess,
+        fail:privateFail
+      }
     }
+    res.status(200).send(response)
   }
 }
 exports.postOrgMemberEdit = async (req, res) => {  
   var orgID = ""
-  var userID = ""
+  var users = ""
   var role = ""
   var token = ""
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    orgMemberEdit(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
   
   function checkReq(callback){
     try{
@@ -1334,14 +1416,14 @@ exports.postOrgMemberEdit = async (req, res) => {
         throw "the body is required."
       }else{
         if(!req.body.id){
-          throw "the id(organization) is required.";
+          throw "the id(organization)) is required.";
         }else{
           orgID = req.body.id
         }
-        if(!req.body.user){
-          throw "the user is required.";
+        if(!req.body.users){
+          throw "the users is required.";
         }else{
-          userID = req.body.user
+          users = req.body.users
         }
         if(!req.body.role){
           throw "the role is required.";
@@ -1360,27 +1442,58 @@ exports.postOrgMemberEdit = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  checkReq(orgMemberEdit)
-  async function orgMemberEdit(){
-    const reqData = {
-      id: orgID,
-      username: userID,
-      role: role
+  var success = []
+  var fail = []
+  async function orgMemberEdit(callback){
+    for(let i = 0 ; i < users.length ; i++){
+      const reqData = {
+        id: orgID,
+        username: users[i],
+        role: role
+      }
+      const resData = await postDataFunction(reqData,ckanPostOrgMemberEdit,token)
+      if(resData.success == 200){
+        success.push(users[i])
+      }else if(resData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:resData.log
+        }
+        fail.push(error)
+      }
+      if(i == (users.length - 1)){
+        callback();
+      }
     }
-    const resData = await postDataFunction(reqData,ckanPostOrgMemberEdit,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      console.log(resData)
-      res.status(resData.success).send(resData.log)
+  }
+  function sendRes(){
+    const response = {
+      success: success,
+      fail:fail
     }
+    res.status(200).send(response)
   }
 }
 exports.postGroupMemberEdit = async (req, res) => {  
   var groupID = ""
-  var userID = ""
+  var users = ""
   var role = ""
   var token = ""
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    groupMemberEdit(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
   
   function checkReq(callback){
     try{
@@ -1392,10 +1505,10 @@ exports.postGroupMemberEdit = async (req, res) => {
         }else{
           groupID = req.body.id
         }
-        if(!req.body.user){
-          throw "the user is required.";
+        if(!req.body.users){
+          throw "the users is required.";
         }else{
-          userID = req.body.user
+          users = req.body.users
         }
         if(!req.body.role){
           throw "the role is required.";
@@ -1414,20 +1527,36 @@ exports.postGroupMemberEdit = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  checkReq(groupMemberEdit)
-  async function groupMemberEdit(){
-    const reqData = {
-      id: groupID,
-      username: userID,
-      role: role
+  var success = []
+  var fail = []
+  async function groupMemberEdit(callback){
+    for(let i = 0 ; i < users.length ; i++){
+      const reqData = {
+        id: groupID,
+        username: users[i],
+        role: role
+      }
+      const resData = await postDataFunction(reqData,ckanPostGroupMemberEdit,token)
+      if(resData.success == 200){
+        success.push(users[i])
+      }else if(resData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:resData.log
+        }
+        fail.push(error)
+      }
+      if(i == (users.length - 1)){
+        callback();
+      }
     }
-    const resData = await postDataFunction(reqData,ckanPostGroupMemberEdit,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      console.log(resData)
-      res.status(resData.success).send(resData.log)
+  }
+  function sendRes(){
+    const response = {
+      success: success,
+      fail:fail
     }
+    res.status(200).send(response)
   }
 }
 exports.postOrgGroupAppend = async (req, res) => {  
@@ -1939,8 +2068,23 @@ exports.delResourceDelete = (req, res) => {
 }
 exports.delCollaboratorDelete = async (req, res) => {  
   var packageID = ""
-  var userID = ""
+  var users = ""
   var token = ""
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    collaboratorDelete(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
   
   function checkReq(callback){
     try{
@@ -1948,14 +2092,14 @@ exports.delCollaboratorDelete = async (req, res) => {
         throw "the body is required."
       }else{
         if(!req.body.id){
-          throw "the id(organization) is required.";
+          throw "the id(organization)) is required.";
         }else{
           packageID = req.body.id
         }
-        if(!req.body.userID){
-          throw "the userID is required.";
+        if(!req.body.users){
+          throw "the users is required.";
         }else{
-          userID = req.body.userID
+          users = req.body.users
         }
       }
       if(!req.headers.authorization){
@@ -1969,24 +2113,56 @@ exports.delCollaboratorDelete = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  checkReq(collaboratorDelete)
-  async function collaboratorDelete(){
-    const reqData = {
-      id: packageID,
-      user_id: userID
+  var success = []
+  var fail = []
+  async function collaboratorDelete(callback){
+    for(let i = 0 ; i < users.length ; i++){
+      const reqData = {
+        id: orgID,
+        username: users[i]
+      }
+      const resData = await postDataFunction(reqData,ckanDelOrgMemberDelete,token)
+      if(resData.success == 200){
+        success.push(users[i])
+      }else if(resData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:resData.log
+        }
+        fail.push(error)
+      }
+      if(i == (users.length - 1)){
+        callback();
+      }
     }
-    const resData = await postDataFunction(reqData,ckanDelCollaboratorDelete,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      res.status(resData.success).send(resData.log)
+  }
+  function sendRes(){
+    const response = {
+      success: success,
+      fail:fail
     }
+    res.status(200).send(response)
   }
 }
 exports.delOrgMemberDelete = async (req, res) => {  
   var orgID = ""
-  var userID = ""
+  var users = ""
   var token = ""
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    orgMemberDelete(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
   
   function checkReq(callback){
     try{
@@ -1994,14 +2170,14 @@ exports.delOrgMemberDelete = async (req, res) => {
         throw "the body is required."
       }else{
         if(!req.body.id){
-          throw "the id(organization) is required.";
+          throw "the id(organization)) is required.";
         }else{
           orgID = req.body.id
         }
-        if(!req.body.userID){
-          throw "the userID is required.";
+        if(!req.body.users){
+          throw "the users is required.";
         }else{
-          userID = req.body.userID
+          users = req.body.users
         }
       }
       if(!req.headers.authorization){
@@ -2015,18 +2191,113 @@ exports.delOrgMemberDelete = async (req, res) => {
       res.status(403).send(e)
     }
   }
-  checkReq(orgMemberDelete)
-  async function orgMemberDelete(){
-    const reqData = {
-      id: orgID,
-      username: userID
+  var success = []
+  var fail = []
+  async function orgMemberDelete(callback){
+    for(let i = 0 ; i < users.length ; i++){
+      const reqData = {
+        id: orgID,
+        username: users[i]
+      }
+      const resData = await postDataFunction(reqData,ckanDelOrgMemberDelete,token)
+      if(resData.success == 200){
+        success.push(users[i])
+      }else if(resData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:resData.log
+        }
+        fail.push(error)
+      }
+      if(i == (users.length - 1)){
+        callback();
+      }
     }
-    const resData = await postDataFunction(reqData,ckanDelOrgMemberDelete,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      res.status(resData.success).send(resData.log)
+  }
+  function sendRes(){
+    const response = {
+      success: success,
+      fail:fail
     }
+    res.status(200).send(response)
+  }
+}
+exports.delGroupMemberDelete = async (req, res) => {  
+  var groupID = ""
+  var users = ""
+  var token = ""
+
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    groupMemberDelete(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
+  
+  function checkReq(callback){
+    try{
+      if(!req.body){
+        throw "the body is required."
+      }else{
+        if(!req.body.id){
+          throw "the id(group) is required.";
+        }else{
+          groupID = req.body.id
+        }
+        if(!req.body.users){
+          throw "the users is required.";
+        }else{
+          users = req.body.users
+        }
+      }
+      if(!req.headers.authorization){
+        throw "the token is required.";
+      }else{
+        token = req.headers.authorization
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+  var success = []
+  var fail = []
+  async function groupMemberDelete(callback){
+    for(let i = 0 ; i < users.length ; i++){
+      const reqData = {
+        id: groupID,
+        username: users[i],
+      }
+      const resData = await postDataFunction(reqData,ckanDelGroupMemberDelete,token)
+      if(resData.success == 200){
+        success.push(users[i])
+      }else if(resData.success == 500){
+        const error = {
+          user:users[i],
+          error_log:resData.log
+        }
+        fail.push(error)
+      }
+      if(i == (users.length - 1)){
+        callback();
+      }
+    }
+  }
+  function sendRes(){
+    const response = {
+      success: success,
+      fail:fail
+    }
+    res.status(200).send(response)
   }
 }
 exports.delPackagePurge = async (req, res) => {  
@@ -2146,52 +2417,6 @@ exports.delGroupPurge = async (req, res) => {
       id: id
     }
     const resData = await postDataFunction(reqData,ckanDelGroupPurge,token)
-    if(resData.success == 200){
-      res.status(resData.success).send()
-    }else if(resData.success == 500){
-      res.status(resData.success).send(resData.log)
-    }
-  }
-}
-exports.delGroupMemberDelete = async (req, res) => {  
-  var id = ""
-  var userID = ""
-  var token = ""
-  
-  function checkReq(callback){
-    try{
-      if(!req.body){
-        throw "the body is required."
-      }else{
-        if(!req.body.id){
-          throw "the id(group) is required.";
-        }else{
-          id = req.body.id
-        }
-        if(!req.body.user){
-          throw "the id(user) is required.";
-        }else{
-          userID = req.body.user
-        }
-      }
-      if(!req.headers.authorization){
-        throw "the token is required.";
-      }else{
-        token = req.headers.authorization
-      }
-      callback();
-    }catch(e){
-      console.log(e)
-      res.status(403).send(e)
-    }
-  }
-  checkReq(groupMemberDelete)
-  async function groupMemberDelete(){
-    const reqData = {
-      id: id,
-      username: userID
-    }
-    const resData = await postDataFunction(reqData,ckanDelGroupMemberDelete,token)
     if(resData.success == 200){
       res.status(resData.success).send()
     }else if(resData.success == 500){

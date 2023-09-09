@@ -1,10 +1,29 @@
-# api@1.4.2 變動 2023/09/06
+# api@1.4.3 變動 2023/09/10
 
 ### 完成進度
 #### DEBUG DONE
-1. index_create -> 比對symptom
+1. package_member_edit & package_member_delete
+  > 限制，僅處理`id`包含`-type-private`字樣之資料集
+
+  > 同步處理公私有資料集
+2. index_delete
+  > 限制，僅處理`title`包含`_[type]_`字樣之resource
+3. resource_create
+  > 修改無上傳檔案格式欄位的BUG
 
 #### UPDATE DONE
+1. organization_member_edit -> 陣列
+  > {"id":<organization_id>,"role":"admin","users":["aaa","bbb","ccc"]}
+2. group_member_edit -> 陣列
+  > {"id":<group_id>,"role":"admin","users":["aaa","bbb","ccc"]}
+3. package_member_edit -> 陣列
+  > {"id":<package_id>,"role":"admin","users":["aaa","bbb","ccc"]}
+4. organization_member_delete -> 陣列
+  > {"id":<organization_id>,"users":["aaa","bbb","ccc"]}
+5. group_member_delete -> 陣列
+  > {"id":<group_id>,"users":["aaa","bbb","ccc"]}
+6. package_member_delete -> 陣列
+  > {"id":<package_id>,"users":["aaa","bbb","ccc"]}
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token
@@ -18,7 +37,10 @@
 #### /api/ckan/
 1. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
 2. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
-3. package_group_patch -> group<br>
+3. package_group_append -> up<br>
+4. package_group_delete -> up<br>
+5. package_group_list -> up<br>
+6. organization_group_delete -> up<br>
 
 ##### 管理系列
 1. post api_token_create -> 給該使用者創建token
