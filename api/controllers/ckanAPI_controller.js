@@ -2,49 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const seq = require('seq');
-require('dotenv').config();
-
-//CKAN_BASE_URI: v6
-//CKAN_BASE_URI_2:  nycu
-const {CKAN_BASE_URI} = process.env;
-const ckanPostPackageCreate = CKAN_BASE_URI + "package_create";
-const ckanPostPackagePatch = CKAN_BASE_URI + "package_patch";
-const ckanGetPackageSearch = CKAN_BASE_URI + "package_search";
-// const ckanGetPackageSearchForName = CKAN_BASE_URI + "package_autocomplete";
-const ckanGetPackageList = CKAN_BASE_URI + "package_list";
-const ckanGetCollaboratorList = CKAN_BASE_URI + "package_collaborator_list";
-const ckanGetPackageShow = CKAN_BASE_URI + "package_show";
-const ckanPostCollaboratorEdit = CKAN_BASE_URI + "package_collaborator_create";
-const ckanDelCollaboratorDelete = CKAN_BASE_URI + "package_collaborator_delete";
-const ckanDelPackagePurge = CKAN_BASE_URI + "dataset_purge";
-
-const ckanGetGroupList = CKAN_BASE_URI + "group_list";
-const ckanGetGroupInfo = CKAN_BASE_URI + "group_show";
-const ckanGetGroupPackageList = CKAN_BASE_URI + "group_package_show";
-const ckanDelGroupPurge = CKAN_BASE_URI + "group_purge";
-
-const ckanGetTagList = CKAN_BASE_URI + "tag_list";
-const ckanGetTagShow = CKAN_BASE_URI + "tag_show";
-
-const ckanGetOrgList = CKAN_BASE_URI + "organization_list";
-const ckanGetOrgShow = CKAN_BASE_URI + "organization_show";
-const ckanPostOrgMemberEdit = CKAN_BASE_URI + "organization_member_create";
-const ckanPostOrgPatch = CKAN_BASE_URI + "organization_patch";
-const ckanDelOrgMemberDelete = CKAN_BASE_URI + "organization_member_delete";
-
-const ckanPostGroupMemberEdit = CKAN_BASE_URI + "group_member_create";
-const ckanPostGroupCreate = CKAN_BASE_URI + "group_create";
-const ckanPostGroupPatch = CKAN_BASE_URI + "group_patch";
-const ckanDelGroupMemberDelete = CKAN_BASE_URI + "group_member_delete";
-
-const ckanGetUserCollaboratorList = CKAN_BASE_URI + "package_collaborator_list_for_user";
-const ckanGetUserOrgList = CKAN_BASE_URI + "organization_list_for_user";
-
-const ckanGetResourceShow = CKAN_BASE_URI + "resource_show";
-const ckanPostResourceAppend = CKAN_BASE_URI + "resource_create";
-const ckanPostResourcePatch = CKAN_BASE_URI + "resource_patch";
-// const ckanPostResourceUpdate = CKAN_BASE_URI + "resource_update";
-const ckanDelResourceDelete = CKAN_BASE_URI + "resource_delete";
+const ckanVariable = require('./variables.js');
 
 const tempDirectory = 'uploads/';
 const resourceSplitName = "_[type]_"
@@ -61,114 +19,6 @@ const axiosErrMes =
 }
 const axiosErrMesJSON = JSON.stringify(axiosErrMes, null, 2);
 
-// 回傳指定層級陣列所帶的值
-function objTraverse(data, keys) {
-  let result = data;
-  for (const key of keys) {
-    if (result.hasOwnProperty(key)) {
-      result = result[key];
-    } else {
-      return undefined;
-    }
-  }
-  return result;
-}
-// params:{},URL,token,要的子層陣列
-async function getCommonListOrCommonPackageList(reqParams, url, token, keys){
-  if(reqParams){
-    // for xxx_show
-    try{
-      const getRes = await axios.get(url,
-      {
-        params: reqParams,
-        headers: {
-          Authorization: token
-        }
-      });
-      const response = getRes.data.result;
-      var resData = {}
-      if(keys){
-        const responseINkeys = objTraverse(response,keys);
-        resData = 
-        {
-          success: 200,
-          data: responseINkeys
-        }
-      }else{
-        resData = 
-        {
-          success: 200,
-          data: response
-        }
-      }
-      return resData;
-    }catch(err){
-      const log = err.response.data.error
-      const resData = 
-      {
-        success: 500,
-        data: log
-      }
-      return resData;
-    }
-  }else{
-    // for xxxx_list
-    try{
-      const getRes = await axios.get(url,
-      {
-        headers: {
-          Authorization: token
-        }
-      });
-      const response = getRes.data.result;
-      var resData = {}
-      if(keys){
-        const responseINkeys = objTraverse(response,keys);
-        resData = 
-        {
-          success: 200,
-          data: responseINkeys
-        }
-      }else{
-        resData = 
-        {
-          success: 200,
-          data: response
-        }
-      }
-      return resData;
-    }catch(err){
-      const log = err.response.data.error
-      const resData = 
-      {
-        success: 500,
-        data: log
-      }
-      return resData;
-    }
-  }
-}
-// 要post的資料,URL,token
-async function postDataFunction(reqData, url, token){
-  //包成key-value
-  const headers = {"Authorization": token};
-  var resData = {}
-  await axios.post(url, reqData, {headers})
-  .then(getRes => {
-    resData = {
-      success: 200
-    }
-  })
-  .catch(err => {
-    const log = err.response.data.error
-    // console.log(log)
-    resData = {
-      success: 500,
-      log: log
-    }
-  })
-  return resData;
-}
 // get
 exports.checkGet = async (req, res) => {
   try {
@@ -182,7 +32,7 @@ exports.checkGet = async (req, res) => {
 exports.getPackageList = async (req, res) => {
   async function packageList(){
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(null,ckanGetPackageList,null,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(null,ckanVariable.ckanGetPackageList,null,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -221,7 +71,7 @@ exports.getPackageShow = async (req, res) => {
       id: searchQuery
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetPackageShow,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -259,7 +109,7 @@ exports.getResourceShow = async (req, res) => {
       id: resourceID
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetResourceShow,header,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetResourceShow,header,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -314,7 +164,7 @@ exports.getPackageSearch = async (req, res) => {
       q:searchQuery
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageSearch,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetPackageSearch,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -348,7 +198,7 @@ exports.getGroupList = async (req, res) => {
     }
     const keys = ["groups"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,null,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetOrgShow,null,keys)
     const orgGroups = resData.data;
     groupsList = orgGroups.map(item => item.name);
     resData.data = groupsList
@@ -362,7 +212,7 @@ exports.getGroupList = async (req, res) => {
 
   async function getAllGroupList(){
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(null,ckanGetGroupList,null,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(null,ckanVariable.ckanGetGroupList,null,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -375,7 +225,7 @@ exports.getTagList = async (req, res) => {
   tagList()
   async function tagList(){
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(null,ckanGetTagList,null,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(null,ckanVariable.ckanGetTagList,null,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -388,7 +238,7 @@ exports.getOrgList = async (req, res) => {
   orgList()
   async function orgList(){
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(null,ckanGetOrgList,null,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(null,ckanVariable.ckanGetOrgList,null,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -423,7 +273,7 @@ exports.getGroupPackageList = async (req, res) => {
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetGroupPackageList,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetGroupPackageList,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -460,7 +310,7 @@ exports.getTagPackageList = async (req, res) => {
     }
     const keys = ["packages"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetTagShow,token,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetTagShow,token,keys)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -497,7 +347,7 @@ exports.getOrgPackageList = async (req, res) => {
     }
     const keys = ["packages"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,token,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetOrgShow,token,keys)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -532,7 +382,7 @@ exports.getGroupInfo = async (req, res) =>{
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetGroupInfo,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetGroupInfo,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -567,7 +417,7 @@ exports.getTagInfo = async (req, res) =>{
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetTagShow,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetTagShow,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -602,7 +452,7 @@ exports.getOrgInfo = async (req, res) =>{
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetOrgShow,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -637,7 +487,7 @@ exports.getCollaboratorList = async (req, res) => {
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetCollaboratorList,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetCollaboratorList,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -672,7 +522,7 @@ exports.getUserCollaboratorList = async (req, res) => {
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetUserCollaboratorList,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetUserCollaboratorList,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -707,7 +557,7 @@ exports.getUserOrgList = async (req, res) => {
       id: id
     }
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetUserOrgList,token,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetUserOrgList,token,null)
     if(resData.success == 200){
       res.status(resData.success).send(resData.data)
     }else if(resData.success == 500){
@@ -761,7 +611,7 @@ exports.getPackageGroupList = async (req, res) => {
     }
     const keys = [ "groups" ]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,token,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetPackageShow,token,keys)
     result = (resData.data).map(item => item.name);
     callback();
   }
@@ -844,12 +694,12 @@ exports.postPackageCreate = async (req, res) => {
     privateData.private = true
     delete privateData.extras;
     // 要post的資料,URL,token
-    privateRes = await postDataFunction(privateData, ckanPostPackageCreate, header)
+    privateRes = await ckanVariable.postDataFunction(privateData, ckanVariable.ckanPostPackageCreate, header)
     try{
       // public
       // 要post的資料,URL,token
       if(privateRes.success == 200){
-        publicRes = await postDataFunction(data, ckanPostPackageCreate, header)
+        publicRes = await ckanVariable.postDataFunction(data, ckanVariable.ckanPostPackageCreate, header)
         if(publicRes.success == 200){
           const response = {
             status:{
@@ -915,7 +765,7 @@ exports.postPackagePatch = async (req, res) => {
   async function packagePatch(){
     // private
     // 要post的資料,URL,token
-    const privateRes = await postDataFunction(data, ckanPostPackagePatch, header)
+    const privateRes = await ckanVariable.postDataFunction(data, ckanVariable.ckanPostPackagePatch, header)
     
     // public
     var publicData = JSON.parse(JSON.stringify(data));
@@ -923,7 +773,7 @@ exports.postPackagePatch = async (req, res) => {
     publicData.id = publicPackageName.split(packageSplitName);
     publicData.id = publicData.id[0];
     // 要post的資料,URL,token
-    const publicRes = await postDataFunction(publicData, ckanPostPackagePatch, header)
+    const publicRes = await ckanVariable.postDataFunction(publicData, ckanVariable.ckanPostPackagePatch, header)
     
     const response = {
       status:{
@@ -997,7 +847,7 @@ exports.postResourceCreate = async (req, res) => {
   var publicFlag = true;
   async function checkPackageStatus(){
     var callbackFlag = false
-    await axios.get(`${ckanGetPackageShow}`,
+    await axios.get(`${ckanVariable.ckanGetPackageShow}`,
       {
         params: { id: privatePackageID },
         headers
@@ -1011,7 +861,7 @@ exports.postResourceCreate = async (req, res) => {
       res.status(500).send("private dataset doesn't exist")
     })
 
-    await axios.get(`${ckanGetPackageShow}`,
+    await axios.get(`${ckanVariable.ckanGetPackageShow}`,
       {
         params: { id: publicPackageID },
         headers
@@ -1064,7 +914,7 @@ exports.postResourceCreate = async (req, res) => {
       var publicResourceUID = "";
       if(publicFlag){
         // 對ckan平台做post請求(公有資料集)
-        await axios.post(`${ckanPostResourceAppend}`,publicFormData,{headers})
+        await axios.post(`${ckanVariable.ckanPostResourceAppend}`,publicFormData,{headers})
         .then(getRes => {
           publicResourceUID = getRes.data.result.id;
           const completeDes = prefixDes + publicResourceUID
@@ -1078,7 +928,7 @@ exports.postResourceCreate = async (req, res) => {
         privateFormData.append('description', prefixDes);
       }
       // 對ckan平台做post請求(私有資料集)
-      await axios.post(`${ckanPostResourceAppend}`,privateFormData,{headers})
+      await axios.post(`${ckanVariable.ckanPostResourceAppend}`,privateFormData,{headers})
       .catch(err =>{
         console.log("err="+err);
         errLog.push(err);
@@ -1133,7 +983,7 @@ exports.postIndexCreate = async (req, res) => {
         const token = req.headers.authorization
         const keys = ["resources"]
         // params:{},URL,token,要的子層陣列
-        const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,token,keys);
+        const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetPackageShow,token,keys);
         const results = resData.data
         const packageResourcesList = results.map(item => item.name);
         const appendSymptomsFiltered = tmpSymptoms.filter(symptom => !packageResourcesList.some(resource => resource.includes(symptom)));
@@ -1170,7 +1020,7 @@ exports.postIndexCreate = async (req, res) => {
       formData.append('name', indexName);
   
       // 要post的資料,URL,token
-      const resData = await postDataFunction(formData, ckanPostResourceAppend, header)
+      const resData = await ckanVariable.postDataFunction(formData, ckanVariable.ckanPostResourceAppend, header)
       if(resData.success == 200){
         count++
       }
@@ -1228,7 +1078,7 @@ exports.getFilteredPackageList = async (req, res) => {
       }
       conditions.push(condition)
       const keys = ["results"]
-      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageSearch,header,keys);
+      const result = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetPackageSearch,header,keys);
       // params:{},URL,token,要的子層陣列
       const packageResults = result.data;
       var packageArray = []
@@ -1248,7 +1098,7 @@ exports.getFilteredPackageList = async (req, res) => {
         group_package_list: reqParams
       }
       conditions.push(condition)
-      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetGroupPackageList,header,null)
+      const result = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetGroupPackageList,header,null)
       const packageResults = result.data;
       var packageArray = []
       packageResults.forEach(dataset => {
@@ -1269,7 +1119,7 @@ exports.getFilteredPackageList = async (req, res) => {
       }
       conditions.push(condition)
       const keys = ["packages"]
-      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetTagShow,header,keys)
+      const result = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetTagShow,header,keys)
       const packageResults = result.data;
       var packageArray = []
       packageResults.forEach(dataset => {
@@ -1290,7 +1140,7 @@ exports.getFilteredPackageList = async (req, res) => {
       }
       conditions.push(condition)
       const keys = ["packages"]
-      const result = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,header,keys)
+      const result = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetOrgShow,header,keys)
       const packageResults = result.data;
       var packageArray = []
       packageResults.forEach(dataset => {
@@ -1396,7 +1246,7 @@ exports.postCollaboratorEdit = async (req, res) => {
         user_id: users[i],
         capacity: role
       }
-      const privateResData = await postDataFunction(privateReqData,ckanPostCollaboratorEdit,token)
+      const privateResData = await ckanVariable.postDataFunction(privateReqData,ckanVariable.ckanPostCollaboratorEdit,token)
       if(privateResData.success == 200){
         privateSuccess.push(users[i])
       }else if(privateResData.success == 500){
@@ -1413,7 +1263,7 @@ exports.postCollaboratorEdit = async (req, res) => {
         user_id: users[i],
         capacity: role
       }
-      const publicResData = await postDataFunction(publicReqData,ckanPostCollaboratorEdit,token)
+      const publicResData = await ckanVariable.postDataFunction(publicReqData,ckanVariable.ckanPostCollaboratorEdit,token)
       if(publicResData.success == 200){
         publicSuccess.push(users[i])
       }else if(publicResData.success == 500){
@@ -1504,7 +1354,7 @@ exports.postOrgMemberEdit = async (req, res) => {
         username: users[i],
         role: role
       }
-      const resData = await postDataFunction(reqData,ckanPostOrgMemberEdit,token)
+      const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostOrgMemberEdit,token)
       if(resData.success == 200){
         success.push(users[i])
       }else if(resData.success == 500){
@@ -1589,7 +1439,7 @@ exports.postGroupMemberEdit = async (req, res) => {
         username: users[i],
         role: role
       }
-      const resData = await postDataFunction(reqData,ckanPostGroupMemberEdit,token)
+      const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostGroupMemberEdit,token)
       if(resData.success == 200){
         success.push(users[i])
       }else if(resData.success == 500){
@@ -1658,7 +1508,7 @@ exports.postOrgGroupAppend = async (req, res) => {
           const params = {
             id: req.body.owner_org
           }
-          const resData = await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,null,null)
+          const resData = await ckanVariable.getCommonListOrCommonPackageList(params,ckanVariable.ckanGetGroupInfo,null,null)
           if(resData.success == 200){
             org = req.body.owner_org
           }else{
@@ -1686,7 +1536,7 @@ exports.postOrgGroupAppend = async (req, res) => {
     }
     const keys = ["state"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,null,null)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(params,ckanVariable.ckanGetGroupInfo,null,null)
     if(resData.success == 200){
       existFlag = true
     }else if(resData.success == 500){
@@ -1708,7 +1558,7 @@ exports.postOrgGroupAppend = async (req, res) => {
           title: title,
           extras: extras
         }
-        const resData = await postDataFunction(reqData,ckanPostGroupCreate,token)
+        const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostGroupCreate,token)
         if(resData.success == 200){
           console.log("continue")
           callback();
@@ -1727,7 +1577,7 @@ exports.postOrgGroupAppend = async (req, res) => {
       }
       const keys = ["extras"]
       // params:{},URL,token,要的子層陣列
-      const resData = await getCommonListOrCommonPackageList(params,ckanGetGroupInfo,null,keys)
+      const resData = await ckanVariable.getCommonListOrCommonPackageList(params,ckanVariable.ckanGetGroupInfo,null,keys)
       if(resData.success == 200){
         const extras = resData.data
         var result = extras.find((item) => item.key === "owner_org");
@@ -1750,7 +1600,7 @@ exports.postOrgGroupAppend = async (req, res) => {
               id: name,
               extras: extras
             }
-            const resData = await postDataFunction(reqData,ckanPostGroupPatch,token)
+            const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostGroupPatch,token)
             callback();
           }
         }catch(e){
@@ -1772,7 +1622,7 @@ exports.postOrgGroupAppend = async (req, res) => {
     }
     const keys = ["groups"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(params,ckanGetOrgShow,null,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(params,ckanVariable.ckanGetOrgShow,null,keys)
     if(resData.success == 200){
       const org2Groups = resData.data
       const appendGroup = {"name":name}
@@ -1793,7 +1643,7 @@ exports.postOrgGroupAppend = async (req, res) => {
       groups: groups
     }
     console.log(groups)
-    const resData = await postDataFunction(reqData,ckanPostOrgPatch,token)
+    const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostOrgPatch,token)
     if(resData.success == 200){
       res.status(resData.success).send()
     }else if(resData.success == 500){
@@ -1850,7 +1700,7 @@ exports.patchResourcePatch = async (req, res) => {
   }
 
   //對ckan平台做post請求
-  axios.post(`${ckanPostResourcePatch}`,formData,{headers})
+  axios.post(`${ckanVariable.ckanPostResourcePatch}`,formData,{headers})
   .then(getRes => {
     const mes = 
     {
@@ -1938,7 +1788,7 @@ exports.patchGroupOrgChange = async (req, res) => {
     }
     const keys = ["groups"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(params,ckanGetOrgShow,null,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(params,ckanVariable.ckanGetOrgShow,null,keys)
     if(resData.success == 200){
       const groupsArray = resData.data
       // filteredGroups = orgShow.groups - delGroup
@@ -1955,7 +1805,7 @@ exports.patchGroupOrgChange = async (req, res) => {
       id: id1,
       groups: filteredGroups
     }
-    const resData = await postDataFunction(reqData,ckanPostOrgPatch,token)
+    const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostOrgPatch,token)
     if(resData.success == 200){
       callback();
     }else if(resData.success == 500){
@@ -1970,7 +1820,7 @@ exports.patchGroupOrgChange = async (req, res) => {
       id: delGroup,
       extras: extras
     }
-    const resData = await postDataFunction(reqData,ckanPostGroupPatch,token)
+    const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostGroupPatch,token)
     if(resData.success == 200){
       callback();
     }else if(resData.success == 500){
@@ -1986,7 +1836,7 @@ exports.patchGroupOrgChange = async (req, res) => {
     }
     const keys = ["groups"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(params,ckanGetOrgShow,null,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(params,ckanVariable.ckanGetOrgShow,null,keys)
     if(resData.success == 200){
       const org2Groups = resData.data
       const appendGroup = {"name":delGroup}
@@ -2004,7 +1854,7 @@ exports.patchGroupOrgChange = async (req, res) => {
       id: id2,
       groups: appendedGroups
     }
-    const resData = await postDataFunction(reqData,ckanPostOrgPatch,token)
+    const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanPostOrgPatch,token)
     if(resData.success == 200){
       res.status(resData.success).send()
     }else if(resData.success == 500){
@@ -2049,7 +1899,7 @@ exports.delResourceDelete = (req, res) => {
   async function checkSplitName(callback){
     for(var i = 0 ; i < resourceID.length ; i++){
       const getData = { id: resourceID[i] }
-      await axios.get(`${ckanGetResourceShow}`, 
+      await axios.get(`${ckanVariable.ckanGetResourceShow}`, 
         {
           params: getData,
           headers
@@ -2082,7 +1932,7 @@ exports.delResourceDelete = (req, res) => {
       const postPublicData = { id: publicResourceUIDarray[i] }
 
       if(publicResourceUIDarray[i]){
-        axios.post(`${ckanDelResourceDelete}`, 
+        axios.post(`${ckanVariable.ckanDelResourceDelete}`, 
         postPublicData, 
           {
             headers
@@ -2096,7 +1946,7 @@ exports.delResourceDelete = (req, res) => {
         })
       }
 
-      await axios.post(`${ckanDelResourceDelete}`, 
+      await axios.post(`${ckanVariable.ckanDelResourceDelete}`, 
       postPrivateData, 
         {
           headers
@@ -2174,7 +2024,7 @@ exports.delCollaboratorDelete = async (req, res) => {
         id: orgID,
         username: users[i]
       }
-      const resData = await postDataFunction(reqData,ckanDelOrgMemberDelete,token)
+      const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanDelCollaboratorDelete,token)
       if(resData.success == 200){
         success.push(users[i])
       }else if(resData.success == 500){
@@ -2252,7 +2102,7 @@ exports.delOrgMemberDelete = async (req, res) => {
         id: orgID,
         username: users[i]
       }
-      const resData = await postDataFunction(reqData,ckanDelOrgMemberDelete,token)
+      const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanDelOrgMemberDelete,token)
       if(resData.success == 200){
         success.push(users[i])
       }else if(resData.success == 500){
@@ -2330,7 +2180,7 @@ exports.delGroupMemberDelete = async (req, res) => {
         id: groupID,
         username: users[i],
       }
-      const resData = await postDataFunction(reqData,ckanDelGroupMemberDelete,token)
+      const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanDelGroupMemberDelete,token)
       if(resData.success == 200){
         success.push(users[i])
       }else if(resData.success == 500){
@@ -2413,12 +2263,12 @@ exports.delPackagePurge = async (req, res) => {
     const reqPublicData = {
       id: publicID
     }
-    publicRes = await postDataFunction(reqPublicData,ckanDelPackagePurge,token)
+    publicRes = await ckanVariable.postDataFunction(reqPublicData,ckanVariable.ckanDelPackagePurge,token)
     if(use == "false"){
       const reqPrivateData = {
         id: privateID
       }
-      privateRes = await postDataFunction(reqPrivateData,ckanDelPackagePurge,token)
+      privateRes = await ckanVariable.postDataFunction(reqPrivateData,ckanVariable.ckanDelPackagePurge,token)
     }
     callback()
   }
@@ -2469,7 +2319,7 @@ exports.delGroupPurge = async (req, res) => {
     const reqData = {
       id: id
     }
-    const resData = await postDataFunction(reqData,ckanDelGroupPurge,token)
+    const resData = await ckanVariable.postDataFunction(reqData,ckanVariable.ckanDelGroupPurge,token)
     if(resData.success == 200){
       res.status(resData.success).send()
     }else if(resData.success == 500){
@@ -2532,7 +2382,7 @@ exports.delOrgGroupDelete = async (req, res) => {
     }
     const keys = ["groups"]
     // params:{},URL,token,要的子層陣列
-    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,null,keys)
+    const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetOrgShow,null,keys)
     if(resData.success == 200){
       const orgGroups = resData.data;
       // filter 篩掉 orgGroups(組織有的群組) 包含 groups(要刪除的群組)的群組
@@ -2552,7 +2402,7 @@ exports.delOrgGroupDelete = async (req, res) => {
     }
     console.log("postData = " + JSON.stringify(postData))
     // 要post的資料,URL,token
-    const resData = await postDataFunction(postData,ckanPostOrgPatch,token)
+    const resData = await ckanVariable.postDataFunction(postData,ckanVariable.ckanPostOrgPatch,token)
     if(resData.success == 200){
       const response = {
         success:200,

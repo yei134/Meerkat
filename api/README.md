@@ -1,11 +1,11 @@
-# api@1.4.4 變動 2023/09/11
+# api@1.4.5 變動 2023/09/12
 
 ### 完成進度
 #### DEBUG DONE
+1. raccoonAPI_controller.js & ckanAPI_controller.js
+  > 宣告變數、function統一放置`variables.js`
 
 #### UPDATE DONE
-1. package_group_list -> up<br>
-2. organization_group_delete -> up<br>
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token<br>
@@ -33,7 +33,8 @@
 
 #### /api/raccoon/
 1. 以PatientID欄位刪除其複數個Study<br>
-2. 以raccoon既有影像添加index(QIDO索引)
+2. 以raccoon既有影像添加index(QIDO索引)<br>
+3. index_delete
 
 ### High Priority DEBUG清單
 1. resource_patch｜對應公私有資料集
