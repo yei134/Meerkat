@@ -717,6 +717,59 @@ exports.getUserOrgList = async (req, res) => {
   }
 }
 
+exports.getPackageGroupList = async (req, res) => {
+  //主線佇列
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    getGroupListOfPackage(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    sendRes(function() {seq_this();});
+  })
+
+  var packageID = ""
+  var token = ""
+  async function checkReq(callback){
+    try{
+      if(req.query.id){
+        packageID = req.query.id;
+      }else{
+        throw "the id(package) is required.";
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization
+      }else{
+        throw "the token(package) is required.";
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+
+  var result = ""
+  async function getGroupListOfPackage(callback){
+    const reqParams = {
+      id: packageID
+    }
+    const keys = [ "groups" ]
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetPackageShow,token,keys)
+    result = (resData.data).map(item => item.name);
+    callback();
+  }
+  async function sendRes(){
+    res.status(200).send(result)
+  }
+}
+
 // post
 exports.checkPost = async (req, res) => {
   try {
@@ -2420,6 +2473,94 @@ exports.delGroupPurge = async (req, res) => {
     if(resData.success == 200){
       res.status(resData.success).send()
     }else if(resData.success == 500){
+      res.status(resData.success).send(resData.log)
+    }
+  }
+}
+exports.delOrgGroupDelete = async (req, res) => {
+  seq()
+  .seq(function(){
+    var seq_this = this;
+    checkReq(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    getOrgGroupList(function() {seq_this();});
+  })
+  .seq(function(){
+    var seq_this = this;
+    appendOrgGroupList(function() {seq_this();});
+  })
+  // .seq(function(){
+  //   var seq_this = this;
+  //   checkReq(function() {seq_this();});
+  // })
+
+  var token = ""
+  var groups = []
+  var orgID = ""
+
+  async function checkReq(callback){
+    try{
+      if(req.body.groups){
+        groups = req.body.groups
+      }else{
+        throw "groups(array of group name/id) is required.";
+      }
+      if(req.body.id){
+        orgID = req.body.id
+      }else{
+        throw "id(organization) is required";
+      }
+      if(req.headers.authorization){
+        token = req.headers.authorization;
+      }else{
+        throw "ckan token is required.";
+      }
+      callback();
+    }catch(e){
+      console.log(e)
+      res.status(403).send(e)
+    }
+  }
+  
+  var groupsList = []
+  var deleted = []
+  async function getOrgGroupList(callback){
+    const reqParams = {
+      id: orgID,
+    }
+    const keys = ["groups"]
+    // params:{},URL,token,要的子層陣列
+    const resData = await getCommonListOrCommonPackageList(reqParams,ckanGetOrgShow,null,keys)
+    if(resData.success == 200){
+      const orgGroups = resData.data;
+      // filter 篩掉 orgGroups(組織有的群組) 包含 groups(要刪除的群組)的群組
+      groupsList = orgGroups.filter(itemA => !groups.includes(itemA.name));
+      deleted = orgGroups.filter(itemA => groups.includes(itemA.name));
+      callback();
+    }else if(resData.success == 500){
+      console.log(resData)
+      res.status(resData.success).send(resData.log)
+    }
+  }
+
+  async function appendOrgGroupList(){
+    const postData = {
+      id: orgID,
+      groups: groupsList
+    }
+    console.log("postData = " + JSON.stringify(postData))
+    // 要post的資料,URL,token
+    const resData = await postDataFunction(postData,ckanPostOrgPatch,token)
+    if(resData.success == 200){
+      const response = {
+        success:200,
+        deleted:deleted
+      }
+      res.status(resData.success).send(response)
+    }else if(resData.success == 500){
+      console.log(resData)
       res.status(resData.success).send(resData.log)
     }
   }
