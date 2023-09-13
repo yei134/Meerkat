@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const seq = require('seq');
-const ckanVariable = require('./variables.js');
+const {ckanVariable} = require('./variables.js');
 
 const tempDirectory = 'uploads/';
 const resourceSplitName = "_[type]_"

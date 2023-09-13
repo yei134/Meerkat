@@ -1,16 +1,15 @@
-# api@1.4.5 變動 2023/09/12
+# api@1.4.6 變動 2023/09/13
 
 ### 完成進度
 #### DEBUG DONE
-1. raccoonAPI_controller.js & ckanAPI_controller.js
-  > 宣告變數、function統一放置`variables.js`
+1. ckanAPI_controller.js
+  > 宣告處引用錯誤
 
 #### UPDATE DONE
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token<br>
-2. ckan的GROUP功能不符合目前的組織-部門階層架構，要用資料庫去實現？
-  > 資料庫實現 -> table規劃
+2. ckan的GROUP功能不符合目前的組織-部門階層架構
   > 廢除部門架構 -> 廢除相關api及其前端操作
 
 ### UPDATE清單
