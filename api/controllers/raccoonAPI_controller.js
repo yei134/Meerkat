@@ -47,7 +47,7 @@ exports.getStudiesList = async (req, res) => {
     var filePath = '';  // 要儲存的檔案路徑
 
     var index = "";
-    var header = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJFUnI3MkpHUmdBaUt3T0FsdE5JeVhRNGUyUS1kSTAyX2J1VXFNZFNsZkJVdTNidlBvT3lXWUVWV0IyeTN1TUhSSUlvVWNaelNlVE96aVVYYyIsImlhdCI6MTY4MzE5OTA1MH0.LK0VQp8BmR_wzF5p-jAnkvX_IQVqPajeM-zM7USsvv4";
+    var header = "";
     //主線佇列
     seq()
       .seq(function(){
@@ -75,11 +75,11 @@ exports.getStudiesList = async (req, res) => {
         }else{
           index = req.query.id;
         }
-        // if(!req.headers.authorization){
-        //   throw "token is required."
-        // }else{
-        //   header = req.headers.authorization;
-        // }
+        if(!req.headers.authorization){
+          throw "token is required."
+        }else{
+          header = req.headers.authorization;
+        }
         callback();
       }catch(e){
         console.log(e)
