@@ -4,7 +4,6 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const seq = require('seq');
 const { execFile } = require('child_process');
-require('dotenv').config();
 const {ckanVariable,raccoonVariable} = require('./variables.js');
 
 const tempDirectory = 'uploads/';
@@ -101,6 +100,9 @@ exports.getStudiesList = async (req, res) => {
       })
       .then(getRes => {
         fileUrl = getRes.data.result.url;
+        const now = new Date();
+        const dateString = now.toISOString();
+        fileName = dateString + "_index.csv"
         filePath = `${csvTempDirectory}${fileName}`;
         console.log('step.1 get index successful.')
         callback();
@@ -512,7 +514,9 @@ exports.postStudiesAppend = async (req, res) => {
       }
     }
 
-    var appendFileName = "append.csv"
+    const now = new Date();
+    const dateString = now.toISOString();
+    var appendFileName = dateString + "_append.csv"
 
     // 3. 對暫存資料夾執行ldcm2csv[append_csv]
     function step3(callback){
@@ -534,7 +538,7 @@ exports.postStudiesAppend = async (req, res) => {
 
     var indexFileUrl = '';   // 要下載的檔案 URL
     var indexFilePath = '';  // 要儲存的檔案路徑
-    var indexFileName = "index.csv" // 檔案名稱
+    var indexFileName = '' // 檔案名稱
     var indexFileUploadName = ''; // 要patch回去的name欄位
 
     // 4. 針對接到的resource_id，抓下csv檔URL
@@ -569,6 +573,9 @@ exports.postStudiesAppend = async (req, res) => {
       .then(getRes => {
         console.log('step.4 get symptom index file downloading url');
         indexFileUrl = getRes.data.result.url;
+        const now = new Date();
+        const dateString = now.toISOString();
+        indexFileName = dateString + "_index.csv"
         indexFilePath = `${csvTempDirectory}${indexFileName}`;
         indexFileUploadName = getRes.data.result.name;
         callback();

@@ -1,15 +1,15 @@
-# api@1.4.6 變動 2023/09/13
+# api@1.4.7 變動 2023/09/14
 
 ### 完成進度
 #### DEBUG DONE
-1. ckanAPI_controller.js
-  > 宣告處引用錯誤
+1. /api/raccoon/studies<br>
+  > 修改`studies`快速連續訪問會出現error的bug
 
 #### UPDATE DONE
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token<br>
-2. ckan的GROUP功能不符合目前的組織-部門階層架構
+2. ckan的GROUP功能不符合目前的組織-部門階層架構，要用資料庫去實現？
   > 廢除部門架構 -> 廢除相關api及其前端操作
 
 ### UPDATE清單
@@ -21,8 +21,6 @@
 #### /api/ckan/
 1. package_publish -> 開放共享資料集（package_patch -> 公有資料集）<br>
 2. package_archive -> 封閉共享資料集（刪除共有資料集）<br>
-3. package_group_append -> up<br>
-4. package_group_delete -> up<br>
 
 ##### 管理系列
 1. post api_token_create -> 給該使用者創建token
@@ -37,7 +35,6 @@
 
 ### High Priority DEBUG清單
 1. resource_patch｜對應公私有資料集
-2. package_create -> 若遇到remain的私有資料集要怎麼判斷？
 
 ### Low Priority DEBUG清單
 1. resource_delete dependency issue<br>
