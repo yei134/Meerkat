@@ -1,27 +1,17 @@
 import React from "react";
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import MenuIcon from '@mui/icons-material/Menu';
+import IconButton from '@mui/material/IconButton';
 
 const Header = () => {
   return (
     <header>
-      <h1><div>AI&nbsp;Data&nbsp;Sharing</div></h1>
-      <nav>
-        <ul>
-          <li>
-            <a href="/datasetInfo">datasetInfo</a>
-          </li>
-          <li>
-            <a href="/newDataset">newDataset</a>
-          </li>
-          <li>
-            {/* <a href="/manage">manage</a> */}
-          </li>
-          <li>
-            <a href="/fileUpload">fileUpload</a>
-          </li>
-        </ul>
-      </nav>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+        <MenuIcon />
+      </IconButton>
+      <h1><img src="LOGO.svg" className="logo"></img><div>AI&nbsp;Data&nbsp;Sharing</div></h1>
       <div>
-        <button  className="newDatasetBtn"><a href="newDataset">新增資料集</a></button>
+        <button className="button1" ><a href="newDataset"><InsertDriveFileIcon className="icon" />新增資料集</a></button>
       </div>
     </header>
   );

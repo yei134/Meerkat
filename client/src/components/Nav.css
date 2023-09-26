@@ -1,0 +1,39 @@
+.button_nav{
+  font-size:16px;
+  font-weight:bold;
+  /* float: right; */
+  color: #FFFFFF;
+  width: 120px;
+  height: 35px;
+  background-color: #6699A4;
+  border: none;
+  border-radius: 5px;
+  margin:0 10px 10px 0;
+  box-shadow: 0 3px 3px 0 #6C757D
+}
+.div_nav{
+  background-color: #E6D4AB;
+}
+.navbar{
+  width: 15%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  transition: ease-in-out;
+  transition-duration: 300;
+  background-color: #4d5270;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.div_navbar{
+  margin-top: 4%;
+  margin-right: 4%;
+  cursor: pointer;
+}
+.div_1{
+  height: 40px;
+  width: 150px;
+  background-color: #d6d9ea;
+}

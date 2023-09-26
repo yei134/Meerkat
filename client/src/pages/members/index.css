@@ -1,0 +1,13 @@
+.membersOperationList {
+  height: 100%;
+  width: min-content;
+  display: flex;
+
+  padding-right: 0.5rem;
+  border-right: 0.1rem solid #00000033;
+}
+.membersOperationList ul {
+  list-style-type: none;
+  padding: 0;
+}
+/* https://codepen.io/Chenyu/pen/aGZoJg */

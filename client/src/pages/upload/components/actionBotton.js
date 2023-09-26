@@ -27,6 +27,7 @@ function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
     for (let element of files) {
       setUploadFile(function (prev) {
         console.log(prev);
+        
         return [
           {
             id: v4(),
@@ -38,17 +39,18 @@ function ActionBotton({ setUploadFile, deletealldata, setstatus }) {
           ...prev,
         ];
       });
+      event.value={}
     }
   }
   return (
-    <div className="test">
+    <div>
       {/* className="upload" */}
-      <label for='filenp'>
-        <input type="file" id='filenp' onChange={add} accept=".dcm" multiple='true' />
+      <label htmlFor='filenp'>
+        <input type="file" id='filenp' onChange={add} accept=".dcm" multiple={true} />
         <span className="btnFile">上傳檔案</span>
       </label>
-      <label for='filep'>
-        <input type="file" id='filep' webkitdirectory="true" onChange={add} accept=".dcm" multiple='true' />
+      <label htmlFor='filep'>
+        <input type="file" id='filep' webkitdirectory="true" onChange={add} accept=".dcm" multiple={true} />
         <span className="btnFile">上傳資料夾</span>
       </label>
       <span />
