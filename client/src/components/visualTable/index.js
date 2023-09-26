@@ -7,19 +7,18 @@ export default function VisualTable({ field, data }) {
         <table className="visualTable">
           <thead>
             <tr>
-              {field.map((value) => {
-                return <th key={`thead_${value}`}>{value}</th>;
+              {field.map((element) => {
+                return <th key={`th_${element.id}`}>{element.display}</th>;
               })}
             </tr>
           </thead>
           <tbody>
             {data.map((element, index) => {
+              element.index = index;
               return (
-                <tr key={`tbody_${index}`}>
-                  {field.map((value) => {
-                    return (
-                      <td key={`tr_${value}${index}`}>{element[value]}</td>
-                    );
+                <tr key={`tb_${element.index}`}>
+                  {field.map((fieldElement) => {
+                    return <td key={`td_${element.index}-${fieldElement.id}`}>{element[fieldElement.name]}</td>;
                   })}
                 </tr>
               );

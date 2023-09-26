@@ -14,9 +14,14 @@ export default function Members() {
   // 可操作列表
   const [operationList, setOperationList] = useState([]);
   // 成員資料
-  const [data, setData] = useState([]);
+  const [members, setMembers] = useState([]);
   // 欄位
-  const field = ["No.", "Name", "E-mail", "Role"];
+  const field = [
+    { id: 1, name: "index", display: "No." },
+    { id: 2, name: "display_name", display: "Name" },
+    { id: 3, name: "email_hash", display: "E-mail" },
+    { id: 4, name: "capacity", display: "Role" },
+  ];
 
   // 取keycloak中的user資料
   async function getUserInfo() {
@@ -24,7 +29,7 @@ export default function Members() {
       .loadUserProfile()
       .then((res) => {
         setUserInfo(res);
-        console.log("keycloak.loadUserProfile:", res);
+        // console.log("keycloak.loadUserProfile:", res);
       })
       .catch((e) => {
         console.log(e);
@@ -42,7 +47,7 @@ export default function Members() {
         },
       })
       .then((res) => {
-        console.log("ckan.organization_list_for_user:", res);
+        // console.log("ckan.organization_list_for_user:", res);
         let tmp = [];
         res.data.map((element) => {
           if (element.capacity === "admin") {
@@ -66,7 +71,7 @@ export default function Members() {
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         res.data.map((element) => {
           setOperationList((prev) => {
             return [...prev, element];
@@ -87,6 +92,7 @@ export default function Members() {
           },
         })
         .then((res) => {
+          setMembers(res.data.users);
           console.log(res.data.users);
         })
         .catch((e) => {
@@ -108,7 +114,7 @@ export default function Members() {
       <div style={{ background: "#fff" }}>
         <ul>
           {operationList.map((element, index) => {
-            console.log(element);
+            // console.log(element);
             return (
               <li
                 key={`operationList_${index}`}
@@ -120,7 +126,9 @@ export default function Members() {
           })}
         </ul>
       </div>
-      <div>{/* <VisualTable field={field} data={data} /> */}</div>
+      <div>
+        <VisualTable field={field} data={members} />
+      </div>
     </>
   );
 }
