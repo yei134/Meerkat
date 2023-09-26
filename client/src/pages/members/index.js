@@ -46,6 +46,7 @@ export default function Members() {
         let tmp = [];
         res.data.map((element) => {
           if (element.capacity === "admin") {
+            getOrgPackageList(element.id);
             tmp.push(element);
           }
         });
@@ -54,6 +55,44 @@ export default function Members() {
       .catch((e) => {
         console.log(e);
       });
+  }
+  // 取得組織所擁有資料集
+  async function getOrgPackageList(orgId) {
+    await axios
+      .get(`${ckan_default}api/ckan/organization_package_list`, {
+        params: { id: orgId },
+        headers: {
+          Authorization: ckan_token,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        res.data.map((element) => {
+          setOperationList((prev) => {
+            return [...prev, element];
+          });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+  async function getMembers(type, id) {
+    if (type === "organization") {
+      await axios
+        .get(`${ckan_default}api/ckan/organization_info`, {
+          params: { id: id },
+          headers: {
+            Authorization: ckan_token,
+          },
+        })
+        .then((res) => {
+          console.log(res.data.users);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
   }
 
   useEffect(() => {
@@ -69,15 +108,19 @@ export default function Members() {
       <div style={{ background: "#fff" }}>
         <ul>
           {operationList.map((element, index) => {
+            console.log(element);
             return (
-              <li key={`operationList_${index}`}>{element.display_name}</li>
+              <li
+                key={`operationList_${index}`}
+                onClick={() => {
+                  getMembers(element.type, element.id);
+                }}
+              >{`${element.type}:  ${element.title}`}</li>
             );
           })}
         </ul>
       </div>
-      <div>
-        <VisualTable field={field} data={data} />
-      </div>
+      <div>{/* <VisualTable field={field} data={data} /> */}</div>
     </>
   );
 }
