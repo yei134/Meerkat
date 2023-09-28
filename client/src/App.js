@@ -11,7 +11,7 @@ import Upload from "./pages/upload/index";
 import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
 import DatasetList from "./pages/datasetlist";
-import Apendmanage from "./pages/appendixmanage";
+import DicomManage from "./pages/dicomManage";
 
 const router = createBrowserRouter([
   {
@@ -27,13 +27,12 @@ const router = createBrowserRouter([
     element:<NewDataset />,
   },
   {
-    path:"fileUpload",
+    path:"datasetInfo/:getId/fileUpload/:getSymptom",
     element:<Upload />,
-  }
-  ,
+  },
   {
-    path:"/datasetInfo/:getId/appendixmanage",
-    element:<Apendmanage />,
+    path:"datasetInfo/:getId/dicomManage",
+    element:<DicomManage/>,
   }
 ]);
 // 介面所需框架集合
