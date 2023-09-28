@@ -8,12 +8,18 @@ services:
       dockerfile: ./Dockerfile.backend
     ports:
       - "9000:9000"
+      # ports in container must be same as PORT & REACT_APP_BACKEND_URI environment variable.
+      # default: 9000
     volumes: 
       - ./api:/api
       - /api/node_modules
     environment:
       - CKAN_BASE_URI=https://sharing.v6.rocks/api/3/action/
       - RACCOON_BASE_URI=https://raccoon.dicom.org.tw/
+      - PORT=9000
+      # REACT_PORT must be same as react environment variable below.
+      # default:3000
+      - REACT_PORT=3000
 
   react:
     container_name: meerkat_frontend

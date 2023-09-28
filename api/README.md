@@ -1,16 +1,24 @@
-# api@1.4.7 變動 2023/09/14
+# api@1.4.8 變動 2023/09/28
 
 ### 完成進度
 #### DEBUG DONE
-1. /api/raccoon/studies<br>
-  > 修改`studies`快速連續訪問會出現error的bug
+1. /api/app.js
+  > `CORS`限制express port
+2. 註解了/group相關api
+  > wiki也註記了
 
 #### UPDATE DONE
+1. /api/ckan/user_show -> up<br>
+2. meerkat_with_certbot_ssl_create
+  > 附加let's encrypt的nginx config
+3. .env種類
+  > .env -> 開發環境
+
+  > .env.pro -> 部屬環境
+
 
 ### Discussion List
 1. 以組織管理身分的token，create維護人員的token<br>
-2. ckan的GROUP功能不符合目前的組織-部門階層架構，要用資料庫去實現？
-  > 廢除部門架構 -> 廢除相關api及其前端操作
 
 ### UPDATE清單
 1. SSL<br>

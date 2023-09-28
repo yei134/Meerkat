@@ -23,6 +23,7 @@ module.exports = app => {
   router.get("/collaborator_list", ckanAPI.getCollaboratorList);
   router.get("/collaborator_list_for_user", ckanAPI.getUserCollaboratorList);
   router.get("/organization_list_for_user", ckanAPI.getUserOrgList);
+  router.get("/user_info", ckanAPI.getUserInfo);
 
   // router.get("/package_group_list", ckanAPI.getPackageGroupList);
   router.get("/group_package_list", ckanAPI.getGroupPackageList);
@@ -47,7 +48,7 @@ module.exports = app => {
   // 待修公私 router.patch("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
 
   // 暫不採用 router.patch("/group_organization_patch", ckanAPI.patchGroupOrgChange); 
-
+  
   // delete
   router.delete("/resource_delete", ckanAPI.delResourceDelete);
   router.delete("/organization_member_delete", ckanAPI.delOrgMemberDelete);

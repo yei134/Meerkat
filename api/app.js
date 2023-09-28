@@ -9,11 +9,22 @@ const cors = require("cors");//載入跨域套件
 const indexRouter = require('./routes/index');
 const app = express();
 
+// react cors setting
+const allowedOrigins = [`http://localhost:${process.env.REACT_PORT}`];
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(cors());//跨網
+app.use(cors({
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

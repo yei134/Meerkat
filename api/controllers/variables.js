@@ -39,6 +39,8 @@ const ckanVariable = {
   ckanGetTagList: process.env.CKAN_BASE_URI + "tag_list",
   ckanGetTagShow: process.env.CKAN_BASE_URI + "tag_show",
 
+  ckanGetUserInfo: process.env.CKAN_BASE_URI + "user_show",
+
   ckanGetOrgList: process.env.CKAN_BASE_URI + "organization_list",
   ckanGetOrgShow: process.env.CKAN_BASE_URI + "organization_show",
   ckanPostOrgMemberEdit: process.env.CKAN_BASE_URI + "organization_member_create",

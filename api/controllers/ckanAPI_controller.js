@@ -80,6 +80,54 @@ exports.getPackageShow = async (req, res) => {
     }
   }
 }
+exports.getUserInfo = async (req, res) => {
+    //將request的查詢參數id拿出
+    var searchQuery = ""
+    //前端post過來的ckanToken
+    var token = ""
+
+    //主線佇列
+    seq()
+    .seq(function(){
+      var seq_this = this;
+      checkReq(function() {seq_this();});
+    })
+    .seq(function(){
+      var seq_this = this;
+      userShow(function() {seq_this();});
+    })
+    
+    function checkReq(callback){
+      try{
+        if(!req.query.id){
+          throw "id/username is required."
+        }else{
+          searchQuery = req.query.id
+        }
+        if(req.headers.authorization){
+          token = req.headers.authorization
+        }
+        callback();
+      }catch(e){
+        console.log(e)
+        res.status(403).send(e)
+      }
+    }
+    async function userShow(){
+      const reqParams = 
+      {
+        id: searchQuery
+      }
+      // params:{},URL,token,要的子層陣列
+      const resData = await ckanVariable.getCommonListOrCommonPackageList(reqParams,ckanVariable.ckanGetUserInfo,token,null)
+      if(resData.success == 200){
+        res.status(resData.success).send(resData.data)
+      }else if(resData.success == 500){
+        console.log(resData)
+        res.status(resData.success).send(resData.log)
+      }
+    }
+}
 exports.getResourceShow = async (req, res) => {
   //將request的查詢參數id拿出
   var resourceID = ""
