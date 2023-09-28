@@ -5,9 +5,8 @@ import axios from 'axios';
 
 /*諄  變數需重新設定*/
 
-const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, arraySymptoms}) => {
+const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms}) => {
 
-  const token ="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJFUnI3MkpHUmdBaUt3T0FsdE5JeVhRNGUyUS1kSTAyX2J1VXFNZFNsZkJVdTNidlBvT3lXWUVWV0IyeTN1TUhSSUlvVWNaelNlVE96aVVYYyIsImlhdCI6MTY4MzE5OTA1MH0.LK0VQp8BmR_wzF5p-jAnkvX_IQVqPajeM-zM7USsvv4";
   //新增資料集畫面需要的參數
   const [name, setName] = useState("");//package_create name (資料集英文名稱 用來當檔案名的 不可有空白 數字開頭
   const [title, setTitle] = useState("")//package_create title(資料集的名字 可以中文
@@ -161,42 +160,25 @@ const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, ar
   function sendTable() {
     
     axios.post( 
-      `${process.env.REACT_APP_BACKEND_URI}ckanAPI/package_create`,
+      `${process.env.REACT_APP_BACKEND_URI}api/ckan/package_create`,
         {
-          name:'test0904',
+          name:name,
           title:title,
           author:author,
           author_email:author_email,
           maintainer:maintainer,
           maintainer_email:maintainer_email,
           note:note,
-          owner_org:'national-taipei-university-of-nursing-and-health-scienses',
+          owner_org:ownerOrg,
           // groups:groups
         },
         {
           headers:{
-            'authorization': token,
+            'authorization': process.env.REACT_APP_CKAN_TOKEN,
             'Content-Type':'application/json'
           }
         }
     )
-    // axios.post( 
-    //   `${process.env.REACT_APP_BACKEND_URI}ckanAPI/package_create`,
-    //   {
-    //     body:{
-    //       name:name,
-    //       title:title,
-    //       author:author,
-    //       author_email:author_email,
-    //       maintainer:maintainer,
-    //       maintainer_email:maintainer_email,
-    //       note:note,
-    //       owner_org:ownerOrg,
-    //       groups:groups
-    //     },headers:{
-    //       'authorization': token,
-    //     }
-    // })
     .then( (response) => console.log(response))
     .catch( (error) => console.log(error))
   }
@@ -293,7 +275,7 @@ const Edit = ({ add, symptomsAdd, submittingState, submittingState1, dataset, ar
             <select id="ownerOrg" className="input-field" name="ownerOrg" value={ownerOrg} onChange={ownerOrgChange}>
               <option value=""></option>
               <option value="academia-sinica">Academia Sinica</option>
-              <option className="label_flex" value="national-taipei-university-of-nursing-and-health-sciences">National Taipei University of Nursing and Health Sciences</option>
+              <option className="label_flex" value="national-taipei-university-of-nursing-and-health-scienses">National Taipei University of Nursing and Health Sciences</option>
               <option value="national-yang-ming-chiao-tung-university">National Yang-Ming Chiao Tung University</option>
               <option value="taipei-veterans-general-hospital">Taipei Veterans General Hospital</option>
             </select>
