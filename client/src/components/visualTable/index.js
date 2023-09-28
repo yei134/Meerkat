@@ -2,7 +2,7 @@ import "./index.css";
 export default function VisualTable({ field, data }) {
   return (
     field !== undefined &&
-    data != undefined && (
+    data !== undefined && (
       <>
         <table className="visualTable">
           <thead>
