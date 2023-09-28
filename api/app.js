@@ -10,7 +10,11 @@ const indexRouter = require('./routes/index');
 const app = express();
 
 // react cors setting
-const allowedOrigins = [`http://localhost:${process.env.REACT_PORT}`];
+var reactPort = "3000"
+if(process.env.REACT_PORT){
+  reactPort = process.env.REACT_PORT
+}
+const allowedOrigins = [`http://localhost:${reactPort}`];
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
