@@ -1,76 +1,39 @@
-import React, { useEffect, useState } from "react";
-import Linkify from "linkify-react";  //判斷字串是否含超連結
-import ItemLeft from"./itemLeft";
-import ItemRight from"./itemRight";
+import React from "react";
 import "../index.css";
-import HomeIcon from '@mui/icons-material/Home';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-const ConRight = ({notes, title, files, name}) => {
-  var[indexFiles, setIndexFiles ] = useState([]);
-  var[appendix, setAppendix ] = useState([]);
-  useEffect(()=>{
-    const keywords = "_[type]_";  //辨別[索引檔]和[附件檔]的關鍵詞
-    indexFiles = files.filter(item => {
-      return typeof item.name === 'string' && item.name.includes(keywords);
-    }); // indexFiles => [索引檔]
-    setIndexFiles(indexFiles);
-    appendix = files.filter(item => {
-      return typeof item.name === 'string' && !item.name.includes(keywords);
-    }); // appendix => [附件檔]
-    setAppendix(appendix);
-  },[files])
-
+import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
+//notes, symptoms, title
+const ConRight = ({notes, symptoms, title, files, name}) => {
   return (
     <div>
-      <div className="route">
-        <HomeIcon/>
-        <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>
+      <p className="p">
+        <EmojiFlagsIcon />
+        <a href="/">資料集列表</a>
         /
-        <a href={`/datasetInfo/${name}`} className="page">&nbsp;&nbsp;{title}</a>
-      </div>
-      <div>
-        <div className="conright">
-          <font className="font-package-title">{title}</font>
-          <Linkify as="div" className="note">{notes}</Linkify>
-        </div>
-        <div className="file-container">
+        <a href={`/datasetInfo/${name}`} className="page">{title}</a>
+      </p>
+      <div className="conright">
+        <h2>{title}</h2>
+        <div className="note">{notes}</div>
+        <hr></hr>
+        <div className="flex-container">
           <div className="dataleft">
-            <div className="float-left">
-              <font className="conright-file-title">DICOM索引檔</font>
-            </div>
-            <hr className="file-hr-style"/>
-            {
-              indexFiles.map((element)=>{
-                return(
-                  <ItemLeft
-                    key={element.id}
-                    name={element.name}
-                    format={element.format}
-                    last_modified={element.last_modified}
-                    url={element.url}
-                  />
-                )
-              })
-            }
+            <h3 className="h3">DICOM索引檔</h3>
+            <a href="google.com">{symptoms}</a><br/>
+            <h6 className="h6">*需下載者請先提出申請文件</h6>
           </div>
           <div className="dataright">
-          <div className="float-left">
-            <font className="conright-file-title">其餘附加檔案</font>
-          </div>
-          <hr className="file-hr-style"/>
-          {
-            appendix.map((element)=>{
-              return(
-                <ItemRight
-                  key={element.id}
-                  name={element.name}
-                  format={element.format}
-                  last_modified={element.last_modified}
-                  url={element.url}
-                />
-              )
-            })
-          }
+            <h3 className="h3">其餘附加檔案</h3>
+            <div>
+              {
+                files.map((item)=>{
+                  return(
+                    <li key={item}>
+                      {item}
+                    </li>
+                  )
+                })
+              }
+            </div>
           </div>
         </div>
       </div>
