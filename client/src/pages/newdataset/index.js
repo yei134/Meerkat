@@ -20,22 +20,24 @@ const NewDataset = () => {
   }, []);
 
   return (
-    <div className="new_basic">
+    <div>
       <Header/>
-      <div className="new_content">
-        <Edit
-          add={setDataset}
-          symptomsAdd={setSymptoms} 
-          submittingState={submittingState}
-          submittingState1={submittingState1}
-          dataset={dataset} 
-          arraySymptoms={symptoms} 
-        />
-        <List
-          listSymptoms={symptoms}
-          listDelete={setSymptoms}
-          submittingState1={submittingState1}
-        />
+      <div className="new-flex-container">
+        <div className="new-form-container">
+          <Edit
+            add={setDataset}
+            symptomsAdd={setSymptoms} 
+            submittingState={submittingState}
+            submittingState1={submittingState1}
+            dataset={dataset} 
+            arraySymptoms={symptoms} 
+          />
+          <List
+            listSymptoms={symptoms}
+            listDelete={setSymptoms}
+            submittingState1={submittingState1}
+          />
+        </div>
         <Outlet />
       </div>
     </div>

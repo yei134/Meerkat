@@ -1,3 +1,8 @@
+.div_symptom_name {
+  padding: 1%;
+  padding-top: 2%;
+  width: 98%;
+}
 div {
   padding: 1%;
   padding-top: 2%;
@@ -7,18 +12,6 @@ div {
 hr {
   border: 1px solid #00000020;
   width: 100%;
-}
-
-input {
-  padding: 10px;
-  width: auto;
-  height: auto;
-}
-
-textarea {
-  /* padding: 10px; */
-  width: 98%;
-  /* height: 300px; */
 }
 
 .text{
@@ -156,4 +149,44 @@ h5{
   flex-wrap: wrap;
   width: auto;
   margin: 5px auto;
+}
+.new-form-input-style{
+  width: 96%;
+  height: 1rem;
+  align-self: center;
+  border-radius: 5px;
+  box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.2);
+  border: 0;
+  margin-bottom: 2vh;
+  font-size: 1rem;
+  padding: 0.75rem;
+}
+.new-form-container{
+  display: flex;
+  flex-direction: column;
+  width: 20vw;
+  height: auto;
+  flex: 2;
+  background-color: #EDE2C4;
+  border-radius: 5px;
+  padding: 2vw;
+  box-shadow: 1px 2px 3px #8b8b8b;
+}
+.new-flex-container {
+  display: flex;
+  flex-direction: row;
+  word-wrap:break-word;
+  white-space:pre-wrap;
+  width: 60vw;
+  position: absolute;
+  left: 50%;
+  margin: 5vh 0 0 -30vw;
+}
+.new-title-style{
+  font-size: xx-large;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  color: #595959;
+  margin-bottom: 2vh;
 }

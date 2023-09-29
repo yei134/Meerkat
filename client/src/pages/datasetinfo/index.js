@@ -22,7 +22,8 @@ function DatasetInfo(){
   const [ notes, setNotes ] = useState();
   const [ title, setTitle ] = useState();
   var [ tags, setTags ] = useState();
-  var [ organization, setOrganization ] = useState();
+  var [ organization_title, setOrganization_title ] = useState();
+  var [ organization_id, setOrganization_id ] = useState();
   const [ createTime, setCreateTime ] = useState();
   const [ modifiedTime, setModifiedTime ] = useState();
   const [ datasetEmail, setDatasetEmail ] = useState();
@@ -38,11 +39,13 @@ function DatasetInfo(){
               {params:{datasetName:datasetName},headers:{'Authorization': token}}
         )
         .then(response => {
-          packageDataInfo = response.data.result;
-          setPackageDataInfo(response.data.result);
+          packageDataInfo = response.data;
+          setPackageDataInfo(packageDataInfo);
           //以下為破解拿不到孫子的怪寫法
-          organization=packageDataInfo.organization.title;
-          setOrganization(organization);
+          organization_title = packageDataInfo.organization.title;
+          setOrganization_title(organization_title);
+          organization_id = packageDataInfo.organization.id;
+          setOrganization_id(organization_id);
           files=packageDataInfo.resources;
           setFiles(files);
           tags=packageDataInfo.tags;
@@ -66,7 +69,6 @@ function DatasetInfo(){
       setCreateTime(packageDataInfo.metadata_created);
       setModifiedTime(packageDataInfo.metadata_modified);
       setDatasetEmail(packageDataInfo.maintainer_email);
-      console.log(tags);
     }
     getData();
   },[packageDataInfo])
@@ -81,7 +83,8 @@ function DatasetInfo(){
         datasetName = {datasetName}
         title = {title}
         // groupsName = {groups}
-        ownerOrg = {organization}
+        org_title = {organization_title}
+        org_id = {organization_id}
         maintainer={maintainer}
         author = {author}
         createTime={createTime}
