@@ -4,6 +4,9 @@ import ItemLeft from"./itemLeft";
 import ItemRight from"./itemRight";
 import "../index.css";
 import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 const ConRight = ({notes, title, files, name}) => {
   var[indexFiles, setIndexFiles ] = useState([]);
@@ -22,11 +25,16 @@ const ConRight = ({notes, title, files, name}) => {
 
   return (
     <div>
-      <div className="route">
-        <HomeIcon/>
-        <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>
-        /
-        <a href={`/datasetInfo/${name}`} className="page">&nbsp;&nbsp;{title}</a>
+      <div className="route-container">
+        <div className="route">
+          <HomeIcon/>
+          <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>
+          /
+          <a href={`/datasetInfo/${name}`} className="page">&nbsp;&nbsp;{title}</a>
+        </div>
+        <button className="edit-icon-button"><a href={`/datasetInfo/${name}/dicomManage`}><PsychologyIcon/></a></button>
+        <button className="edit-icon-button"><a href="/datasetInfo"><AttachFileIcon/></a></button>
+        <button className="edit-icon-button"><a href={`/datasetInfo/${name}/datasetEdit`}><SettingsIcon/></a></button>
       </div>
       <div>
         <div className="conright">

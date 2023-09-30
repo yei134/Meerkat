@@ -2,7 +2,7 @@ import React, { useState }from "react";
 import ConLeft from "./conleft";
 import ConRight from "./conright";
 
-const Content = ({datasetName, title, groupsName, ownerOrg, author, maintainer, createTime, modifiedTime, notes, files, tags}) => {
+const Content = ({datasetName, title, groupsName, org_title, author, maintainer, createTime, modifiedTime, notes, files, tags, org_id}) => {
 
   return (
     <div className="flex-container">
@@ -11,7 +11,8 @@ const Content = ({datasetName, title, groupsName, ownerOrg, author, maintainer, 
         name = {datasetName}
         title = {title}
         groupsName = {groupsName}
-        ownerOrg = {ownerOrg}
+        org_title = {org_title}
+        org_id={org_id}
         author = {author}
         maintainer={maintainer}
         createTime={createTime}

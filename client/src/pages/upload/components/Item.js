@@ -31,7 +31,7 @@ const Item = ({
           formData.append('id', symptomId);
           formData.append('dicomFile', item.dicomFile);
           formData.append('description', symptomId);
-          if(formData!=={}){
+          if(formData!==undefined){
             axios.post(`${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesAppend`, formData, {
               headers: {
                 "Authorization": process.env.REACT_APP_CKAN_TOKEN,
@@ -71,7 +71,7 @@ const Item = ({
       <td className={fileStatus === "READY" ? "ready" : "success"}>{fileStatus}</td>
       <td>Created&ensp;Time:{processingProgress}</td>
       <td>{fileSize}</td>
-      <td className="flex-container-row">
+      <td >
         {/* 代改 */}
         <button onClick={uploadItem} className="btnUpload" >Upload</button>
         <button onClick={deleteItem} className="btnReset">Delete</button>

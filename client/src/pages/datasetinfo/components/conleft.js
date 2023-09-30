@@ -1,12 +1,35 @@
-import React, { useState } from "react";
+//套件
+import React, { useState, useEffect, useRef, useContext } from "react";
+import axios from 'axios';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-const ConLeft = ({author, groupsName, createTime, modifiedTime, ownerOrg, tags, maintainer, title}) => {
+const ConLeft = ({author, groupsName, createTime, modifiedTime, org_title, org_id, tags, maintainer, title}) => {
 
-  //字串分割，只保留整段時間的前10碼，只留日期
   var createDate = "";
   var modifiedDate = "";
+  var [ org_image_url, setOrg_image_url ] = useState();
+  useEffect(() => {
+    const getDataset = async () => {
+      try {
+        await axios.get( 
+          `${process.env.REACT_APP_BACKEND_URI}api/ckan/organization_info`,
+              {params:{id:org_id},headers:{'Authorization': process.env.REACT_APP_CKAN_TOKEN}}
+        )
+        .then(response => {
+          org_image_url=response.data.image_display_url;
+          setOrg_image_url(org_image_url);
+        })
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    if(org_id!==undefined){
+      getDataset();
+    }
+  },[org_id])
+  
+  //字串分割，只保留整段時間的前10碼，只留日期
   if(typeof createTime === "string"){
     createDate = createTime.slice(0, 10);
   }
@@ -20,8 +43,11 @@ const ConLeft = ({author, groupsName, createTime, modifiedTime, ownerOrg, tags, 
       </div> 
       <div className="conleft-title-style">所屬組織</div>
       <div className="conleft-org-container">
-        <img src="../LOGO.svg"></img>
-        <div>{ownerOrg}</div>
+        <div className="org_img_container">
+          <img src={org_image_url} className="org_img"></img>
+        </div>
+        <hr></hr>
+        <div className="org_title">{org_title}</div>
       </div>
       <div className="conleft-title-style">相關人員</div>
       <div className="info-div-container">

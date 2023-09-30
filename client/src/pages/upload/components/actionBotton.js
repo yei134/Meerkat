@@ -26,7 +26,7 @@ function ActionBotton({ datasetName, setUploadFile, deletealldata, status, setst
           `${process.env.REACT_APP_BACKEND_URI}api/ckan/package_show`,
           {params:{datasetName:datasetName}})
         .then(response => {
-          packageDataInfo = response.data.result;
+          packageDataInfo = response.data;
           setPackageDataInfo(packageDataInfo);
           setTitle(packageDataInfo.title);
           files=packageDataInfo.resources.map((resource)=>resource);

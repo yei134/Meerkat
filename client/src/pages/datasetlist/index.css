@@ -41,6 +41,7 @@ header nav ul li a, .newDatasetBtn{
   font-size:25px;
   font-weight:bold;
   font-family:"Helvetica","Microsoft JhengHei";
+  margin-top: 2%;
 }
 
 .p{
@@ -136,7 +137,8 @@ header nav ul li a, .newDatasetBtn{
 }
 .datasetlist-conright-container{
   display: flex;
-  flex: 7;
+  /* flex: 7; */
+  width:70vw;
   flex-direction: column;
 }
 .package-list-div-style{
@@ -152,7 +154,7 @@ header nav ul li a, .newDatasetBtn{
 .list_content{
   display: flex;
   flex-direction: column;
-  margin: 0 0 3% 4%;
+  margin: 1.5vh 0 1.5vh 2.75vw;
   padding: 2% 3% 2% 3%;
   word-wrap:break-word;  /*元素換行*/
   width: 14vw;
@@ -172,7 +174,8 @@ header nav ul li a, .newDatasetBtn{
   flex: 1;
 }
 .condition{
-  flex: 1.5;
+  /* flex: 1.5; */
+  width: 15vw;
   margin: 0 0 0 5vw ;
 }
 .package-condition-title{
@@ -264,9 +267,9 @@ header nav ul li a, .newDatasetBtn{
   display: flex;
   flex-direction: row;
   align-items: end;
-  margin-left: 8%;
+  margin-left: 5vw;
   margin-bottom: 1%;
-  width: 85%;
+  width: 60vw;
 }
 .right-condition-container{
   white-space: nowrap;
@@ -295,6 +298,7 @@ header nav ul li a, .newDatasetBtn{
   border:none;
   background-color: transparent;
   height: auto;
+  padding: 0.5%;
 }
 .icon-button:hover{
   background-color: #8b8b8b15;
@@ -306,6 +310,34 @@ header nav ul li a, .newDatasetBtn{
   margin-left: 8%;
 }
 .dataset-list-hr{
-  width: 85%;
+  width: 65vw;
   color: #8b8b8b;
+}
+.org_container{
+  display:flex;
+  /* flex-direction: row; */
+}
+.org_url{
+  position:relative;
+  width: 12%;
+  margin-right: 1%;
+}
+.org-title-font-style{
+  margin-left: 1%;
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 2%;
+  color: #727171;
+}
+.image_url{
+  width: 100%;
+  position:absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin:auto;
+}
+.package-list-container{
+  margin-left: 2vw;
 }

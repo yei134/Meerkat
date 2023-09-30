@@ -102,8 +102,6 @@ div {
   box-shadow: 0 0 20px rgba(255, 255, 255, 1);
 }
 
-
-
 .background {
   width: auto;
   height: auto;
@@ -123,6 +121,11 @@ div {
   font-weight: bold;
   margin: 0px, 0px, 0px, 20%,;
 }
-.total-file-font{
-  /* 待改 */
+.uploadfile-container {
+  width: 90vw;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -30vh 0 0 -45vw;
 }

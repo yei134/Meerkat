@@ -17,8 +17,9 @@ const Content = ({dataset}) => {
   var [ orgName, setOrgName ] = useState();
   var [ packageDataInfo, setPackageDataInfo ] = useState([]);
   var [ files, setFiles ] = useState([]);
-  var [ organization, setOrganization ] = useState();
-
+  var [ org_title, setOrg_title ] = useState();
+  var [ org_id, setOrg_id] = useState();
+  var [ org_image_url, setOrg_image_url ] = useState();
 
   useEffect(() => {
     const getDataset = async () => {
@@ -28,11 +29,13 @@ const Content = ({dataset}) => {
               {params:{datasetName:name},headers:{'Authorization': process.env.REACT_APP_CKAN_TOKEN}}
         )
         .then(response => {
-          packageDataInfo = response.data.result;
-          setPackageDataInfo(response.data.result);
+          packageDataInfo = response.data;
+          setPackageDataInfo(packageDataInfo);
           //以下為破解拿不到孫子的怪寫法
-          organization=packageDataInfo.organization.title;
-          setOrganization(organization);
+          org_id=packageDataInfo.organization.id;
+          setOrg_id(org_id);
+          org_title=packageDataInfo.organization.title;
+          setOrg_title(org_title);
           files=packageDataInfo.resources;
           setFiles(files);
         })
@@ -42,6 +45,31 @@ const Content = ({dataset}) => {
     }
     getDataset();
   },[name])
+  useEffect(() => {
+    const getOrg = async () => {
+      try {
+        await axios.get(
+          `${process.env.REACT_APP_BACKEND_URI}api/ckan/organization_info`,
+              {params:{id:org_id},headers:{'Authorization': process.env.REACT_APP_CKAN_TOKEN}}
+        )
+        .then(response => {
+          // console.log(org_id);
+          if(response.data.image_display_url!==""){
+            org_image_url=response.data.image_display_url;
+            setOrg_image_url(org_image_url);
+          }else{
+            org_image_url="./undefined_url.svg";
+            setOrg_image_url(org_image_url);
+          }
+        })
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    if(org_id!==undefined){
+      getOrg();
+    }
+  },[org_id])
 
   return (
     <>
@@ -51,7 +79,14 @@ const Content = ({dataset}) => {
       ) : (
         <Link to={`datasetInfoU/${name}`} className="link">{title}</Link>  //回傳使用者介面
       )} */}
-      <font className="package-list-org-font-style">{organization}</font>
+      <div className="org_container">
+        <div className="org_url">
+          <img src={`${org_image_url}`} className="image_url"></img>
+        </div>
+        <div className="org-title-font-style">
+          <font className="org-title-font-style">{org_title}</font>
+        </div>
+      </div>
       <Link to={`datasetInfo/${name}`} className="link" title={`/datasetInfo/${name}`}>{title}</Link>
       <font className="package-list-org-font-style">{name}</font>
       <div className="p">{notes}</div>
@@ -59,7 +94,7 @@ const Content = ({dataset}) => {
         <div className="AttachFileIcon-style">
           <AttachFileIcon></AttachFileIcon>{files.length}件
         </div>
-        <Link to={`datasetInfo/${name}`} className="link-to-dataInfo" title={`/datasetInfo/${name}`}>LEARN MORE</Link>
+        <Link to={`datasetInfo/${name}`} className="link-to-dataInfo" title={`/datasetInfo/${name}`}>More...</Link>
       </div>
     </div>
     </>

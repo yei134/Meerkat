@@ -12,6 +12,8 @@ import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
 import DatasetList from "./pages/datasetlist";
 import DicomManage from "./pages/dicomManage";
+import Organization from "./pages/organization";
+import DatasetEdit from "./pages/datasetEdit";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
   {
     path:"datasetInfo/:getId/dicomManage",
     element:<DicomManage/>,
+  },
+  {
+    path:"organization",
+    element:<Organization/>,
+  },
+  {
+    path:"datasetInfo/:getId/datasetEdit",
+    element:<DatasetEdit/>,
   }
 ]);
 // 介面所需框架集合

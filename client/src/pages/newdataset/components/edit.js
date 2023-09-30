@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 } from "uuid";
 import axios from 'axios';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 /*諄  變數需重新設定*/
 
@@ -22,9 +23,6 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms}) => 
   const [input2, setInput2] = useState("");
   const [symptoms, setSymptoms] = useState([]);//病徵
   const navigate = useNavigate();
-
-  useEffect(()=>{
-  })
 
   //newDataset's label change
   function nameChange(e){
@@ -108,57 +106,55 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms}) => 
   }
 
   function btn_submit(){
-    // submittingState.current = true;
-    //設一個字串檢查特定欄位有沒有填寫，若沒填寫要發出警告
-    // if(name===""){
-    //   alert("名字尚未填寫！");
-    //   return;
-    // }
-    // else if(title===""){
-    //   alert("標題尚未填寫！")
-    //   return;
-    // }
-    // else if(maintainer===""){
-    //   alert("管理者尚未填寫！")
-    //   return;
-    // }
-    // else if(maintainer_email===""){
-    //   alert("管理者電子郵件尚未填寫！")
-    //   return;
-    // }
-    // else{
-    //   add(function () {
-    //     return [
-    //       {
-    //         name,
-    //         title,
-    //         note,
-    //         private_dataset,
-    //         groups,
-    //         ownerOrg,
-    //       },
-    //     ];
-    //   });
-    //   alert("資料集創建成功！");
-    //   //存至Ckan後頁面重整，表單清空
-    //   setName("")
-    //   setTitle("")
-    //   setAuthor("")
-    //   setAuthor_email("")
-    //   setMaintainer("")
-    //   setMaintainer_email("")
-    //   setNote("")
-    //   setPrivate(false)
-    //   setGroups("")
-    //   setOwnerOrg("")
-    //   navigate(`datasetInfo/${name}/fileUpload`);
-    // }
+    submittingState1.current = true;
+    // 設一個字串檢查特定欄位有沒有填寫，若沒填寫要發出警告
+    if(name===""){
+      alert("名字尚未填寫！");
+      return;
+    }
+    else if(title===""){
+      alert("標題尚未填寫！")
+      return;
+    }
+    else if(maintainer===""){
+      alert("管理者尚未填寫！")
+      return;
+    }
+    else if(maintainer_email===""){
+      alert("管理者電子郵件尚未填寫！")
+      return;
+    }
+    else{
+      add(function () {
+        return [
+          {
+            name,
+            title,
+            note,
+            private_dataset,
+            groups,
+            ownerOrg,
+          },
+        ];
+      });
+      alert("資料集創建成功！");
+      //存至Ckan後頁面重整，表單清空
+      setName("")
+      setTitle("")
+      setAuthor("")
+      setAuthor_email("")
+      setMaintainer("")
+      setMaintainer_email("")
+      setNote("")
+      setPrivate(false)
+      setGroups("")
+      setOwnerOrg("")
+      navigate(`datasetInfo/${name}/fileUpload`);
+    }
     // test area
     sendTable()
   }
-  //test
   function sendTable() {
-    
     axios.post( 
       `${process.env.REACT_APP_BACKEND_URI}api/ckan/package_create`,
         {
@@ -202,92 +198,94 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms}) => 
   return (
     <div>
       <div>
+        <div>
+          <span className="new-title-style"><LibraryAddIcon/>&nbsp;Create&nbsp;Dataset</span>
+        </div>
         <form>
           {/* 填寫區域 */}
-          <label className="label_flex">
-            <span className="label_left">*名字：</span>
-            <input 
-              type="text" 
-              value={name} 
+          <div>
+            <span>Dataset&nbsp;Name：<font className="edit-must-fill">&#8251;必填</font></span>
+            <input
+              type="text"
+              value={name}
               onChange={nameChange}
-              placeholder="需英文且不可有空白" 
-              className="input-field"/>
-          </label>
-          <p/>
-          <label className="label_flex">
-            <span className="label_left">*標題：</span>
+              placeholder="需英文且不可有空白"
+              className="new-form-input-style"
+            />
+          </div>
+          <div>
+            <span>Dataset&nbsp;Title：<font className="edit-must-fill">&#8251;必填</font></span>
             <input
-              type="text" 
-              value={title} 
-              onChange={titleChange} 
-              className="input-field" />
-          </label>
+              type="text"
+              value={title}
+              onChange={titleChange}
+              className="new-form-input-style"
+            />
+          </div>
           <hr></hr>
-          <label className="label_flex">
-            <span className="label_left">作者：</span>
+          <div>
+            <span>Author：</span>
             <input
-              type="text" 
-              value={author} 
-              onChange={authorChange} 
-              className="input-field" />
-          </label>
-          <label className="label_flex">
-            <span className="label_left">作者電子郵件：</span>
+              type="text"
+              value={author}
+              onChange={authorChange}
+              className="new-form-input-style"
+            />
+          </div>
+          <div>
+            <span>Author&nbsp;E-mail：</span>
             <input
-              type="text" 
-              value={author_email} 
-              onChange={author_emailChange} 
-              className="input-field" />
-          </label>
-          <label className="label_flex">
-            <span className="label_left">管理者：</span>
+              type="text"
+              value={author_email}
+              onChange={authorChange}
+              className="new-form-input-style"
+            />
+          </div>
+          <div>
+            <span>Mantainer：</span>
             <input
-              type="text" 
-              value={maintainer} 
-              onChange={maintainerChange} 
-              className="input-field" />
-          </label>
-          <label className="label_flex">
-            <span className="label_left">管理者電子郵件：</span>
+              type="text"
+              value={maintainer}
+              onChange={maintainerChange}
+              className="new-form-input-style"
+            />
+          </div>
+          <div>
+            <span>Mantainer&nbsp;E-mail：</span>
             <input
-              type="text" 
-              value={maintainer_email} 
-              onChange={maintainer_emailChange} 
-              className="input-field" />
-          </label>
-          <p/>
-          <label className="label_flex">{/*需要改成可以從ckan端取得資料*/}
-            <span className="label_left">所屬群組&nbsp;</span>
-            <select id="groups" className="input-field" name="groups" value={groups} onChange={groupsChange}>
-              <option value=""></option>
-              <option value="ai-model">AI Model</option>
-              <option value="biosignal">Bio-Signal</option>
-              <option value="brain-image">Brain Image</option>
-              <option value="digital-pathology">Digital Pathology</option>
-              <option value="drone">Drone</option>
-              <option value="genomic-data">Genomic Data</option>
-              <option value="health-record">Health Record</option>
-              <option value="medical-image">Medical Image</option>
-            </select>
-          </label><p/>
-          <label className="label_flex">
-            <span className="label_left">組織&nbsp;</span>{/*需要改成可以從ckan端取得資料*/}
-            <select id="ownerOrg" className="input-field" name="ownerOrg" value={ownerOrg} onChange={ownerOrgChange}>
+              type="text"
+              value={maintainer}
+              onChange={maintainerChange}
+              className="new-form-input-style"
+            />
+          </div>
+          <div>
+            <span>Mantainer&nbsp;E-mail：</span>
+            <input
+              type="text"
+              value={maintainer}
+              onChange={maintainerChange}
+              className="new-form-input-style"
+            />
+          </div>
+          <div>
+            <span>Organization：</span>
+            <select id="ownerOrg" className="new-form-input-style" name="ownerOrg" value={ownerOrg} onChange={ownerOrgChange}>
               <option value=""></option>
               <option value="academia-sinica">Academia Sinica</option>
               <option className="label_flex" value="national-taipei-university-of-nursing-and-health-scienses">National Taipei University of Nursing and Health Sciences</option>
               <option value="national-yang-ming-chiao-tung-university">National Yang-Ming Chiao Tung University</option>
               <option value="taipei-veterans-general-hospital">Taipei Veterans General Hospital</option>
             </select>
-          </label>
-          <label className="label_flex">  
-            <div className="label_left">說明：</div>
-            <textarea value={note} onChange={noteChange} className="input-field1" />
-          </label>
+          </div>
+          <div>
+            <span>Notes:</span>
+            <textarea value={note} onChange={noteChange} className="new-form-input-style" />
+          </div>
           <hr></hr>
           {/* 操作按鈕 */}
           <label>
-            <div className='div'>
+            <div className='div_symptom_name'>
               <h5>*索引檔名稱：</h5>
               <input 
               type="text" 
