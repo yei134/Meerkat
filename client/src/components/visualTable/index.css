@@ -1,0 +1,26 @@
+.visualTable {
+  width: 80%;
+  margin: 1rem auto;
+}
+.visualTable td {
+  text-align: center;
+}
+.visualTable thead tr th {
+  background-color: #ffffff60;
+  border-top: 0.1rem solid #00000033;
+  border-bottom: 0.1rem solid #00000033;
+  border-left: 0.1rem solid #bbbbbb;
+}
+.visualTable thead tr th:first-child {
+  border-left: none;
+}
+.visualTable tbody tr td {
+  background-color: #ffffff40;
+  border-left: 0.1rem solid #bbbbbb;
+}
+.visualTable tbody tr td:first-child {
+  border-left: none;
+}
+.visualTable tbody tr:nth-child(even) {
+  background-color: #ffffff60;
+}
