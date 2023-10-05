@@ -37,7 +37,7 @@ function DatasetInfo(){
 
   async function getDatasetInfo() {
     axios.get(
-      `${process.env.REACT_APP_BACKEND_URI}ckanAPI/package_show`,
+      `${process.env.REACT_APP_BACKEND_URI}api/ckan/package_show`,
       {params:{datasetName:datasetName},headers:{'Authorization': token}})
       .then(res=>setTest(res.data.result))
       .catch(e=>console.log(e))

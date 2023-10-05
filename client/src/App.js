@@ -1,13 +1,7 @@
 //client/App.js
 //載入套件
 import React, { Component, useState, useEffect, useContext } from "react";
-import {
-  BrowserRouter,
-  createBrowserRouter,
-  Route,
-  Routes,
-  RouterProvider,
-} from "react-router-dom";
+import { BrowserRouter, createBrowserRouter, Route, Routes, RouterProvider } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 import Keycloak from "./keycloak";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
@@ -20,9 +14,12 @@ import Nav from "./components/Nav";
 import Upload from "./pages/upload/index";
 import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
-import DatasetInfoU from "./pages/datasetinfoU";
+// import DatasetInfoU from "./pages/datasetinfoU";
 import DatasetList from "./pages/datasetlist";
 import Members from "./pages/members";
+import DicomManage from "./pages/dicomManage";
+import Organization from "./pages/organization";
+import DatasetEdit from "./pages/datasetEdit";
 import Header from "./components/header";
 
 const router = createBrowserRouter([
@@ -44,16 +41,16 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  {
-    path: "datasetInfoU/:getId",
-    element: (
-      <PrivateRoute>
-        {/* <AuthProvider> */}
-        <DatasetInfoU />
-        {/* </AuthProvider> */}
-      </PrivateRoute>
-    ),
-  },
+  // {
+  //   path: "datasetInfoU/:getId",
+  //   element: (
+  //     <PrivateRoute>
+  //       <AuthProvider>
+  //       <DatasetInfoU />
+  //       </AuthProvider>
+  //     </PrivateRoute>
+  //   ),
+  // },
   {
     path: "newDataset",
     element: (
@@ -71,6 +68,26 @@ const router = createBrowserRouter([
         {/* <AuthProvider> */}
         <Upload />
         {/* </AuthProvider> */}
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "datasetInfo/:getId/dicomManage",
+    element: (
+      <PrivateRoute>
+        <DicomManage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "organization",
+    element: <Organization />,
+  },
+  {
+    path: "datasetInfo/:getId/datasetEdit",
+    element: (
+      <PrivateRoute>
+        <DatasetEdit />
       </PrivateRoute>
     ),
   },

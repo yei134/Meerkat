@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState }from "react";
 import ConLeft from "./conleft";
 import ConRight from "./conright";
 
-const Content = ({datasetName, title, groupsName, ownerOrg, author, createTime, modifiedTime, notes, files}) => {
-  // const [symptoms, setSymptoms]=useState([]); //resources.name 病徵名稱
+const Content = ({datasetName, title, groupsName, org_title, author, maintainer, createTime, modifiedTime, notes, files, tags, org_id}) => {
 
   return (
     <div className="flex-container">
@@ -12,12 +11,15 @@ const Content = ({datasetName, title, groupsName, ownerOrg, author, createTime, 
         name = {datasetName}
         title = {title}
         groupsName = {groupsName}
-        ownerOrg = {ownerOrg}
+        org_title = {org_title}
+        org_id={org_id}
         author = {author}
+        maintainer={maintainer}
         createTime={createTime}
         modifiedTime={modifiedTime}
+        tags={tags}
       />
-      <ConRight
+      <ConRight 
         key={notes}
         notes = {notes}
         title = {title}

@@ -1,43 +1,12 @@
-import { useState, useEffect, useRef } from "react";
 import React from "react";
-import axios from 'axios';
 import Item from "./Item";
-import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
 
 
-function Content({ uploadFile, setUploadFile, setstatus ,datasetName}) {
-  var [packageDataInfo, setPackageDataInfo]=useState([]);
-  useEffect(() => {
-    const getDataset = async () => {
-      try {
-        console.log(packageDataInfo);
-        await axios.get( 
-          `${process.env.REACT_APP_BACKEND_URI}ckan_get/package_show`,
-          {params:{datasetName:datasetName}})
-        .then(response => {
-          console.log(response);
-          packageDataInfo = response.data.result;
-          setPackageDataInfo(packageDataInfo);
-        })
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    getDataset();
-  },[])
-
-  var title=packageDataInfo.title;
+function Content({ setFileStatus, uploadFile, setUploadFile, datasetName, symptomId }) {
 
   return (
-    <div>
-      <p className="p">
-        <EmojiFlagsIcon />
-        <a href="/">資料集列表</a>
-        <text> / </text>
-        <a href={`/datasetInfo/${datasetName}`}>{title}</a>
-        <text> / </text>
-        <a href={`/datasetInfo/${datasetName}/fileUpload`} className="page">{title}上傳區</a>
-      </p>
+    <div className="uploadfile-container">
+      <font className="total-file-font">共載入{uploadFile.length}個檔案</font>
       <table>
         <thead>
           <tr>
@@ -62,8 +31,10 @@ function Content({ uploadFile, setUploadFile, setstatus ,datasetName}) {
                 fileStatus={fileStatus}
                 processingProgress={processingProgress}
                 fileSize={(fileSize /(1024*1024)).toFixed(1) + "MB"}
+                uploadFile={uploadFile}
                 setUploadFile={setUploadFile} //如果需要刪除項目時需要的
-                setstatus={setstatus}
+                setFileStatus={setFileStatus}
+                symptomId={symptomId}
               />
             );
           })}
