@@ -14,29 +14,50 @@ module.exports = app => {
   router.get("/package_show", ckanAPI.getPackageShow);
   router.get("/package_search", ckanAPI.getPackageSearch);
   router.get("/resource_show", ckanAPI.getResourceShow);
-  router.get("/group_list", ckanAPI.getGroupList);
   router.get("/tag_list", ckanAPI.getTagList);
   router.get("/organization_list", ckanAPI.getOrgList);
-  router.get("/group_package_list", ckanAPI.getGroupPackageList);
   router.get("/tag_package_list", ckanAPI.getTagPackageList);
   router.get("/organization_package_list", ckanAPI.getOrgPackageList);
-  router.get("/group_info", ckanAPI.getGroupInfo);
   router.get("/tag_info", ckanAPI.getTagInfo);
   router.get("/organization_info", ckanAPI.getOrgInfo);
+  router.get("/collaborator_list", ckanAPI.getCollaboratorList);
+  router.get("/collaborator_list_for_user", ckanAPI.getUserCollaboratorList);
+  router.get("/organization_list_for_user", ckanAPI.getUserOrgList);
+
+  // router.get("/package_group_list", ckanAPI.getPackageGroupList);
+  router.get("/group_package_list", ckanAPI.getGroupPackageList);
+  router.get("/group_info", ckanAPI.getGroupInfo);
+  router.get("/group_list", ckanAPI.getGroupList);
 
   // post
   router.post("/", ckanAPI.checkPost);
   router.post("/package_create", ckanAPI.postPackageCreate);
-  router.post("/package_patch", ckanAPI.postPackagePatch);
   router.post("/resource_create", upload.single('resourceFile'), ckanAPI.postResourceCreate);
   router.post("/index_create", ckanAPI.postIndexCreate);
   router.post("/package_filter", ckanAPI.getFilteredPackageList);
+  router.post("/collaborator_edit", ckanAPI.postCollaboratorEdit);
+  router.post("/organization_member_edit", ckanAPI.postOrgMemberEdit);
+
+  // router.post("/group_member_edit", ckanAPI.postGroupMemberEdit);
+  // router.post("/organization_group_append", ckanAPI.postOrgGroupAppend);
+  // router.post("/package_group_append", ckanAPI.postPackageGroupAppend);
 
   // patch
-  router.post("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
+  router.patch("/package_patch", ckanAPI.postPackagePatch);
+  // 待修公私 router.patch("/resource_patch", upload.single('resourceFile'), ckanAPI.postResourcePatch);
+
+  // 暫不採用 router.patch("/group_organization_patch", ckanAPI.patchGroupOrgChange); 
 
   // delete
   router.delete("/resource_delete", ckanAPI.delResourceDelete);
+  router.delete("/organization_member_delete", ckanAPI.delOrgMemberDelete);
+  router.delete("/collaborator_delete", ckanAPI.delCollaboratorDelete);
+  router.delete("/package_purge", ckanAPI.delPackagePurge);
+  
+  // router.delete("/group_purge", ckanAPI.delGroupPurge);
+  // router.delete("/group_member_delete", ckanAPI.delGroupMemberDelete);
+  // router.delete("/package_group_delete", ckanAPI.delPackageGroupDelete);
+  // router.delete("/organization_group_delete", ckanAPI.delOrgGroupDelete);
 
   app.use("/api/ckan", router);
 };

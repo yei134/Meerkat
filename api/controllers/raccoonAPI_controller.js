@@ -4,22 +4,7 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const seq = require('seq');
 const { execFile } = require('child_process');
-require('dotenv').config();
-
-const {RACCOON_BASE_URI} = process.env;
-const {CKAN_BASE_URI} = process.env;
-
-const {DCMTK_TOOL_LDCM2CSV} = process.env;
-const {DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG} = process.env;
-const {DCMTK_TOOL_LDCM2CSV_PROFCSV} = process.env;
-
-const ckanGetResource = CKAN_BASE_URI + "resource_show";
-const ckanPostResourcePatch = CKAN_BASE_URI+"resource_patch";
-const ckanPostResourceUpdate = CKAN_BASE_URI+"resource_update";
-
-const raccoonGetQIDO = RACCOON_BASE_URI + "api/dicom/qido/studies";
-const raccoonPost = RACCOON_BASE_URI + "dicom-web/studies";
-const raccoonImagingStudyFHIR = RACCOON_BASE_URI + "api/fhir/ImagingStudy";
+const {ckanVariable,raccoonVariable} = require('./variables.js');
 
 const tempDirectory = 'uploads/';
 const csvTempDirectory = './csv_temp/'
@@ -45,29 +30,6 @@ const raccoonErrMes =
 }
 const raccoonErrMesJSON = JSON.stringify(raccoonErrMes, null, 2);
 
-function readCSVFile(filePath, columns) {
-  return new Promise((resolve, reject) => {
-  var extractedColumns = [];
-
-  fs.createReadStream(filePath)
-    .pipe(csv())
-    .on('data', (row) => {
-      // Extract the desired columns from each row
-      //column代表traverse的參數
-      columns.forEach((column) => extractedColumns.push(row[column]));
-      //console.log('extractedColumns:'+extractedColumns);
-    })
-    .on('end', () => {
-      resolve(extractedColumns);
-      //console.log('extractedColumns:'+extractedColumns);
-      // console.log('CSV file processing is complete.');
-    })
-    .on('error', (error) => {
-      reject(error);
-    });
- });
-}
-
 // get
 exports.checkGet = async (req, res) => {
   try {
@@ -84,8 +46,14 @@ exports.getStudiesList = async (req, res) => {
     var fileName = 'index.csv';  // 檔案名稱
     var filePath = '';  // 要儲存的檔案路徑
 
+    var index = "";
+    var header = "";
     //主線佇列
     seq()
+      .seq(function(){
+        var seq_this = this;
+        step0(function() {seq_this();});
+      })
       .seq(function(){
         var seq_this = this;
         step1(function() {seq_this();});
@@ -99,14 +67,29 @@ exports.getStudiesList = async (req, res) => {
         step3(function() {seq_this();});
       })
 
+    //0.確認req有哪些參數
+    function step0(callback){
+      try{
+        if(!req.query.id){
+          throw "index id is required."
+        }else{
+          index = req.query.id;
+        }
+        if(!req.headers.authorization){
+          throw "token is required."
+        }else{
+          header = req.headers.authorization;
+        }
+        callback();
+      }catch(e){
+        console.log(e)
+        res.status(500).send(e)
+      }
+    }
     //1.依據index參數，去和ckan要求指定resource下載URL
     function step1(callback){
-      // 索引檔resource_id
-      const index = req.query.id;
-      const header = req.headers.authorization;
-      
       //拉csv的下載URL
-      axios.get(`${ckanGetResource}`,
+      axios.get(ckanVariable.ckanGetResourceShow,
       {
         params: {
           id: index
@@ -117,6 +100,9 @@ exports.getStudiesList = async (req, res) => {
       })
       .then(getRes => {
         fileUrl = getRes.data.result.url;
+        const now = new Date();
+        const dateString = now.toISOString();
+        fileName = dateString + "_index.csv"
         filePath = `${csvTempDirectory}${fileName}`;
         console.log('step.1 get index successful.')
         callback();
@@ -155,16 +141,13 @@ exports.getStudiesList = async (req, res) => {
       const readColumns = ["Type","AccessionNumber","PatientID","Modality","StudyDescription","StudyInstanceUID","SeriesInstanceUID","SOPInstanceUID"]
       var tableData = []
       // 讀取csv檔案
-      readCSVFile(filePath, readColumns)
+      raccoonVariable.readCSVFile(filePath, readColumns)
       .then((data) => {
         console.log('step.3 csv processing successed');
         for (let i = 0; i < data.length; i += readColumns.length) {
           const rowData = data.slice(i , i + readColumns.length)
           tableData.push(rowData);
         }
-        // const resData = {
-        //   StudyInstanceUID: data
-        // }
         const resData = tableData.map(row => {
           const [Type,AccessionNumber,PatientID,Modality,StudyDescription,StudyInstanceUID,SeriesInstanceUID,SOPInstanceUID] = row;
           return {Type,AccessionNumber,PatientID,Modality,StudyDescription,StudyInstanceUID,SeriesInstanceUID,SOPInstanceUID}
@@ -254,7 +237,12 @@ exports.postStudiesNew = async (req, res) => {
       function step0(callback){
         try{
           console.log("step.0 mkdir temporary dicom folder")
-          const indexName = req.body.indexName;
+          var indexName = "";
+          if(!req.body.indexName){
+            throw "indexName is required."
+          }else{
+            indexName = req.body.indexName;
+          }
           const temp = indexName.split("_[type]_");
           // test_[type]_symptom -> symptom
           symptom = temp[1]; 
@@ -268,7 +256,8 @@ exports.postStudiesNew = async (req, res) => {
           fs.mkdirSync(symptomFolder)
           callback();
         }catch(err){
-          console.log("fail to mkdir.")
+          console.log(err)
+          res.status(500).send(err)
         }
       }
 
@@ -294,8 +283,9 @@ exports.postStudiesNew = async (req, res) => {
         });
         console.log(`step.1 dicom saved.`);
         callback();
-      }catch(error){
-        console.log(error)
+      }catch(err){
+        console.log(err)
+        res.status(500).send(err)
       }
     }
     // 2. 對暫存資料夾執行ldcm2csv
@@ -303,18 +293,18 @@ exports.postStudiesNew = async (req, res) => {
       symptomCSVname = csvTempDirectory + symptom + ".csv";
       // console.log("symptomCSVname="+symptomCSVname);
       // console.log("splitSymptomFolder="+splitSymptomFolder[1]);
-      const args = ["+pf", DCMTK_TOOL_LDCM2CSV_PROFCSV, "+web", DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG, symptomFolder, symptomCSVname];
+      const args = ["+pf", raccoonVariable.raccoonVariable.DCMTK_TOOL_LDCM2CSV_PROFCSV, "+web", raccoonVariable.raccoonVariable.DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG, symptomFolder, symptomCSVname];
       try{
-        execFile(DCMTK_TOOL_LDCM2CSV, args, (error, stdout, stderr) => {
+        execFile(raccoonVariable.DCMTK_TOOL_LDCM2CSV, args, (error, stdout, stderr) => {
           if (error) {
             throw "fail to excute ldcm2csv.";
           }
           console.log("step.2 to index file done.")
           callback();
         })
-      }catch(e){
-        console.log(e)
-        res.status(500).send(e)
+      }catch(err){
+        console.log(err)
+        res.status(500).send(err)
       }
     }
     // 3. 將產生的csv檔patch回ckan
@@ -339,7 +329,7 @@ exports.postStudiesNew = async (req, res) => {
       const blob = new Blob([fileStream]);
       formData.append('upload', blob, symptomCSVname);
       //對ckan平台做post請求
-      axios.post(`${ckanPostResourcePatch}`,formData,{headers})
+      axios.post(ckanVariable.ckanPostResourcePatch,formData,{headers})
       .then(getRes => {
         // console.log(getRes.data);
         console.log("step.3 patch index file done.")
@@ -375,13 +365,12 @@ exports.postStudiesNew = async (req, res) => {
           formData.append('file', blob, dcmFiles[i]);
           //console.log(symptomFolder+dcmFiles[i]+" appended.")
         }
-      }catch(error){
-        console.error(error);
-        res.status(500).send(error);
-      } 
+      }catch(err){
+        console.log(err)
+      }
 
       const headers = {'Content-Type': 'application/dicom', 'Accept': 'application/dicom'}; 
-      axios.post(`${raccoonPost}`, formData, {
+      axios.post(`${raccoonVariable.raccoonPost}`, formData, {
         headers: headers
       })
       .then(getRes => {
@@ -525,14 +514,16 @@ exports.postStudiesAppend = async (req, res) => {
       }
     }
 
-    var appendFileName = "append.csv"
+    const now = new Date();
+    const dateString = now.toISOString();
+    var appendFileName = dateString + "_append.csv"
 
     // 3. 對暫存資料夾執行ldcm2csv[append_csv]
     function step3(callback){
       try{
         symptomCSVname = csvTempDirectory + appendFileName;
-        const args = ["+pf", DCMTK_TOOL_LDCM2CSV_PROFCSV, "+web", DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG, symptomFolder, symptomCSVname];
-        execFile(DCMTK_TOOL_LDCM2CSV, args, (error, stdout, stderr) => {
+        const args = ["+pf", raccoonVariable.raccoonVariable.DCMTK_TOOL_LDCM2CSV_PROFCSV, "+web", raccoonVariable.raccoonVariable.DCMTK_TOOL_LDCM2CSV_DICOMWEB_CONFIG, symptomFolder, symptomCSVname];
+        execFile(raccoonVariable.DCMTK_TOOL_LDCM2CSV, args, (error, stdout, stderr) => {
           if (error) {
             throw "execute ldcm2csv failed." ;
           }
@@ -547,7 +538,7 @@ exports.postStudiesAppend = async (req, res) => {
 
     var indexFileUrl = '';   // 要下載的檔案 URL
     var indexFilePath = '';  // 要儲存的檔案路徑
-    var indexFileName = "index.csv" // 檔案名稱
+    var indexFileName = '' // 檔案名稱
     var indexFileUploadName = ''; // 要patch回去的name欄位
 
     // 4. 針對接到的resource_id，抓下csv檔URL
@@ -570,7 +561,7 @@ exports.postStudiesAppend = async (req, res) => {
         res.status(500).send(e)
       }
       //拉csv的下載URL
-      axios.get(`${ckanGetResource}`,
+      axios.get(ckanVariable.ckanGetResourceShow,
       {
         params: {
           id: index
@@ -582,6 +573,9 @@ exports.postStudiesAppend = async (req, res) => {
       .then(getRes => {
         console.log('step.4 get symptom index file downloading url');
         indexFileUrl = getRes.data.result.url;
+        const now = new Date();
+        const dateString = now.toISOString();
+        indexFileName = dateString + "_index.csv"
         indexFilePath = `${csvTempDirectory}${indexFileName}`;
         indexFileUploadName = getRes.data.result.name;
         callback();
@@ -657,7 +651,10 @@ exports.postStudiesAppend = async (req, res) => {
           const studiesInstanceFiltered = appendCSVdata.filter(item => {
             // 用 some 檢查添加的影像列，有沒有包含任何原本在索引檔內的UID
             // 只 return 「包含在原索引的影像列」
-            return indexCSVdata.some(indexItem => indexItem.StudyInstanceUID === item.StudyInstanceUID);
+            return indexCSVdata.some(indexItem => 
+              {
+                indexItem.StudyInstanceUID === item.StudyInstanceUID
+              });
           });
 
           // 提取要刪除的元素
@@ -738,7 +735,7 @@ exports.postStudiesAppend = async (req, res) => {
       const headers = {'Content-Type': 'application/dicom', 'Accept': 'application/dicom'};
 
       if(!noDCMflag){
-        axios.post(`${raccoonPost}`, formData, {
+        axios.post(`${raccoonVariable.raccoonPost}`, formData, {
           headers: headers
         })
         .then(getRes => {
@@ -811,7 +808,7 @@ exports.postStudiesAppend = async (req, res) => {
           formData.append('format', "csv")
         }
 
-        axios.post(`${ckanPostResourcePatch}`,formData,{headers})
+        axios.post(ckanVariable.ckanPostResourcePatch,formData,{headers})
         .then(getRes => {
           // console.log("ckan patch index file status:"+getRes.data.success);
           console.log("step.8 index patched.")
@@ -931,7 +928,7 @@ exports.postStudiesDelete = async (req, res) => {
 
     function step1(callback){
       //拉csv的下載URL
-      axios.get(`${ckanGetResource}`,
+      axios.get(ckanVariable.ckanGetResourceShow,
       {
         params: {
           id: index
@@ -1028,7 +1025,7 @@ exports.postStudiesDelete = async (req, res) => {
       const blob = new Blob([fileStream]);
       formData.append('upload', blob, indexFilePath);
       //對ckan平台做post請求
-      axios.post(`${ckanPostResourcePatch}`,formData,{headers})
+      axios.post(ckanVariable.ckanPostResourcePatch,formData,{headers})
       .then(getRes => {
         // console.log(getRes.data);
         console.log("step.4 patch index file done.")
@@ -1058,7 +1055,7 @@ exports.postStudiesDelete = async (req, res) => {
     async function step6(callback){
       console.log("step.6 delete processing ...")
       for (const item of deleteItemArray) {
-        await axios.delete(`${raccoonImagingStudyFHIR}/${item}`)
+        await axios.delete(`${raccoonVariable.raccoonImagingStudyFHIR}/${item}`)
         .then(getRes => {
           console.log(`${item} done.`)
         })

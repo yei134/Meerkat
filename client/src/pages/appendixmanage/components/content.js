@@ -5,10 +5,8 @@ import axios from 'axios';
 import { useState, useEffect, useRef } from "react";
 
 var ownerOrg = "";
-// var groups=["app"];
 //取得資料集
 const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount }) => {
-  // const [symptoms, setSymptoms]=useState([]); //resources.name 病徵名稱
   var [packageDataInfo, setPackageDataInfo] = useState([]);
   const [ name, setName ] = useState();
   const [ author, setAuthor ] = useState();
@@ -20,7 +18,7 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
   const [ createTime, setCreateTime ] = useState();
   const [ modifiedTime, setModifiedTime ] = useState();
   const [ datasetEmail, setDatasetEmail ] = useState();
-  const [ groups, setGroups ] = useState();
+  // const [ groups, setGroups ] = useState();
   useEffect(() => {
     const getDataset = async () => {
       try {
@@ -30,6 +28,8 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
           .then(response => {
             packageDataInfo = response.data;
             setPackageDataInfo(packageDataInfo);
+            organization=packageDataInfo.organization.name;
+            setOrganization(organization);
           })
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -45,11 +45,10 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
       setAuthor(packageDataInfo.author);
       setMaintainer(packageDataInfo.maintainer);
       setNotes(packageDataInfo.notes);
-      
       setCreateTime(packageDataInfo.metadata_created);
       setModifiedTime(packageDataInfo.metadata_modified);
       setDatasetEmail(packageDataInfo.maintainer_email);
-      console.log(tags);
+      // console.log(tags);
     }
     getData();
   },[packageDataInfo])
@@ -57,7 +56,6 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
   const { resources } = packageDataInfo;
   return (
     <div className="contentContainer">
-      <ConRight resources={resources} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
       <ConLeft key={datasetName }
         name={datasetName}
         title={title}
@@ -68,7 +66,9 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
         modifiedTime={modifiedTime}
         notes = {notes}
         tags = {tags}
+        
       />
+      <ConRight resources={resources} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
     </div>
   );
 }

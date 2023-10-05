@@ -29,17 +29,9 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
       setFileUploadCount(prevCount => prevCount + 1);
     }
     };
-//   const handleDescriptionChange = (index, e) => {
-//   const newDescriptions = [...description]; 
-//   newDescriptions[index] = e.target.value; 
-//   setdescription(newDescriptions); 
-
-// };
-
 
   const closeModal = () => {
     setFile([]);
-    // setdescription([]);
     setShowModal(false);
   };
 
@@ -59,12 +51,9 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
           Authorization: header,
           'Content-Type': 'multipart/form-data' 
         };
-        // req.files.path 上傳後的臨時路徑
-        // req.files.originalname 原本的檔名
+     
         const resourceFiles = file;
-        // const descriptioned=description;
-        //  console.log("上船前",descriptioned);
-        // traverse每項上傳的檔案
+       
         async function resourcesUpload() {
           for (let resourceFile of resourceFiles) {
             //宣告formdata物件
@@ -75,7 +64,6 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
             const blob = new Blob([resourceFile]);
             formData.append('resourceFile', blob, resourceFile.name);
             formData.append('resourceName', resourceFile.name);
-            // formData.append('description', descriptioned);
             // 對ckan平台做post請求
             await axios({
               method: "post",
@@ -85,9 +73,7 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
             })
             .then(getRes => {
               console.log(getRes)
-              // console.log(descriptioned)
               handleFileUploadSuccess();
-
             })
             .catch(err => {
               console.log("err=" + err);
@@ -104,13 +90,12 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
       // ckan返回請求錯誤的訊息
       console.error(error);
       console.log(('Error fetching data from external API'));
+      window.alert("上傳失敗"); // 顯示失敗訊息
     }
     finally {
       // 無論上傳成功或失敗，最後都執行 closeModal
       closeModal();
     }
-    // console.log(fileUploadCount)
-
   };
 
   return (
@@ -133,12 +118,6 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
               <div key={index}>
                 <p>Filename: {file.name} </p>
                 <p>Size: {(file.size / (1024 * 1024)).toFixed(1)}MB</p>
-                {/* <input
-                  type="text"
-                  value={description[index]||''}
-                  onChange={(e) => handleDescriptionChange(index,e)}
-                  placeholder="輸入敘述"
-                /> */}
               </div>
             ))}
             <hr />
@@ -157,6 +136,5 @@ function UploadFile({ datasetName,fileUploadCount, setFileUploadCount }) {
     </div>
   );
 }
-
 export default UploadFile;
 

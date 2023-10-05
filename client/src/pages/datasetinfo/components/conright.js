@@ -3,6 +3,7 @@ import "../index.css";
 //notes, symptoms, title
 const ConRight = ({notes, symptoms, title}) => {
   return (
+    
     <div className="conright">
       <h2>{title}</h2>
       <div className="note">{notes}</div>
