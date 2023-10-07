@@ -1,8 +1,9 @@
 /* 清除初始css */
 * {
   font-size: 1rem;
-  font-family: "微軟正黑體";
-  font-weight: 400;
+  font-family:"Helvetica","Microsoft JhengHei";
+  font-weight: 100;
+  /* 100,400,600,800 */
 }
 div {
   margin: 0;

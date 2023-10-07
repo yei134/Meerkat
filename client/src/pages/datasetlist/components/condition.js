@@ -35,7 +35,7 @@ const Condition = (inputText) => {
         await axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/organization_list`, { headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN } }).then((response) => {
           orglist = response.data;
           setOrglist(orglist);
-          console.log(typeof orglist);
+          // console.log(typeof orglist);
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -51,6 +51,7 @@ const Condition = (inputText) => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
+        setGrouplist([]);
       }
     };
     getGrouplist();
@@ -63,6 +64,7 @@ const Condition = (inputText) => {
         });
       } catch (error) {
         console.error("Error fetching data:", error);
+        setTaglist([]);
       }
     };
     getTaglist();
@@ -83,6 +85,7 @@ const Condition = (inputText) => {
       })
       .then((response) => {
         datsetlist = response.data.results;
+        // console.log(datsetlist);
         setDatsetlist(datsetlist);
         pagestotal = Math.ceil(datsetlist.length / dataSix);
         setPagestotal(pagestotal);
@@ -91,7 +94,7 @@ const Condition = (inputText) => {
         setPageNow(1);
         datalistNow = distributedDatalist[pageNow - 1];
         setDatalistNow(datalistNow);
-        console.log(datalistNow);
+        // console.log(datalistNow);
       })
       .catch((error) => console.log(error));
   }, [inputText, condition]);
@@ -224,14 +227,16 @@ const Condition = (inputText) => {
   return (
     <>
       <div className="condition">
+        {/* 新建資料集 */}
         <div>
-          <button>
+          <button className="dataset-conditioin-newdataset">
             <a href="newDataset" className="pick-condition-title">
               <AddIcon />
               新建資料集
             </a>
           </button>
         </div>
+        {/* org下拉 */}
         <div>
           <div className="condition-list-div">
             <button onClick={orglistStateChange} className="icon-button">
@@ -262,6 +267,7 @@ const Condition = (inputText) => {
             )}
           </div>
         </div>
+        {/* group下拉 */}
         <div>
           <div className="condition-list-div">
             <button onClick={grouplistStateChange} className="icon-button">
@@ -292,6 +298,7 @@ const Condition = (inputText) => {
             )}
           </div>
         </div>
+        {/* tag下拉 */}
         <div>
           <div className="condition-list-div">
             <button onClick={taglistStateChange} className="icon-button">
@@ -329,6 +336,7 @@ const Condition = (inputText) => {
           <KeyboardDoubleArrowDownIcon />
         </div>
       </div>
+      {/* 上一頁 */}
       <div className="icon-button-container">
         <button className="icon-button" title={"上一頁"}>
           <ArrowBackIosNewIcon onClick={minusPageChange} />
@@ -363,7 +371,6 @@ const Condition = (inputText) => {
                   </button>
                 </div>
               </div>
-              <></>
               <div>
                 <font className="data-amount-div">共篩出&nbsp;{datsetlist.length}筆&nbsp;資料集</font>
               </div>

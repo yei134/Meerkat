@@ -31,9 +31,7 @@ export default function Header() {
             onClick={() => {
               keycloak.logout();
             }}
-          >{`（${
-            userInfo.email !== undefined ? userInfo.email.split("@")[0] : ""
-          }）Logout`}</button>
+          >{`(${userInfo.email !== undefined ? userInfo.email.split("@")[0] : ""}) Logout`}</button>
         ) : (
           <button
             className="headerRightButton"

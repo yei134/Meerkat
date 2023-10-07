@@ -47,7 +47,7 @@ export default function DatasetList() {
         <Header/>
       </div> */}
       <div className="search">
-        <TextField id="outlined-basic" onChange={inputHandler} variant="outlined" fullWidth label="輸入關鍵詞" />
+        <TextField id="outlined-basic" onChange={inputHandler} variant="outlined" fullWidth size="small" label="輸入關鍵詞" />
       </div>
       {/* Body */}
       <div className="package-condition-div-style">
