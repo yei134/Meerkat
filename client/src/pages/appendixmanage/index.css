@@ -152,3 +152,49 @@ table {
   background-color: #f5f1e5;
   padding: 2%;
 }
+/* .edit-icon-button{
+  color: #595959;
+  display: inline-block;
+  border:none;
+  background-color: transparent;
+  height: auto;
+  padding: 0.5%;
+}
+.edit-icon-button:hover{
+  background-color: #8b8b8b15;
+  border-radius: 100%;
+  transition: 1s;
+} */
+.route-container{
+  display: flex;
+  flex-direction: row;
+  width: 85%;
+  margin:6vh 0 0 2vw;
+}
+.page{
+  color: #6699A4;
+}
+.route{
+  display: flex;
+  align-items: end;
+  margin-left: 2%;
+  font-size:20px;
+  color:#6C757D;
+  font-weight:bold;
+  letter-spacing: 1px;
+  font-family:"Helvetica","Microsoft JhengHei",serif;
+}
+.tag-button{
+  display: flex;
+  align-items: center;
+  border:none;
+  background-color: #D9D9D9;
+  color: #455367;
+  border-radius:10px;
+  margin: 2vh 0 2vh 0.25vw;
+  font-size: medium;
+}
+.tag-button-container{
+  display: flex;
+  flex-direction: row;
+}

@@ -48,6 +48,8 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
       setCreateTime(packageDataInfo.metadata_created);
       setModifiedTime(packageDataInfo.metadata_modified);
       setDatasetEmail(packageDataInfo.maintainer_email);
+      tags=packageDataInfo.tags;
+      setTags(tags);
       // console.log(tags);
     }
     getData();
@@ -68,7 +70,11 @@ const Content = ({ datasetName, selectedItems, setSelectedItems ,fileUploadCount
         tags = {tags}
         
       />
-      <ConRight resources={resources} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
+      <ConRight resources={resources} 
+        selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
+        name={datasetName}
+        title={title}  />
     </div>
   );
 }
