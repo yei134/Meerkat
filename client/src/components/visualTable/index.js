@@ -1,5 +1,5 @@
 import "./index.css";
-export default function VisualTable({ field, data }) {
+export default function VisualTable({ field, data, operate }) {
   return (
     field !== undefined &&
     data !== undefined && (
@@ -10,6 +10,7 @@ export default function VisualTable({ field, data }) {
               {field.map((element) => {
                 return <th key={`th_${element.id}`}>{element.display}</th>;
               })}
+              {operate !== undefined && <th>Operate</th>}
             </tr>
           </thead>
           <tbody>
@@ -20,6 +21,17 @@ export default function VisualTable({ field, data }) {
                   {field.map((fieldElement) => {
                     return <td key={`td_${element.index}-${fieldElement.id}`}>{element[fieldElement.name]}</td>;
                   })}
+                  {operate !== undefined && (
+                    <td>
+                      <button
+                        onClick={() => {
+                          operate(element.operate);
+                        }}
+                      >
+                        Operate
+                      </button>
+                    </td>
+                  )}
                 </tr>
               );
             })}

@@ -19,7 +19,7 @@ export default function Members() {
   const field = [
     { id: 1, name: "index", display: "No." },
     { id: 2, name: "name", display: "Name" },
-    { id: 3, name: "email_hash", display: "E-mail" },
+    { id: 3, name: "email", display: "E-mail" },
     { id: 4, name: "capacity", display: "Role" },
   ];
 
@@ -29,7 +29,6 @@ export default function Members() {
       .loadUserProfile()
       .then((res) => {
         setUserInfo(res);
-        // console.log("keycloak.loadUserProfile:", res);
       })
       .catch((e) => {
         console.log(e);
@@ -47,9 +46,9 @@ export default function Members() {
         },
       })
       .then((res) => {
-        // console.log("ckan.organization_list_for_user:", res);
         let tmp = [];
         res.data.map((element) => {
+          // 是org管理者時，取所有資料集
           if (element.capacity === "admin") {
             getOrgPackageList(element.id);
             tmp.push(element);
@@ -82,6 +81,7 @@ export default function Members() {
         console.log(e);
       });
   }
+  // 取得選取範圍org/dataset內的成員
   async function getMembers(type, id) {
     let api = "";
     if (type === "organization") {
@@ -97,45 +97,46 @@ export default function Members() {
             Authorization: ckan_token,
           },
         })
-        .then((res) => {
-          console.log(res);
+        .then(async (res) => {
           if (type === "organization") {
             const tmp = res.data.users;
-            let data = [];
-            tmp.map((element) => {
-              element.name = element.display_name;
-              data.push(element);
-            });
+            const memberInfo = await getCkanUser(tmp, "id", "organization", id);
+            setMembers(memberInfo);
           } else if (type === "dataset") {
             const tmp = res.data;
-            let data = [];
-            tmp.map((element) => {
-              const { name, email_hash } = getCkanUser(element.user_id);
-            });
+            const memberInfo = await getCkanUser(tmp, "user_id", "dataset", id);
+            setMembers(memberInfo);
           }
-          type === "organization" ? setMembers(res.data.users) : setMembers(res.data);
         })
         .catch((e) => {
           console.error(e);
         });
     }
   }
-  // 取得ckan的user資訊
-  async function getCkanUser(id) {
-    const res = await axios
-      .get(`${ckan_default}api/ckan/user_show`, {
-        params: { id: id },
-        headers: {
-          Authorization: ckan_token,
-        },
+  // 取得ckan的user資訊 (type和id是為了表格操作放入的)
+  async function getCkanUser(arr, field_name, type, id) {
+    // promise將區塊內程序打包使執行序完全執行後才往下運行
+    const res = await Promise.all(
+      arr.map(async (element) => {
+        return await axios
+          .get(`${ckan_default}api/ckan/user_info`, {
+            params: { id: element[field_name] },
+            headers: {
+              Authorization: ckan_token,
+            },
+          })
+          .then((res) => {
+            const tmp = res.data;
+            const operate = { type: type, id: id, user: tmp.name, role: element.capacity };
+            // operate內的名稱會連動到changeOperate方法
+            return { name: tmp.name, email: tmp.email, capacity: element.capacity, operate: operate };
+          })
+          .catch((e) => {
+            console.error(e);
+            return { name: "", email: "" };
+          });
       })
-      .then((res) => {
-        console.log(res);
-        return { name: res.data.name, email_hash: res.data.email_hash };
-      })
-      .catch((e) => {
-        return { name: "", email_hash: "" };
-      });
+    );
     return res;
   }
 
@@ -165,26 +166,29 @@ export default function Members() {
         </ul>
       </div>
       <div>
-        <VisualTable field={field} data={members} />
-      </div>
-      {/* 變更權限 */}
-      <div style={{ background: "#ff0", position: "fixed", top: "5rem", left: "5rem" }}>
-        <RoleChange />
+        <VisualTable field={field} data={members} operate={changeOperate} />
       </div>
     </>
   );
 }
-function RoleChange({ org, name, role }) {
+function changeOperate(memberInfo) {
+  // type:organization/dataset,
+  // id:(org/set)'s id,
+  // name:user's name,
+  // role:original role
   const roleList = [
     { id: 0, value: "admin", display: "admin" },
     { id: 1, value: "editor", display: "editor" },
     { id: 2, value: "member", display: "member" },
   ];
+  async function sendChange() {
+    await axios.post({});
+  }
   return (
-    <>
-      <font>權限變更-{org}</font>
-      <font>{name}</font>
-      <font>目前權限:{role}</font>
+    <div>
+      <font>權限變更-{memberInfo.id}</font>
+      <font>{memberInfo.user}</font>
+      <font>目前權限:{memberInfo.role}</font>
       <font>
         更改為:
         <select name="role">
@@ -197,6 +201,16 @@ function RoleChange({ org, name, role }) {
           })}
         </select>
       </font>
-    </>
+      <div>
+        <button>cancel</button>
+        <button
+          onClick={() => {
+            sendChange();
+          }}
+        >
+          change
+        </button>
+      </div>
+    </div>
   );
 }
