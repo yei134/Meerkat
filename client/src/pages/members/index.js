@@ -15,6 +15,8 @@ export default function Members() {
   const [operationList, setOperationList] = useState([]);
   // 成員資料
   const [members, setMembers] = useState([]);
+  // 權限變更
+  const [roleChange, setRoleChange] = useState({});
   // 欄位
   const field = [
     { id: 1, name: "index", display: "No." },
@@ -70,11 +72,13 @@ export default function Members() {
         },
       })
       .then((res) => {
-        // console.log(res);
+        let tmp = [];
         res.data.map((element) => {
-          setOperationList((prev) => {
-            return [...prev, element];
-          });
+          console.log(element);
+          tmp.push(element);
+        });
+        setOperationList((prev) => {
+          return [...prev, ...tmp];
         });
       })
       .catch((e) => {
@@ -127,7 +131,7 @@ export default function Members() {
           })
           .then((res) => {
             const tmp = res.data;
-            const operate = { type: type, id: id, user: tmp.name, role: element.capacity };
+            const operate = { type: type, id: id, user: tmp.name, role: element.capacity, display: true };
             // operate內的名稱會連動到changeOperate方法
             return { name: tmp.name, email: tmp.email, capacity: element.capacity, operate: operate };
           })
@@ -144,7 +148,9 @@ export default function Members() {
     getUserInfo();
   }, []);
   useEffect(() => {
-    if (userInfo.email !== undefined) getOperationList();
+    if (userInfo.email !== undefined) {
+      getOperationList();
+    }
   }, [userInfo]);
 
   return (
@@ -153,25 +159,26 @@ export default function Members() {
       <div style={{ background: "#fff" }}>
         <ul>
           {operationList.map((element, index) => {
-            // console.log(element);
             return (
               <li
                 key={`operationList_${index}`}
                 onClick={() => {
                   getMembers(element.type, element.id);
                 }}
-              >{`${element.type}:  ${element.title}`}</li>
+              >{`${element.type}:  ${element.title}-${element.private}`}</li>
             );
           })}
         </ul>
       </div>
       <div>
-        <VisualTable field={field} data={members} operate={changeOperate} />
+        <VisualTable field={field} data={members} operate={setRoleChange} />
       </div>
+      {/* 權限變換對話框 */}
+      <ChangeOperate roleChange={roleChange} setRoleChange={setRoleChange} />
     </>
   );
 }
-function changeOperate(memberInfo) {
+function ChangeOperate({ roleChange, setRoleChange }) {
   // type:organization/dataset,
   // id:(org/set)'s id,
   // name:user's name,
@@ -181,36 +188,84 @@ function changeOperate(memberInfo) {
     { id: 1, value: "editor", display: "editor" },
     { id: 2, value: "member", display: "member" },
   ];
-  async function sendChange() {
-    await axios.post({});
+  function closeChangeRole() {
+    setRoleChange((prev) => {
+      return {
+        ...prev,
+        display: false,
+      };
+    });
+  }
+  async function sendChange(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    let formJson = Object.fromEntries(formData.entries());
+    let api = `${ckan_default}api/ckan`;
+    if (roleChange.type === "dataset") {
+      api += "/collaborator_edit";
+    } else {
+      api += "/organization_member_edit";
+    }
+    await axios
+      .post(
+        api,
+        {
+          id: roleChange.id,
+          users: [roleChange.user],
+          role: formJson.role,
+        },
+        {
+          headers: {
+            Authorization: ckan_token,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    setRoleChange((prev) => {
+      return {
+        ...prev,
+        display: false,
+      };
+    });
   }
   return (
-    <div>
-      <font>權限變更-{memberInfo.id}</font>
-      <font>{memberInfo.user}</font>
-      <font>目前權限:{memberInfo.role}</font>
-      <font>
-        更改為:
-        <select name="role">
-          {roleList.map((element) => {
-            return (
-              <option key={`role_${element.id}`} value={element.value}>
-                {element.display}
-              </option>
-            );
-          })}
-        </select>
-      </font>
-      <div>
-        <button>cancel</button>
-        <button
-          onClick={() => {
-            sendChange();
-          }}
-        >
-          change
-        </button>
-      </div>
-    </div>
+    <>
+      {roleChange.display && (
+        <form onSubmit={sendChange}>
+          <>權限變更-{roleChange.name}</>
+          <>{roleChange.user}</>
+          <>目前權限:{roleChange.role}</>
+          <>
+            更改為:
+            <select name="role">
+              {roleList.map((element) => {
+                return (
+                  <option key={`role_${element.id}`} value={element.value}>
+                    {element.display}
+                  </option>
+                );
+              })}
+            </select>
+          </>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                closeChangeRole();
+              }}
+            >
+              cancel
+            </button>
+            <button type="submit">change</button>
+          </div>
+        </form>
+      )}
+    </>
   );
 }

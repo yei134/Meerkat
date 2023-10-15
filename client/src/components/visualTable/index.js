@@ -25,6 +25,8 @@ export default function VisualTable({ field, data, operate }) {
                     <td>
                       <button
                         onClick={() => {
+                          console.log("operate", operate);
+                          console.log("ele", element.operate);
                           operate(element.operate);
                         }}
                       >
