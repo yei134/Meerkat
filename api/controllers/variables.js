@@ -189,7 +189,18 @@ const raccoonVariable = {
         reject(error);
       });
    });
-  }
+  },
+  // https://kiiuo.com/archives/3125/javascript-%E7%94%A2%E7%94%9F%E4%BA%82%E6%95%B8%E7%9A%84%E6%96%B9%E6%B3%95/
+  // 偉大的亂數產生器
+  makeid:function(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
 }
 
 module.exports = {

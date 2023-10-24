@@ -80,6 +80,7 @@ exports.getStudiesList = async (req, res) => {
         }else{
           header = req.headers.authorization;
         }
+        console.log("step.0 checked done")
         callback();
       }catch(e){
         console.log(e)
@@ -101,39 +102,46 @@ exports.getStudiesList = async (req, res) => {
       .then(getRes => {
         fileUrl = getRes.data.result.url;
         const now = new Date();
-        const dateString = now.toISOString();
-        fileName = dateString + "_index.csv"
+        let dateString = now.toISOString();
+        dateString = dateString.replaceAll(':', '_');
+        fileName = dateString + "__" + raccoonVariable.makeid(8) + "__index.csv";
         filePath = `${csvTempDirectory}${fileName}`;
-        console.log('step.1 get index successful.')
+        console.log('step.1 get index successful.');
         callback();
       })
       .catch(err => {
-        console.log(err.response)
+        console.log(err)
         res.status(500).send(axiosErrMesJSON);
       })
     }
 
     //2. 將拉到的URL下載csv到指定目錄
-    function step2(callback){
-      const writer = fs.createWriteStream(filePath);
-      axios({
-        method: 'GET',
-        url: fileUrl,
-        responseType: 'stream',
-      })
-      .then(response =>{
-        response.data.pipe(writer)
-      })
-      .then(
-        writer.on('finish', () => {
-          console.log(`step.2 download completed: ${filePath}`);
-          callback();
+    async function step2(callback){
+      let writer = "";
+      try{
+        writer = fs.createWriteStream(filePath);
+        axios({
+          method: 'GET',
+          url: fileUrl,
+          responseType: 'stream',
         })
-      )
-      .catch(err => {
-        console.log(err)
-        res.status(500).send(err);
-      })
+        .then(response =>{
+          response.data.pipe(writer)
+        })
+        .then(
+          writer.on('finish', () => {
+            console.log(`step.2 download completed: ${filePath}`);
+            callback();
+          })
+        )
+        .catch(err => {
+          console.log(err)
+          res.status(500).send(err);
+        })
+      }catch(e){
+        res.status(500).send(e);
+        console.log(e)
+      }
     }
 
     // 4.打開step.3拉到的csv，將特定欄位逐一讀出
