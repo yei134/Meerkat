@@ -1,20 +1,16 @@
 //client/App.js
 //載入套件
-import React, { Component, useState, useEffect, useContext } from "react";
-import { BrowserRouter, createBrowserRouter, Route, Routes, RouterProvider } from "react-router-dom";
-import { useKeycloak } from "@react-keycloak/web";
+import React, { Component } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Keycloak from "./keycloak";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import PrivateRoute from "./helpers/PrivateRoute.js";
-import { AuthProvider } from "./helpers/AuthContext";
 
 //載入檔案
 import "./App.css";
-import Nav from "./components/Nav";
 import Upload from "./pages/upload/index";
 import NewDataset from "./pages/newdataset";
 import DatasetInfo from "./pages/datasetinfo";
-// import DatasetInfoU from "./pages/datasetinfoU";
 import DatasetList from "./pages/datasetlist";
 import Members from "./pages/members";
 import DicomManage from "./pages/dicomManage";
@@ -25,54 +21,39 @@ import Header from "./components/header";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      // <AuthProvider>
-      <DatasetList />
-      // </AuthProvider>
-    ),
+    // 資料集總表
+    element: <DatasetList />,
   },
   {
     path: "datasetInfo/:getId",
+    // 資料集資訊
     element: (
       <PrivateRoute>
-        {/* <AuthProvider> */}
         <DatasetInfo />
-        {/* </AuthProvider> */}
       </PrivateRoute>
     ),
   },
-  // {
-  //   path: "datasetInfoU/:getId",
-  //   element: (
-  //     <PrivateRoute>
-  //       <AuthProvider>
-  //       <DatasetInfoU />
-  //       </AuthProvider>
-  //     </PrivateRoute>
-  //   ),
-  // },
   {
     path: "newDataset",
+    // 新增資料集
     element: (
       <PrivateRoute>
-        {/* <AuthProvider> */}
         <NewDataset />
-        {/* </AuthProvider> */}
       </PrivateRoute>
     ),
   },
   {
-    path: "datasetInfo/:getId/fileUpload",
+    path: "datasetInfo/:getId/fileUpload/:getSymptom",
+    // dicom檔案上傳
     element: (
       <PrivateRoute>
-        {/* <AuthProvider> */}
         <Upload />
-        {/* </AuthProvider> */}
       </PrivateRoute>
     ),
   },
   {
     path: "datasetInfo/:getId/dicomManage",
+    // dicom檔案管理
     element: (
       <PrivateRoute>
         <DicomManage />
@@ -81,10 +62,12 @@ const router = createBrowserRouter([
   },
   {
     path: "organization",
+    // 組資資訊
     element: <Organization />,
   },
   {
     path: "datasetInfo/:getId/datasetEdit",
+    // 資料集資訊修改
     element: (
       <PrivateRoute>
         <DatasetEdit />
@@ -93,11 +76,10 @@ const router = createBrowserRouter([
   },
   {
     path: "members",
+    // 人員管理
     element: (
       <PrivateRoute>
-        {/* <AuthProvider> */}
         <Members />
-        {/* </AuthProvider> */}
       </PrivateRoute>
     ),
   },
@@ -109,8 +91,8 @@ class App extends Component {
       <>
         <ReactKeycloakProvider authClient={Keycloak}>
           <Header />
+          {/* 避免資料被header擋住 */}
           <div className="nullDiv" />
-          {/* <Nav /> */}
           <RouterProvider router={router} />
         </ReactKeycloakProvider>
       </>
@@ -119,5 +101,3 @@ class App extends Component {
 }
 
 export default App;
-
-// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqRmtadk83VFJlSG5FNC1XcXBrc2E5VXl2X1o3OFAyd18yVjlhMW51NzJmTTI4ck1DOW1lcFI2QlUtR0pHc1VFVHVaLUdfaEdpVjBBZ0NyTCIsImlhdCI6MTY4OTY4MjczOH0.D4WxmjsJtY_BIv--UEBRVk6ev1LSNARJTJUZTN1AmpE

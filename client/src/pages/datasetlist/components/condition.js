@@ -35,7 +35,6 @@ const Condition = (inputText) => {
         await axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/organization_list`, { headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN } }).then((response) => {
           orglist = response.data;
           setOrglist(orglist);
-          // console.log(typeof orglist);
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -85,7 +84,6 @@ const Condition = (inputText) => {
       })
       .then((response) => {
         datsetlist = response.data.results;
-        // console.log(datsetlist);
         setDatsetlist(datsetlist);
         pagestotal = Math.ceil(datsetlist.length / dataSix);
         setPagestotal(pagestotal);
@@ -94,9 +92,8 @@ const Condition = (inputText) => {
         setPageNow(1);
         datalistNow = distributedDatalist[pageNow - 1];
         setDatalistNow(datalistNow);
-        // console.log(datalistNow);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, [inputText, condition]);
 
   //=== 依照篩選條件去後端拿資料集 ===//
@@ -118,13 +115,11 @@ const Condition = (inputText) => {
             setPagestotal(pagestotal);
             distributedDatalist = chunkArray(datsetlist, dataSix);
             setDistributedDatalist(distributedDatalist);
-            console.log(distributedDatalist);
             setPageNow(1);
             if (pageNow == 1) {
               datalistNow = distributedDatalist[pageNow - 1];
               setDatalistNow(datalistNow);
             }
-            console.log(datalistNow);
           });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -202,7 +197,6 @@ const Condition = (inputText) => {
     }
     datalistNow = distributedDatalist[pageNow - 1];
     setDatalistNow(datalistNow);
-    console.log(datalistNow);
   };
   //=== 監聽上一頁button ===//
   const minusPageChange = () => {
@@ -212,7 +206,6 @@ const Condition = (inputText) => {
     }
     datalistNow = distributedDatalist[pageNow - 1];
     setDatalistNow(datalistNow);
-    console.log(typeof pageNow);
   };
 
   //=== 將拿到的datasetlist做資料處理，每{chunkSize}個值裝進一個二維陣列 ===//

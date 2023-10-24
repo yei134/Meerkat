@@ -1,13 +1,10 @@
 //套件
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Outlet } from "react-router-dom";
 //檔案
 import "./index.css";
-import Header from "./components/hearder";
-import Content from "./components/content";
 import Condition from "./components/condition";
-// import Navbar from "../../components/Navbar"
 //icon庫
 import TextField from "@mui/material/TextField";
 
@@ -29,11 +26,8 @@ export default function DatasetList() {
       })
       .then((response) => {
         setList(response.data.results);
-        if (response.data.result != null) {
-          console.log(list);
-        }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, [inputText]);
   //=== 監聽SearchBar ===//
   const inputHandler = (e) => {
@@ -42,10 +36,6 @@ export default function DatasetList() {
 
   return (
     <>
-      {/* 頁首 */}
-      {/* <div className="head">
-        <Header/>
-      </div> */}
       <div className="search">
         <TextField id="outlined-basic" onChange={inputHandler} variant="outlined" fullWidth size="small" label="輸入關鍵詞" />
       </div>
