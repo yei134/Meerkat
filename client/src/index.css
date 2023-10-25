@@ -1,8 +1,8 @@
 /* 清除初始css */
 * {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-family:"Helvetica","Microsoft JhengHei";
-  font-weight: 100;
+  font-weight: 400;
   /* 100,400,600,800 */
 }
 div {
