@@ -900,10 +900,10 @@ exports.postStudiesDelete = async (req, res) => {
       var seq_this = this;
       step5(function() {seq_this();});
     })
-    .seq(function(){
-      var seq_this = this;
-      step6(function() {seq_this();});
-    })
+    // .seq(function(){
+    //   var seq_this = this;
+    //   step6(function() {seq_this();});
+    // })
     .seq(function(){
       var seq_this = this;
       step7(function() {seq_this();});
@@ -922,7 +922,7 @@ exports.postStudiesDelete = async (req, res) => {
       V 3. 刪除索引檔內指定StudiesInstanceUID列
       V 4. 將索引檔patch回ckan
       V 5. 刪除暫存索引檔
-      V 6. 刪除raccoon的指定影像
+      X 6. 刪除raccoon的指定影像
       V 7. response {success:[?]}
     */
 
@@ -1061,18 +1061,23 @@ exports.postStudiesDelete = async (req, res) => {
     }
 
     async function step6(callback){
+      let flag = false;
       console.log("step.6 delete processing ...")
       for (const item of deleteItemArray) {
         await axios.delete(`${raccoonVariable.raccoonImagingStudyFHIR}/${item}`)
         .then(getRes => {
+          flag = true;
           console.log(`${item} done.`)
         })
         .catch(err => {
-          console.log(raccoonErrMesJSON)
-          res.status(500).send(raccoonErrMesJSON);
+          console.log(`${item} failed.`)
         })
       }
-      callback();
+      if(flag == true){
+        callback();
+      }else{
+        res.status(500).send("a part of uploading failed.");
+      }
     }
 
     function step7(callback){
