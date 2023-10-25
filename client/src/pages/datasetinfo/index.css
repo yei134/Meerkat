@@ -127,6 +127,13 @@
 }
 .formate-a-style{
   flex: 1;
+  width: 10%;
+}
+.formate-a-style a{
+  width: 100%;
+}
+.formate-a-style a img{
+  width: 100%;
 }
 .format-font-title-style{
   color: #595959;
@@ -146,6 +153,7 @@
   float: right;
   flex-direction: row;
   margin-bottom: 10px;
+  width: 100%;
 }
 .file-float-column{
   justify-content: center;
@@ -155,6 +163,7 @@
   border-left-style: solid;
   border-color: #b9b6a3;
   text-indent:10px;
+  width: 85%;
 }
 .conright-file-title{
   color: #595959;

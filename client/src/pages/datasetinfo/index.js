@@ -54,24 +54,22 @@ function DatasetInfo() {
   }, [packageDataInfo]);
 
   return (
-    <>
-      <Content
-        key={datasetName}
-        datasetName={datasetName}
-        title={title}
-        // groupsName = {groups}
-        org_title={organization_title}
-        org_id={organization_id}
-        maintainer={maintainer}
-        author={author}
-        createTime={createTime}
-        modifiedTime={modifiedTime}
-        notes={notes}
-        files={files}
-        tags={tags}
-        // listSymptoms={symptoms}
-      />
-    </>
+    <Content
+      key={datasetName}
+      datasetName={datasetName}
+      title={title}
+      // groupsName = {groups}
+      org_title={organization_title}
+      org_id={organization_id}
+      maintainer={maintainer}
+      author={author}
+      createTime={createTime}
+      modifiedTime={modifiedTime}
+      notes={notes}
+      files={files}
+      tags={tags}
+      // listSymptoms={symptoms}
+    />
   );
 }
 export default DatasetInfo;
