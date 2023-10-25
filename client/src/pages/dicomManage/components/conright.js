@@ -49,14 +49,9 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
           setDicomList(tmp); //所有取得的檔案
           const packagingDicom = chunkArray(tmp, conditionNum); //根據每一頁顯示數量打包
           setDistributedDicomList(packagingDicom);
-          // dicomlistNow = packagingDicom[pageNow - 1]; // 設定要顯示的資料
-          // setDicomlistNow(dicomlistNow);
         })
         .catch((error) => {
-          console.log(error);
-          console.log("symptomId=" + symptomId);
-          // 若是發生error, 將dicomList清空, 避免存留上一次拿到的值
-          // dicomList = [];
+          console.error(error);
           setDicomList([]);
         });
     }
@@ -64,7 +59,6 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
 
   //=== 當要顯示的病徵資料更新時 ===//
   useEffect(() => {
-    console.log("run test");
     // 從首頁顯示
     setPageNow(1);
   }, [distributedDicomList]);
@@ -79,12 +73,10 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
 
   //=== 判斷頁數列表的顯示 ===//
   const pagehandle = () => {
-    console.log("distributedDicomList:", distributedDicomList);
     let updatePageList = [];
     if (distributedDicomList.length < 5) {
       for (let i = 0; i < distributedDicomList.length; i++) {
         updatePageList[i] = i + 1;
-        console.log(i);
       }
     } else {
       if (pageNow <= 2) {
@@ -107,7 +99,6 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
         updatePageList[4] = pageNow + 2;
       }
     }
-    console.log("updatePageList", updatePageList);
     setPaglist(updatePageList);
   };
 
@@ -116,7 +107,6 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
     deleteObject.indexID = symptomId;
     dicomUIDs.push(value); //等子層級(item)呼叫並改變deleteObject值
     deleteObject.StudyInstanceUID = dicomUIDs;
-    console.log(dicomUIDs);
   };
 
   //=== 處理checkbox陣列值-減 ===//
@@ -128,9 +118,7 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
     });
     setDicomUIDs([]);
     setDicomUIDs(dicomFilter);
-    console.log(dicomFilter);
     deleteObject.StudyInstanceUID = dicomFilter;
-    console.log(dicomUIDs);
   };
 
   //=== 呼叫後端API刪studies ===//
@@ -148,14 +136,11 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
         .then((response) => {
           deleteEcho = response.data;
           setDeleteEcho(setDeleteEcho);
-          console.log(deleteEcho.deletedDICOM);
           alert("成功刪除" + deleteEcho.deletedDICOM.length + "筆資料");
           window.location.reload();
         })
         .catch((error) => {
-          // delecteEcho=error;
-          console.log(error);
-          console.log(deleteObject);
+          console.error(error);
         });
     }
   }
@@ -171,40 +156,33 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
 
   //=== 監聽頁數button ===//
   const pageStateChange = (e) => {
-    if (e.target.value >= 1) {
-      pageNow = parseInt(e.target.value);
-      setPageNow(pageNow);
+    const clickPageNum = parseInt(e.target.value);
+    if (clickPageNum >= 1) {
+      setPageNow(clickPageNum);
     }
-    dicomlistNow = distributedDicomList[pageNow - 1];
-    setDicomlistNow(dicomlistNow);
+    setDicomlistNow(distributedDicomList[clickPageNum - 1]);
     pagehandle();
   };
 
   //=== 監聽上一頁button ===//
   const minuspageStateChange = () => {
     if (pageNow > 1) {
-      pageNow = pageNow - 1;
-      setPageNow(pageNow);
+      setPageNow((prev) => prev - 1);
     }
-    dicomlistNow = distributedDicomList[pageNow - 1];
-    setDicomlistNow(dicomlistNow);
-    pagehandle();
   };
 
   //=== 監聽下一頁button ===//
   const pluspageStateChange = () => {
     if (pageNow < distributedDicomList.length) {
-      pageNow = pageNow + 1;
-      setPageNow(pageNow);
+      setPageNow((prev) => prev + 1);
     }
-    dicomlistNow = distributedDicomList[pageNow - 1];
-    setDicomlistNow(dicomlistNow);
-    pagehandle();
   };
+
   //=== 下拉選單 選擇顯示資料筆數 ===//
   const handleConditionChange = (e) => {
     setConditionNum(parseInt(e.target.value));
   };
+
   return (
     <div className="conRight">
       {dicomlistNow && (
@@ -286,11 +264,14 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
               </tbody>
             </table>
           )}
+          {/* 頁面列表 */}
           {pagelist && (
             <div className="pagelist-container">
-              <button onClick={minuspageStateChange} className="icon-button" title={"上一頁"}>
-                <KeyboardArrowLeftIcon />
-              </button>
+              {pageNow > 1 && (
+                <button onClick={minuspageStateChange} className="icon-button" title={"上一頁"}>
+                  <KeyboardArrowLeftIcon />
+                </button>
+              )}
               {pagelist.map((item, index) => {
                 return (
                   <StyledButton key={index} page={item} value={item} onClick={pageStateChange} className="icon-button">
@@ -298,9 +279,11 @@ const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) =
                   </StyledButton>
                 );
               })}
-              <button onClick={pluspageStateChange} className="icon-button" title={"下一頁"}>
-                <KeyboardArrowRightIcon />
-              </button>
+              {pageNow < distributedDicomList.length && (
+                <button onClick={pluspageStateChange} className="icon-button" title={"下一頁"}>
+                  <KeyboardArrowRightIcon />
+                </button>
+              )}
             </div>
           )}
         </div>
