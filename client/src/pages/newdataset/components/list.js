@@ -2,7 +2,7 @@ import Item from "./item";
 
 const List = ({ listSymptoms, listDelete, submittingState1}) => {
   return (
-    <div>
+    <div className="symptoms_flex">
       {listSymptoms.map((item) => {
         const { id, symptoms, description} = item;
         console.log(id);

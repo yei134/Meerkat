@@ -1,0 +1,51 @@
+.header {
+  background: #e6d4ab;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  padding: 0.2rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+.headerLeft {
+  width: fit-content;
+  display: flex;
+  align-content: center;
+}
+.headerLeft a{
+  display: flex;
+}
+.headerLeftLogo {
+  height: 3.5rem;
+}
+.otherIcon{
+  height: 1.5rem;
+  align-self: "flex-end";
+  margin: auto 0.2rem 0.2rem 0.2rem;
+}
+.headerRight {
+  width: fit-content;
+  display: flex;
+  align-self: center;
+  margin: 0rem 1rem 0rem 0.2rem;
+}
+.headerRightButton {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  margin: 0rem 1rem 0.2rem 0.2rem;
+  color: #ffffff;
+  background-color: #6699a4;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 3px 3px 0 #6c757d;
+}
+@media screen and (max-height: 600px) {
+  .headerLeftLogo {
+    height: 3rem;
+  }
+  .headerRightButton {
+    font-size: 0.7rem;
+  }
+}
