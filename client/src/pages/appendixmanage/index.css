@@ -1,0 +1,207 @@
+.contentContainer {
+  display: flex;
+  margin: 0px auto;
+}
+/* 大 */
+@media screen and (min-width: 1920px) {
+  .contentContainer {
+    width: 1536px;
+  }
+}
+/* 中 */
+@media screen and (min-width: 800px) {
+  .contentContainer {
+    width: 90%;
+  }
+}
+/* 小 */
+@media screen and (max-width: 800px) {
+  .contentContainer {
+    width: 100%;
+  }
+}
+/* 右側資料集附件列表 */
+.append-right-list {
+  width: 100%;
+  margin: 1rem auto;
+}
+.append-right-list td {
+  text-align: center;
+}
+.append-right-list thead tr th {
+  background-color: #ffffff60;
+  border-top: 0.1rem solid #00000033;
+  border-bottom: 0.1rem solid #00000033;
+  border-left: 0.1rem solid #bbbbbb;
+}
+.append-right-list thead tr th:first-child {
+  border-left: none;
+}
+.append-right-list tbody tr td {
+  background-color: #ffffff40;
+  border-left: 0.1rem solid #bbbbbb;
+}
+.append-right-list tbody tr td:first-child {
+  border-left: none;
+}
+.append-right-list tbody tr:nth-child(even) {
+  background-color: #ffffff60;
+}
+/* 左側資料總覽 */
+.append-left {
+  width: 20%;
+  text-align: center;
+  background: linear-gradient(to bottom, #ffffff, #ffffff55);
+}
+.append-left div {
+  /* padding: 0.5rem; */
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+.append-left img {
+  width: 100%;
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  width: 300px;
+  visibility: visible;
+}
+
+.modal h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+}
+
+.modal-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-button button {
+  margin-left: 10px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.custom-modal {
+  width: 60%;
+  max-width: 800px;
+  margin: auto;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow-y: auto; /* 使用 auto 啟用垂直滾動 */
+}
+.btnFile1 {
+  border-radius: 10px;
+  background-color: #6c757d;
+  color: white;
+  margin-top: 50%;
+  /* 與附近元素的距離 */
+  padding: 10px;
+  /* 與元素內的距離 */
+  white-space: nowrap;
+}
+.file-hr-style {
+  width: 70%;
+  float: left;
+}
+.info-div-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #f5f1e5;
+  padding: 2%;
+}
+.info-div-left {
+  display: flex;
+  flex: 1;
+  align-items: end;
+}
+.info-div-right {
+  display: flex;
+  flex: 1;
+  align-items: end;
+}
+.modal-content p {
+  margin: 0;
+  flex: 1; /* 讓文字平均分配空間 */
+}
+.ABconleft {
+  max-width: 20%;
+  margin: 0 20px 0 8%;
+}
+
+.conleft-title-style {
+  text-align: center;
+  margin-top: 5%;
+  background-color: #b5a57f;
+  font-size: larger;
+  font-weight: bold;
+  padding: 2%;
+}
+.conleft-datasetname-style {
+  text-align: center;
+  background-color: #f5f1e5;
+  font-size: x-large;
+  font-weight: bold;
+  padding: 2%;
+}
+.conleft-org-container {
+  background-color: #f5f1e5;
+  padding: 2%;
+}
+/* .edit-icon-button{
+  color: #595959;
+  display: inline-block;
+  border:none;
+  background-color: transparent;
+  height: auto;
+  padding: 0.5%;
+}
+.edit-icon-button:hover{
+  background-color: #8b8b8b15;
+  border-radius: 100%;
+  transition: 1s;
+} */
+.route-container {
+  display: flex;
+  flex-direction: row;
+  width: 85%;
+  margin: 6vh 0 0 2vw;
+}
+.page {
+  color: #6699a4;
+}
+.route {
+  display: flex;
+  align-items: end;
+  margin-left: 2%;
+  font-size: 20px;
+  color: #6c757d;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-family: "Helvetica", "Microsoft JhengHei", serif;
+}
+.tag-button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: #d9d9d9;
+  color: #455367;
+  border-radius: 10px;
+  margin: 2vh 0 2vh 0.25vw;
+  font-size: medium;
+}
+.tag-button-container {
+  display: flex;
+  flex-direction: row;
+}

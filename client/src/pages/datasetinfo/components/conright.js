@@ -1,12 +1,15 @@
+// 檔案
+import "../index.css";
+// 套件
 import React, { useEffect, useState } from "react";
 import Linkify from "linkify-react"; //判斷字串是否含超連結
 import ItemLeft from "./itemLeft";
 import ItemRight from "./itemRight";
-import "../index.css";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PsychologyIcon from "@mui/icons-material/Psychology";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+
 const ConRight = ({ notes, title, files, name }) => {
   var [indexFiles, setIndexFiles] = useState([]);
   var [appendix, setAppendix] = useState([]);
@@ -38,7 +41,7 @@ const ConRight = ({ notes, title, files, name }) => {
           </a>
         </button>
         <button className="edit-icon-button">
-          <a href="/datasetInfo">
+          <a href={`/datasetInfo/${name}/appendixmanage`}>
             <AttachFileIcon />
           </a>
         </button>
