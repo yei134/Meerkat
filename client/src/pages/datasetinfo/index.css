@@ -34,7 +34,7 @@
 }
 .conright{
   width: 80%;
-  margin:3vh 0 0 2vw;
+  margin:1vh 0 0 2vw;
   padding: 2% 4%;
   background-color: #EDE2C4;
   border: 1.5px solid #dad0b5;
@@ -87,6 +87,7 @@
   top:4px;
 }
 .note{
+  font-size: 1rem;
   text-indent:40px;
   font-size: larger;
   margin-top: 20px;
@@ -97,7 +98,7 @@
   color:#4b70bf;
 }
 .font-package-title{
-  font-size:x-large;
+  font-size:1.5rem;
   font-weight: bold;
 }
 .page{
@@ -120,10 +121,10 @@
   border-radius: 5px;
 }
 .formate-style{
-  width: 70%;
+  width: 60%;
   float: right;
   justify-content: center;
-  margin-right: 10%;
+  margin-right: 15%;
 }
 .formate-a-style{
   flex: 1;
@@ -137,7 +138,7 @@
 }
 .format-font-title-style{
   color: #595959;
-  font-size: large;
+  font-size: 1rem;
   font-weight:bold;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -146,12 +147,13 @@
   text-overflow: ellipsis; /* 加上省略號 */
 }
 .format-font-time-style{
-  font-size: small;
+  font-size: 0.8rem;
 }
 .file-float-row{
   display: flex;
   float: right;
   flex-direction: row;
+  margin-top: 0.3rem;
   margin-bottom: 10px;
   width: 100%;
 }
@@ -203,7 +205,7 @@
   color: #595959;
   text-align: center;
   background-color: #f5f1e5;
-  font-size: x-large;
+  font-size: 1.5rem;
   font-weight: bold;
   padding: 5%;
   border-radius: 10px;
@@ -233,7 +235,7 @@
   color: #455367;
   border-radius:10px;
   margin: 2vh 0 2vh 0.25vw;
-  font-size: medium;
+  font-size: 0.9rem;
 }
 .tag-button-container{
   display: flex;
@@ -271,4 +273,27 @@
   flex-direction: row;
   width: 85%;
   margin:6vh 0 0 2vw;
+}
+@media screen and (max-height: 600px) {
+  .font-package-title{
+    font-size: 1.2rem;
+  }
+  .note{
+    font-size: 0.95rem;
+  }
+  .conleft-datasetname-style{
+    font-size: 1.2rem;
+  }
+  .tag-button{
+    font-size: 0.7rem;
+  }
+  .format-font-title-style{
+    font-size: 0.9rem;
+  }
+  .format-font-time-style{
+    font-size: 0.7rem;
+  }
+  .conleft{
+    width: 28vw;
+  }
 }

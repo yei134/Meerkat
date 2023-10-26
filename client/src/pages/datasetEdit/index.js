@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Outlet } from "react-router-dom";
-import Header from "./components/header";
 import Content from "./components/content";
 
 function DatasetEdit(){
@@ -12,7 +11,6 @@ function DatasetEdit(){
   console.log(typeof(datasetName))
   return(
     <>
-      <Header/>
       <Content
         key={datasetNameId}
         datasetName={datasetName}
