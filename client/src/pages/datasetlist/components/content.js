@@ -79,7 +79,7 @@ const Content = ({ dataset }) => {
         <div className="package-card-note-style">{notes}</div>
         <div className="package-card-footer-style">
           <div className="AttachFileIcon-style">
-            <AttachFileIcon></AttachFileIcon>
+            <AttachFileIcon sx={{fontSize:"1rem"}}></AttachFileIcon>
             {files.length}件
           </div>
           <Link to={`datasetInfo/${name}`} className="link-to-dataInfo" title={`/datasetInfo/${name}`}>

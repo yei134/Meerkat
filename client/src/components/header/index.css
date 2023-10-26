@@ -2,7 +2,7 @@
   background: #e6d4ab;
   width: 100%;
   position: fixed;
-  z-index: 100;
+  z-index: 98;
   top: 0;
   left: 0;
   padding: 0.2rem 0.5rem;
@@ -18,7 +18,7 @@
   display: flex;
 }
 .headerLeftLogo {
-  height: 3.5rem;
+  height: 4rem;
 }
 .otherIcon{
   height: 1.5rem;
