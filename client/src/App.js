@@ -92,8 +92,9 @@ class App extends Component {
         <ReactKeycloakProvider authClient={Keycloak}>
           <Header />
           {/* 避免資料被header擋住 */}
-          <div className="nullDiv" />
-          <RouterProvider router={router} />
+          <div className="nullDiv">
+            <RouterProvider router={router} />
+          </div>
         </ReactKeycloakProvider>
       </>
     );

@@ -28,12 +28,12 @@ export default function Header() {
         <a href="/">
           <img src="/MeerkatTitle.svg" className="headerLeftLogo" />
         </a>
-        <a href="https://github.com/cylab-tw" target="_blank">
+        {/* <a href="https://github.com/cylab-tw" target="_blank">
           <GitHubIcon sx={{ fontSize: "1.5rem", alignSelf: "flex-end", margin: "0.2rem" }} />
         </a>
         <a href="	https://data.dmc.nycu.edu.tw/" target="_blank">
           <img src="/NYCU_icon.png" alt="NYCU" className="otherIcon" />
-        </a>
+        </a> */}
       </div>
       <div className="headerRight">
         {keycloak.authenticated ? (

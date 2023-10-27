@@ -10,12 +10,24 @@ div {
   padding: 0;
 }
 .route {
-  margin-left: 2%;
   display: flex;
   align-items: center;
   color:#6C757D;
   font-weight:800;
   letter-spacing: 1px;
+}
+.edit-icon-button{
+  color: #595959;
+  display: inline-block;
+  border:none;
+  background-color: transparent;
+  height: auto;
+  padding: 0.5%;
+}
+.edit-icon-button:hover{
+  background-color: #8b8b8b15;
+  border-radius: 100%;
+  transition: 1s;
 }
 /* 清除初始css */
 /* 

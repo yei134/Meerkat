@@ -4,7 +4,6 @@ import Edit from "./components/edit";
 import List from "./components/list";
 import "./index.css";
 import { Outlet } from "react-router-dom";
-import Header from "./components/header";
 
 const NewDataset = () => {
   //定義一個react偵測到有變動時要渲染的東西
@@ -21,7 +20,6 @@ const NewDataset = () => {
 
   return (
     <div>
-      <Header/>
       <div className="new-flex-container">
         <div className="new-form-container">
           <Edit

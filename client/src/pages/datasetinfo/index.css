@@ -255,19 +255,6 @@
   height: 20vh;
   margin: 2vh 0 2vh 0;
 }
-.edit-icon-button{
-  color: #595959;
-  display: inline-block;
-  border:none;
-  background-color: transparent;
-  height: auto;
-  padding: 0.5%;
-}
-.edit-icon-button:hover{
-  background-color: #8b8b8b15;
-  border-radius: 100%;
-  transition: 1s;
-}
 .route-container{
   display: flex;
   flex-direction: row;

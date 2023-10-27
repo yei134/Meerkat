@@ -1,3 +1,6 @@
+.head{
+  width: 100%;
+}
 input[type="file"] {
   display: none;
 }
@@ -9,9 +12,10 @@ input[type="file"] {
   display: flex;
   align-items: center;
   border-radius: 10px;
-  background-color: #6c757d;
-  color: white;
-  margin: 5px;
+  /* background-color: #6c757d; */
+  /* color: white; */
+  color: #6c757d;
+  /* margin: 5px; */
   /* 與附近元素的距離 */
   padding: 10px;
   /* 與元素內的距離 */
@@ -121,11 +125,42 @@ div {
   font-weight: bold;
   margin: 0px, 0px, 0px, 20%,;
 }
+/* content */
+.upload-content{
+  width: 100%;
+}
 .uploadfile-container {
-  width: 90vw;
-  height: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -30vh 0 0 -45vw;
+  /* width: 90vw; */
+  width: 100%;
+  /* height: 0; */
+  /* position: absolute; */
+  /* top: 50%; */
+  /* left: 50%; */
+  /* margin: -30vh 0 0 -45vw; */
+}
+/* .uploadfile-container {
+  width: 80%;
+  margin: 1rem auto;
+} */
+.uploadfile-container td {
+  text-align: center;
+}
+.uploadfile-container thead tr th {
+  background-color: #ffffff60;
+  border-top: 0.1rem solid #00000033;
+  border-bottom: 0.1rem solid #00000033;
+  border-left: 0.1rem solid #bbbbbb;
+}
+.uploadfile-container thead tr th:first-child {
+  border-left: none;
+}
+.uploadfile-container tbody tr td {
+  background-color: #ffffff40;
+  border-left: 0.1rem solid #bbbbbb;
+}
+.uploadfile-container tbody tr td:first-child {
+  border-left: none;
+}
+.uploadfile-container tbody tr:nth-child(even) {
+  background-color: #ffffff60;
 }

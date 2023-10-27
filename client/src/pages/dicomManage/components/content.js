@@ -74,62 +74,73 @@ const Content = ({ datasetName, datasetTitle, files }) => {
   }, [files]);
 
   return (
-    <>
-      <div className="symptoms-list">
-        <div className="flex-container-column">
-          <font className="flex-container-column-index">{datasetTitle}</font>
-          <hr />
-          <div className="flex-container-column-index">
-            <div className="add-symptoms-button-container">
-              <button onClick={handleClickDialogState} title={"新增病徵"}>
-                Add Symptom
-              </button>
-              <Dialog open={open} onClose={handleClickDialogState}>
-                <DialogTitle>新增索引檔 - {datasetTitle}</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>輸入病徵名稱，命名規則：</DialogContentText>
-                  <TextField autoFocus margin="dense" id="name" label="symptom" type="email" fullWidth variant="standard" onChange={(e) => setInputSymptom(e.target.value)} />
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClickDialogState}>Cancel</Button>
-                  <Button
-                    onClick={() => {
-                      setInputSymptom(inputSymptom);
-                      AddSymptom();
-                    }}
-                  >
-                    Submit
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </div>
-            {symptoms && (
-              <div>
-                {symptoms.map((item, index) => (
-                  <div key={index}>
-                    <button key={index} onClick={ChooseSymptoms} value={item} className="symptoms-button">
-                      {item[1]}
-                    </button>
-                    <br />
-                  </div>
-                ))}
-              </div>
-            )}
+    <div className="symptoms-list">
+      <div className="flex-container-column">
+        <font className="flex-container-column-index">{datasetTitle}</font>
+        <hr />
+        <div className="flex-container-column-index">
+          <div className="add-symptoms-button-container">
+            <button onClick={handleClickDialogState} title={"新增病徵"}>
+              Add Symptom
+            </button>
+            <Dialog open={open} onClose={handleClickDialogState}>
+              <DialogTitle>新增索引檔 - {datasetTitle}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>輸入病徵名稱，命名規則：</DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="symptom"
+                  type="email"
+                  fullWidth
+                  variant="standard"
+                  onChange={(e) => setInputSymptom(e.target.value)}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClickDialogState}>Cancel</Button>
+                <Button
+                  onClick={() => {
+                    setInputSymptom(inputSymptom);
+                    AddSymptom();
+                  }}
+                >
+                  Submit
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
+          {symptoms && (
+            <div>
+              {symptoms.map((item, index) => (
+                <div key={index}>
+                  <button
+                    key={index}
+                    onClick={ChooseSymptoms}
+                    value={item}
+                    className="symptoms-button"
+                  >
+                    {item[1]}
+                  </button>
+                  <br />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <ConRight
-          key={datasetTitle}
-          symptom={symptomPick}
-          symptomId={symptomIdPick}
-          datasetName={datasetName}
-          datasetTitle={datasetTitle}
-          keywords={keywords}
-          deleteArray={deleteArray}
-          setDeleteArray={setDeleteArray}
-        />
       </div>
-      <Outlet />
-    </>
+      <ConRight
+        key={datasetTitle}
+        symptom={symptomPick}
+        symptomId={symptomIdPick}
+        datasetName={datasetName}
+        datasetTitle={datasetTitle}
+        keywords={keywords}
+        deleteArray={deleteArray}
+        setDeleteArray={setDeleteArray}
+      />
+    </div>
   );
 };
 
