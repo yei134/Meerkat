@@ -1,0 +1,17 @@
+FROM ubuntu:22.04 AS backend-env
+RUN apt update
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt install g++ gcc wget curl -y
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+
+################################################################################
+
+# FROM node:18.14.2 as backend-env
+RUN mkdir /api
+COPY . /api/
+COPY ./cmake/dicom.dic /usr/local/share/dcmtk-3.6.7-DEV/dicom.dic
+
+WORKDIR /api
+RUN npm install
+CMD ["npm","start"]
