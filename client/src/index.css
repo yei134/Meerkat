@@ -22,3 +22,31 @@ body {
 #F7E7B5
 #EDD7AD
 */
+/* 清除初始css */
+* {
+  font-size: 1rem;
+  font-family:"Helvetica","Microsoft JhengHei";
+  font-weight: 400;
+  /* 100,400,600,800 */
+}
+div {
+  margin: 0;
+  padding: 0;
+}
+.route {
+  margin-left: 2%;
+  display: flex;
+  align-items: center;
+  color:#6C757D;
+  font-weight:800;
+  letter-spacing: 1px;
+}
+/* 清除初始css */
+/* 
+色卡
+#E2EDAD
+#F7F4B5
+#E0D9AF
+#F7E7B5
+#EDD7AD
+*/

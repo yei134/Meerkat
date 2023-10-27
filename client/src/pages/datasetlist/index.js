@@ -37,7 +37,7 @@ export default function DatasetList() {
   return (
     <>
       <div className="search">
-        <TextField id="outlined-basic" onChange={inputHandler} variant="outlined" fullWidth size="small" label="輸入關鍵詞" />
+        <TextField id="outlined-basic" onChange={inputHandler} variant="outlined" fullWidth size="small" label="輸入關鍵詞" sx={{ fontSize: "0.2rem" }}/>
       </div>
       {/* Body */}
       <div className="package-condition-div-style">
