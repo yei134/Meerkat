@@ -1,18 +1,26 @@
 // 套件
-import { useKeycloak } from "@react-keycloak/web";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useKeycloak } from "@react-keycloak/web";
 // 檔案
 import "./index.css";
 import VisualTable from "../../components/visualTable";
 import { ckan_default, ckan_token } from "../../global/constants";
 
 export default function Members() {
+  // 網頁跳轉涵式
+  const navigate = useNavigate();
+  // 取得keycloak資訊
   const { keycloak } = useKeycloak();
   // 使用者keycloak資訊
   const [userInfo, setUserInfo] = useState({});
-  // 可操作列表
+  // 可操作列表(orgnization[org]+package[pkg])
   const [operationList, setOperationList] = useState([]);
+  // 有權限的org列表
+  const [orgList, setOrgList] = useState([]);
+  // 有權限的pkg列表
+  const [pkgList, setPkgList] = useState([]);
   // 成員資料
   const [members, setMembers] = useState([]);
   // 權限變更
@@ -25,6 +33,10 @@ export default function Members() {
     { id: 4, name: "capacity", display: "Role" },
   ];
 
+  // 首次刷新時，取得使用者登入資訊
+  useEffect(() => {
+    getUserInfo();
+  }, []);
   // 取keycloak中的user資料
   async function getUserInfo() {
     await keycloak
@@ -34,12 +46,38 @@ export default function Members() {
       })
       .catch((e) => {
         console.log(e);
+        alert("登入錯誤");
+        navigate("/");
       });
   }
-  // 取得使用者所屬的組織
+  // 當使用者資料更新時，取得操作列表
+  useEffect(() => {
+    if (userInfo.email !== undefined) {
+      getOperationList();
+    }
+    setOperationList([]);
+    setOrgList([]);
+    setPkgList([]);
+    setMembers([]);
+    setRoleChange({});
+  }, [userInfo]);
+  // 取得使用者可操作列表(orgnization[org]+package[pkg])
   async function getOperationList() {
     // 待補：透過saml取得user在ckan的name
-    const userName = userInfo.email.split("@")[0];
+    let userName = userInfo.email.split("@")[0];
+    userName = userName.replace(".", "-");
+    getOrgPkgList(userName);
+    getPkgList(userName);
+  }
+  // 取得組織資料集列表
+  async function getOrgPkgList(userName) {
+    /*
+    get ckan organization_list_for_user
+    filter organization capacity=admin
+    get ckan organization_package_list
+    filter name not includes -type-private
+    */
+    // 取得組織列表
     await axios
       .get(`${ckan_default}api/ckan/organization_list_for_user`, {
         params: { id: userName },
@@ -48,15 +86,14 @@ export default function Members() {
         },
       })
       .then((res) => {
-        let tmp = [];
-        res.data.map((element) => {
-          // 是org管理者時，取所有資料集
-          if (element.capacity === "admin") {
-            getOrgPackageList(element.id);
-            tmp.push(element);
-          }
+        const resData = res.data;
+        // 篩選出admin身分的組織
+        const adminList = resData.filter((org) => org.capacity === "admin");
+        adminList.map((element) => {
+          // 取得組織裡的所有資料集
+          getOrgPackageList(element.id);
         });
-        setOperationList(tmp);
+        setOperationList(adminList);
       })
       .catch((e) => {
         console.log(e);
@@ -74,8 +111,9 @@ export default function Members() {
       .then((res) => {
         let tmp = [];
         res.data.map((element) => {
-          console.log(element);
-          tmp.push(element);
+          if (element.name.includes("-type-private")) {
+            tmp.push(element);
+          }
         });
         setOperationList((prev) => {
           return [...prev, ...tmp];
@@ -85,6 +123,9 @@ export default function Members() {
         console.log(e);
       });
   }
+  // 取得單獨資料集列表
+  async function getPkgList() {}
+
   // 取得選取範圍org/dataset內的成員
   async function getMembers(type, id) {
     let api = "";
@@ -143,15 +184,6 @@ export default function Members() {
     );
     return res;
   }
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-  useEffect(() => {
-    if (userInfo.email !== undefined) {
-      getOperationList();
-    }
-  }, [userInfo]);
 
   return (
     <>

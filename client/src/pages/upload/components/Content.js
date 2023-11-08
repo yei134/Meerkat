@@ -5,9 +5,9 @@ import Item from "./Item";
 function Content({ setFileStatus, uploadFile, setUploadFile, datasetName, symptomId }) {
 
   return (
-    <div className="uploadfile-container">
-      <font className="total-file-font">共載入{uploadFile.length}個檔案</font>
-      <table>
+    <div className="upload-content">
+      <div>共載入{uploadFile.length}個檔案</div>
+      <table className="uploadfile-container">
         <thead>
           <tr>
             <th>NO.</th>

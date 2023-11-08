@@ -1,30 +1,6 @@
 /* 清除初始css */
 * {
   font-size: 1rem;
-  font-family: "Helvetica", "Microsoft JhengHei";
-  font-weight: 400;
-  /* 100,400,600,800 */
-}
-div {
-  margin: 0;
-  padding: 0;
-}
-body {
-  margin: 0;
-  padding: 0;
-}
-/* 清除初始css */
-/* 
-色卡
-#E2EDAD
-#F7F4B5
-#E0D9AF
-#F7E7B5
-#EDD7AD
-*/
-/* 清除初始css */
-* {
-  font-size: 1rem;
   font-family:"Helvetica","Microsoft JhengHei";
   font-weight: 400;
   /* 100,400,600,800 */
@@ -34,12 +10,24 @@ div {
   padding: 0;
 }
 .route {
-  margin-left: 2%;
   display: flex;
   align-items: center;
   color:#6C757D;
   font-weight:800;
   letter-spacing: 1px;
+}
+.edit-icon-button{
+  color: #595959;
+  display: inline-block;
+  border:none;
+  background-color: transparent;
+  height: auto;
+  padding: 0.5%;
+}
+.edit-icon-button:hover{
+  background-color: #8b8b8b15;
+  border-radius: 100%;
+  transition: 1s;
 }
 /* 清除初始css */
 /* 
