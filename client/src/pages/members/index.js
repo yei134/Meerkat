@@ -15,12 +15,12 @@ export default function Members() {
   const { keycloak } = useKeycloak();
   // 使用者keycloak資訊
   const [userInfo, setUserInfo] = useState({});
-  // 可操作列表(orgnization[org]+package[pkg])
-  const [operationList, setOperationList] = useState([]);
   // 有權限的org列表
   const [orgList, setOrgList] = useState([]);
   // 有權限的pkg列表
   const [pkgList, setPkgList] = useState([]);
+  // 可操作列表(orgnization[org]+package[pkg])
+  const [operationList, setOperationList] = useState([]);
   // 成員資料
   const [members, setMembers] = useState([]);
   // 權限變更
@@ -33,11 +33,11 @@ export default function Members() {
     { id: 4, name: "capacity", display: "Role" },
   ];
 
-  // 首次刷新時，取得使用者登入資訊
+  // 1.首次刷新時，取得使用者登入資訊
   useEffect(() => {
     getUserInfo();
   }, []);
-  // 取keycloak中的user資料
+  // 1.1.取keycloak中的user資料
   async function getUserInfo() {
     await keycloak
       .loadUserProfile()
@@ -50,7 +50,7 @@ export default function Members() {
         navigate("/");
       });
   }
-  // 當使用者資料更新時，取得操作列表
+  // 2.當使用者資料更新時，取得操作列表
   useEffect(() => {
     if (userInfo.email !== undefined) {
       getOperationList();
@@ -61,23 +61,39 @@ export default function Members() {
     setMembers([]);
     setRoleChange({});
   }, [userInfo]);
-  // 取得使用者可操作列表(orgnization[org]+package[pkg])
+  // 2.1.取得使用者可操作列表(orgnization[org]+package[pkg])
   async function getOperationList() {
     // 待補：透過saml取得user在ckan的name
     let userName = userInfo.email.split("@")[0];
     userName = userName.replace(".", "-");
+    // A. 組織可操作列表取得
     getOrgPkgList(userName);
+    // B. 資料集可操作列表取得
     getPkgList(userName);
   }
-  // 取得組織資料集列表
+  // A. 取得組織資料集列表
   async function getOrgPkgList(userName) {
-    /*
-    get ckan organization_list_for_user
-    filter organization capacity=admin
-    get ckan organization_package_list
-    filter name not includes -type-private
-    */
-    // 取得組織列表
+    // A1. 取得使用者所在的所有組織(org)和組織身分
+    await getCkanApiOrgListForUser(userName);
+    // A2. 篩選組織出身分為admin的組織
+    filterAdminCapacityOrgList();
+    // A3. 取得組織內所有的資料集列表
+    let getPkgList = getOrgPkgList();
+    // 3. 篩選出符合格式的資料集(package)
+    filterFormatPkgList(getPkgList);
+    // 4. 放入pkgList並避免重複
+    putInPkgList(getPkgList);
+  }
+  // B. 取得單獨資料集列表
+  async function getPkgList(userName) {
+    // B1. 取得所在的資料集列表
+    const getPkgListPkg = await getCkanApiCollaboratorListForUser(userName);
+    console.log(getPkgListPkg);
+    // B2. 篩選出身分為admin的資料集
+    filerAdminCapacityPkgList(getPkgListPkg);
+  }
+  // A1. 取得使用者所在的所有組織(org)和組織身分
+  async function getCkanApiOrgListForUser(userName) {
     await axios
       .get(`${ckan_default}api/ckan/organization_list_for_user`, {
         params: { id: userName },
@@ -86,45 +102,82 @@ export default function Members() {
         },
       })
       .then((res) => {
-        const resData = res.data;
-        // 篩選出admin身分的組織
-        const adminList = resData.filter((org) => org.capacity === "admin");
-        adminList.map((element) => {
-          // 取得組織裡的所有資料集
-          getOrgPackageList(element.id);
-        });
-        setOperationList(adminList);
+        setOrgList(res.data);
       })
       .catch((e) => {
         console.log(e);
+        setOrgList([]);
       });
   }
-  // 取得組織所擁有資料集
-  async function getOrgPackageList(orgId) {
+  // A2. 篩選組織出身分為admin的組織
+  function filterAdminCapacityOrgList() {
+    const adminList = orgList.filter((org) => org.capacity === "admin");
+    setOrgList(adminList);
+  }
+  // A3. 取得組織內所有的資料集列表
+  async function getOrgPkgList() {
+    const orgPkgList = await new Promise(() => {
+      let resList = [];
+      orgList.map((element) => {
+        resList.push(...getCkanApiOrgPkgList(element.id));
+      });
+      return resList;
+    });
+    async function getCkanApiOrgPkgList(orgId) {
+      await axios
+        .get(`${ckan_default}api/ckan/organization_package_list`, {
+          params: { id: orgId },
+          headers: {
+            Authorization: ckan_token,
+          },
+        })
+        .then((res) => {
+          return res.data;
+        })
+        .catch((e) => {
+          console.log(e);
+          return [];
+        });
+    }
+  }
+  // B1. 取得所在的資料集列表
+  async function getCkanApiCollaboratorListForUser(userName) {
     await axios
-      .get(`${ckan_default}api/ckan/organization_package_list`, {
-        params: { id: orgId },
+      .get(`${ckan_default}api/ckan/collaborator_list_for_user`, {
+        params: { id: userName },
         headers: {
           Authorization: ckan_token,
         },
       })
       .then((res) => {
-        let tmp = [];
-        res.data.map((element) => {
-          if (element.name.includes("-type-private")) {
-            tmp.push(element);
-          }
-        });
-        setOperationList((prev) => {
-          return [...prev, ...tmp];
-        });
+        console.log(res.data);
+        return res.data;
       })
       .catch((e) => {
         console.log(e);
+        return [];
       });
   }
-  // 取得單獨資料集列表
-  async function getPkgList() {}
+  // B2. 篩選出身分為admin的資料集
+  function filerAdminCapacityPkgList(getPkgList) {
+    console.log(getPkgList);
+    // const adminList = getPkgList.filter((org) => org.capacity === "admin");
+  }
+  // 3. 篩選出符合格式的資料集(package)
+  function filterFormatPkgList(getPkgList) {
+    const formatList = getPkgList.filter((pack) => pack.name.includes("-type-private"));
+    return formatList;
+  }
+  // 4. 放入pkgList並避免重複
+  function putInPkgList(getPkgList) {
+    getPkgList.map((element) => {
+      if (!pkgList.filter((pack) => pack.id.includes(element.id))) {
+        setPkgList((prev) => {
+          return [...prev, element];
+        });
+      }
+    });
+  }
 
   // 取得選取範圍org/dataset內的成員
   async function getMembers(type, name) {
