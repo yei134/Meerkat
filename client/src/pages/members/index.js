@@ -127,7 +127,7 @@ export default function Members() {
   async function getPkgList() {}
 
   // 取得選取範圍org/dataset內的成員
-  async function getMembers(type, id) {
+  async function getMembers(type, name) {
     let api = "";
     if (type === "organization") {
       api = `${ckan_default}api/ckan/organization_info`;
@@ -137,7 +137,7 @@ export default function Members() {
     if (api !== "") {
       await axios
         .get(api, {
-          params: { id: id },
+          params: { id: name },
           headers: {
             Authorization: ckan_token,
           },
@@ -145,11 +145,11 @@ export default function Members() {
         .then(async (res) => {
           if (type === "organization") {
             const tmp = res.data.users;
-            const memberInfo = await getCkanUser(tmp, "id", "organization", id);
+            const memberInfo = await getCkanUser(tmp, "id", "organization", name);
             setMembers(memberInfo);
           } else if (type === "dataset") {
             const tmp = res.data;
-            const memberInfo = await getCkanUser(tmp, "user_id", "dataset", id);
+            const memberInfo = await getCkanUser(tmp, "user_id", "dataset", name);
             setMembers(memberInfo);
           }
         })
@@ -158,8 +158,8 @@ export default function Members() {
         });
     }
   }
-  // 取得ckan的user資訊 (type和id是為了表格操作放入的)
-  async function getCkanUser(arr, field_name, type, id) {
+  // 取得ckan的user資訊 (type和name是為了表格操作放入的)
+  async function getCkanUser(arr, field_name, type, name) {
     // promise將區塊內程序打包使執行序完全執行後才往下運行
     const res = await Promise.all(
       arr.map(async (element) => {
@@ -172,7 +172,7 @@ export default function Members() {
           })
           .then((res) => {
             const tmp = res.data;
-            const operate = { type: type, id: id, user: tmp.name, role: element.capacity, display: true };
+            const operate = { type: type, name: name, user: tmp.name, role: element.capacity, display: true };
             // operate內的名稱會連動到changeOperate方法
             return { name: tmp.name, email: tmp.email, capacity: element.capacity, operate: operate };
           })
@@ -195,7 +195,7 @@ export default function Members() {
               <li
                 key={`operationList_${index}`}
                 onClick={() => {
-                  getMembers(element.type, element.id);
+                  getMembers(element.type, element.name);
                 }}
               >{`${element.type}:  ${element.title}-${element.private}`}</li>
             );
@@ -212,7 +212,7 @@ export default function Members() {
 }
 function ChangeOperate({ roleChange, setRoleChange }) {
   // type:organization/dataset,
-  // id:(org/set)'s id,
+  // id:(org/set)'s name,
   // name:user's name,
   // role:original role
   const roleList = [
@@ -243,7 +243,7 @@ function ChangeOperate({ roleChange, setRoleChange }) {
       .post(
         api,
         {
-          id: roleChange.id,
+          id: roleChange.name,
           users: [roleChange.user],
           role: formJson.role,
         },
