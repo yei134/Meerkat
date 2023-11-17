@@ -17,6 +17,7 @@ import DicomManage from "./pages/dicomManage";
 import Organization from "./pages/organization";
 import DatasetEdit from "./pages/datasetEdit";
 import Header from "./components/header";
+import Apendmanage from "./pages/appendixmanage";
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,15 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <Members />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/datasetInfo/:getId/appendixmanage",
+    // 資料集附件管理與上傳
+    element: (
+      <PrivateRoute>
+        <Apendmanage />
       </PrivateRoute>
     ),
   },

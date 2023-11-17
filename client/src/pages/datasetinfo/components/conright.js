@@ -38,7 +38,7 @@ const ConRight = ({ notes, title, files, name }) => {
           </a>
         </button>
         <button className="edit-icon-button">
-          <a href="/datasetInfo">
+          <a href={`/datasetInfo/${name}/appendixmanage`}>
             <AttachFileIcon />
           </a>
         </button>
