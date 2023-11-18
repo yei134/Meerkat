@@ -23,13 +23,50 @@ export default function ConLeft({ datasetInfo }) {
         });
     }
   }, [datasetInfo]);
+
+  // 計算資料集附件類別結構
+  useEffect(() => {
+    if (datasetInfo.resources !== undefined) {
+      const resources = datasetInfo.resources;
+      resources.map((element) => {
+        if (formatCount[element.format] === undefined) {
+          if (element.format === "") {
+            element.format = "Unknow";
+          }
+          setFormatCount((prev) => {
+            prev[element.format] = 1;
+            return prev;
+          });
+        } else {
+          setFormatCount((prev) => {
+            prev[element.format] += 1;
+            return prev;
+          });
+        }
+      });
+    }
+  }, [datasetInfo]);
+
   return (
     <div className="append-left">
-      <div>所屬組織</div>
+      <div className="left-head">資料集名稱</div>
+      <div className="ds-name">{datasetInfo.name}</div>
+      <div className="left-head">所屬組織</div>
       <div>
         <img src={orgInfo.imgUrl} alt={orgInfo.title} />
       </div>
-      <div>{orgInfo.title}</div>
+      <div className="ds-org">{orgInfo.title}</div>
+      <div className="left-head">附件結構</div>
+      <div className="ds-fieformat">
+        {Object.entries(formatCount).map((element) => {
+          return (
+            <p key={`fileFormat_${element}`}>
+              <img src={`../../file${element[0]}.svg`} alt={`${element[0]}`} />:{element[1]}
+              <br />
+            </p>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import VisualTable from "../../../components/visualTable";
 
-const ConRight = ({ resources, selectedItems, setSelectedItems, name, title }) => {
+const ConRight = ({ resources, selectedItems, setSelectedItems }) => {
   // 若資源(resources)為空，則不顯示內容，返回 null
   if (!resources) {
     return null;

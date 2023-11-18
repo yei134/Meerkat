@@ -50,13 +50,30 @@
 /* 左側資料總覽 */
 .append-left {
   width: 20%;
+  max-width: max-content;
   text-align: center;
-  background: linear-gradient(to bottom, #ffffff, #ffffff55);
+  /* background: linear-gradient(to bottom, #ffffff, #ffffff55); */
 }
-.append-left div {
-  /* padding: 0.5rem; */
-  color: #6c757d;
-  font-size: 0.8rem;
+.append-left .left-head{
+  color: #ffffff;
+  background: #D7C593;
+}
+.append-left .ds-name{
+  font-size: 1.2;
+  font-weight: 600;
+  color: #B49D60;
+}
+.append-left .ds-org{
+  font-size: 0.8;
+  /* font-weight: 600; */
+  color: #B49D60;
+}
+.append-left .ds-fieformat p{
+  color: #B49D60;
+}
+.append-left .ds-fieformat img{
+  height: 1rem;
+  width: auto;
 }
 .append-left img {
   width: 100%;
