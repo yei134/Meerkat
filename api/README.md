@@ -1,17 +1,9 @@
-# api@1.4.10 變動 2023/10/25
+# api@1.4.11 變動 2023/11/18
 
 ### 完成進度
 #### DEBUG DONE
-1. /api/studiesDelete
- > 刪除raccoon端刪除影像之步驟
-2. /api/app.js
- > 刪除cors限定
-3. /api/raccoon/studiesList 噴出4058錯誤
- > 檔名禁止格式包含冒號
-4. /api/raccoon/studiesList
- > index亂數名稱除時間外多加亂碼
-5. /api/controllers/variables.js
- > 新增偉大的亂碼產生器，謝謝大大
+1. /api/raccoon/appendStudies
+  > 修改檔案格式冒號之問題
 
 #### UPDATE DONE
 
