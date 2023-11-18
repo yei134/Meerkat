@@ -93,6 +93,15 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
+  {
+    path: "/datasetInfo/:getId/appendixmanage",
+    // 資料集附件管理與上傳
+    element: (
+      <PrivateRoute>
+        <Apendmanage />
+      </PrivateRoute>
+    ),
+  },
 ]);
 //介面所需框架集合
 class App extends Component {

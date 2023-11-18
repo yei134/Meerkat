@@ -1,4 +1,5 @@
 import "../index.css";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const Item = ({ id, symptoms, description, listDelete, submittingState1 }) => {
   function deleteItem() {
@@ -7,12 +8,13 @@ const Item = ({ id, symptoms, description, listDelete, submittingState1 }) => {
       return prev.filter((item) => item.id !== id);
     });
   }
-  console.log(description);
   return (
     <div>
       <div className="div_index">
-        &nbsp;{symptoms}&nbsp;/&nbsp;{description}&nbsp;
-        <button onClick={deleteItem} className="button_cancel"></button>
+        &nbsp;{symptoms}&nbsp;
+        <button onClick={deleteItem} className="button_cancel">
+          <ClearIcon />
+        </button>
       </div>
     </div>
   );
