@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 ReactModal.setAppElement("#root");
 
-function ActionBotton({ selectedItems, setFileUploadCount }) {
+function ActionBotton({ selectedItems, setFileUploadCount, getCkanApiPackageShow }) {
   const [showModal, setShowModal] = useState(false);
   function deleteItems() {
     const postData = { resource_id: selectedItems };
@@ -40,11 +40,13 @@ function ActionBotton({ selectedItems, setFileUploadCount }) {
   }
   const handleFileUploadSuccess = () => {
     setFileUploadCount((prevCount) => prevCount + 1);
+    getCkanApiPackageShow();
   };
   return (
     <span className="dicom-btn-container">
       <button className="edit-icon-button" onClick={handleDelete}>
         <DeleteIcon />
+        附件刪除
       </button>
       <ReactModal isOpen={showModal} onRequestClose={closeModal} contentLabel="Delete Modal" className="modal">
         <h2>確認要刪除嗎？</h2>
