@@ -70,24 +70,22 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount }) {
               headers: headers,
             })
               .then((getRes) => {
-                console.log(getRes);
                 handleFileUploadSuccess();
               })
               .catch((err) => {
-                console.log("err=" + err);
+                console.error("err=" + err);
               });
           }
         }
         resourcesUpload();
         window.alert("上傳成功");
-        console.log(resourceFiles);
       } else {
         throw Error("no resourceFile uploaded.");
       }
     } catch (error) {
       // ckan返回請求錯誤的訊息
       console.error(error);
-      console.log("Error fetching data from external API");
+      console.error("Error fetching data from external API");
       window.alert("上傳失敗"); // 顯示失敗訊息
     } finally {
       // 無論上傳成功或失敗，最後都執行 closeModal

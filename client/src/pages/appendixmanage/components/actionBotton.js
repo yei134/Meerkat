@@ -9,7 +9,6 @@ function ActionBotton({ selectedItems, setFileUploadCount }) {
   const [showModal, setShowModal] = useState(false);
   function deleteItems() {
     const postData = { resource_id: selectedItems };
-    console.log(postData);
     axios
       .delete(`${process.env.REACT_APP_BACKEND_URI}api/ckan/resource_delete`, {
         headers: {
@@ -19,18 +18,16 @@ function ActionBotton({ selectedItems, setFileUploadCount }) {
         data: postData,
       })
       .then((response) => {
-        console.log(response);
         handleFileUploadSuccess();
         window.alert("刪除成功");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
   //開啟刪除視窗
   function handleDelete() {
     setShowModal(true);
-    console.log("checked:", selectedItems);
   }
   //關閉刪除視窗
   function closeModal() {

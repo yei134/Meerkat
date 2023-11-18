@@ -38,14 +38,10 @@ const Content = ({ datasetName, selectedItems, setSelectedItems, fileUploadCount
 
   return (
     <div className="contentContainer">
+      {/* 資訊欄 */}
       <ConLeft datasetInfo={datasetInfo} />
-      <ConRight
-        resources={datasetInfo.resources}
-        selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
-        name={datasetName}
-        title={title}
-      />
+      {/* 附件列表 */}
+      <ConRight resources={datasetInfo.resources} selectedItems={selectedItems} setSelectedItems={setSelectedItems} name={datasetName} title={title} />
     </div>
   );
 };

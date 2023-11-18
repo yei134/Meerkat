@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 // 檔案
 import "./index.css";
-import ActionBotton from "./components/actionBotton";
 import Content from "./components/content";
+import ActionBotton from "./components/actionBotton";
 import UploadFile from "./components/uplaodBotton";
 
 function Apendmanage() {
@@ -20,6 +20,7 @@ function Apendmanage() {
         {/* 上傳 */}
         <UploadFile datasetName={datasetName.getId} fileUploadCount={fileUploadCount} setFileUploadCount={setFileUploadCount} />
       </div>
+      {/* 左側資訊欄&右側附件列表 */}
       <Content datasetName={datasetName.getId} selectedItems={selectedItems} setSelectedItems={setSelectedItems} fileUploadCount={fileUploadCount} />
     </>
   );

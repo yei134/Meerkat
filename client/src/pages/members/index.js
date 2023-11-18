@@ -80,7 +80,8 @@ export default function Members() {
     // A2.1. 儲存組織列表
     setOrgList(getOrgList);
     // A3. 取得組織內所有的資料集列表
-    let getPkgListOrg = getOrgPkgList();
+    let getPkgListOrg = await getOrgPkgList();
+    console.log("A3. getPkgListOrg:", getPkgListOrg);
     // 3. 篩選出符合格式的資料集(package)
     getPkgListOrg = filterFormatPkgList(getPkgListOrg);
     // 4. 放入pkgList並避免重複
@@ -92,11 +93,12 @@ export default function Members() {
     let getPkgListPkg = await getCkanApiCollaboratorListForUser(userName);
     // B2. 篩選出身分為admin的資料集
     getPkgListPkg = filterAdminCapacityList(getPkgListPkg);
-    console.log(getPkgListPkg);
+    // B3. 取得pkg的name
+    getPkgListPkg = await pkgSearch(getPkgListPkg);
     // 3. 篩選出符合格式的資料集(package)
-    getPkgListPkg = filterFormatPkgList(getPkgListPkg);
+    // getPkgListPkg = filterFormatPkgList(getPkgListPkg);
     // 4. 放入pkgList並避免重複
-    putInPkgList(getPkgListPkg);
+    // putInPkgList(getPkgListPkg);
   }
   // A1. 取得使用者所在的所有組織(org)和組織身分
   async function getCkanApiOrgListForUser(userName) {
@@ -123,11 +125,11 @@ export default function Members() {
   }
   // A3. 取得組織內所有的資料集列表
   async function getOrgPkgList() {
-    const orgPkgList = await new Promise(() => {
+    const orgPkgList = await Promise.all(
       orgList.map((element) => {
         return getCkanApiOrgPkgList(element.id);
-      });
-    });
+      })
+    );
     async function getCkanApiOrgPkgList(orgId) {
       const res = await axios
         .get(`${ckan_default}api/ckan/organization_package_list`, {
@@ -137,6 +139,7 @@ export default function Members() {
           },
         })
         .then((res) => {
+          console.log(res.data);
           return res.data;
         })
         .catch((e) => {
@@ -145,7 +148,7 @@ export default function Members() {
         });
       return res;
     }
-    console.log(orgPkgList);
+    return orgPkgList;
   }
   // B1. 取得所在的資料集列表
   async function getCkanApiCollaboratorListForUser(userName) {
@@ -165,9 +168,40 @@ export default function Members() {
       });
     return getPkgList;
   }
+  // B3. 取得pkg的name
+  async function pkgSearch(getPkgListPkg) {
+    const res = await new Promise(() => {
+      getPkgListPkg.map((element) => {
+        return getCkanApiPkgShow(element.package_id);
+      });
+    });
+    async function getCkanApiPkgShow(pkgId) {
+      const res = await axios
+        .get(`${ckan_default}api/ckan/package_show`, {
+          params: { datasetName: pkgId },
+          headers: {
+            Authorization: ckan_token,
+          },
+        })
+        .then((res) => {
+          return res.data;
+        })
+        .catch((e) => {
+          console.log(e);
+          return {};
+        });
+      return res;
+    }
+  }
   // 3. 篩選出符合格式的資料集(package)
   function filterFormatPkgList(getPkgList) {
-    const formatList = getPkgList.lenth === 0 ? getPkgList.filter((pack) => pack.name.includes("-type-private")) : [];
+    console.log(getPkgList);
+    // const formatList = getPkgList.filter((pack) => pack.name.includes("-type-private"));
+    const formatList = getPkgList.filter((pack) => {
+      // typeof pack.name === "string" 用來防止filter爆掉
+      return typeof pack.name === "string" && pack.name.includes("-type-private");
+    });
+    console.log(formatList);
     return formatList;
   }
   // 4. 放入pkgList並避免重複

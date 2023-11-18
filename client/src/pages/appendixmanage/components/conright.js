@@ -20,8 +20,6 @@ const ConRight = ({ resources, selectedItems, setSelectedItems, name, title }) =
       //如果 item 與 resourceId 不相等，表示不是要移除的ID，它將會被保留在新陣列中。
       setSelectedItems((prevSelectedItems) => prevSelectedItems.filter((item) => item !== resourceId));
     }
-    // console.log("Checkbox checked:", isChecked);
-    // console.log("Selected resourceId:", resourceId); // 在console中顯示資源的ID
   };
 
   return (
@@ -66,8 +64,10 @@ const ConRight = ({ resources, selectedItems, setSelectedItems, name, title }) =
             const displayedFileName = `${fileName}.${format}`;
             const isChecked = selectedItems.includes(resources.id);
             // 不顯示csv以及篩選特殊病徵
-            if (format === "CSV") {
-              if (displayedFileName.includes("_[type]_")) {
+            if (format === "CSV" || format === "") {
+              // 確認是否為特定檔案格式: datasetName_[type]_symptoms
+              const haveSymptem = displayedFileName.split("_[type]_").length > 1 ? true : false;
+              if (haveSymptem) {
                 return null;
               }
             }
