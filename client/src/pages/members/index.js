@@ -64,15 +64,15 @@ export default function Members() {
   // 2.1.取得使用者可操作列表(orgnization[org]+package[pkg])
   async function getOperationList() {
     // 待補：透過saml取得user在ckan的name
-    let userName = userInfo.email.split("@")[0];
+    let userName = await userInfo.email.split("@")[0];
     userName = userName.replace(".", "-");
     // A. 組織可操作列表取得
-    getOrgPkgList(userName);
+    getOrgList(userName);
     // B. 資料集可操作列表取得
     getPkgList(userName);
   }
   // A. 取得組織資料集列表
-  async function getOrgPkgList(userName) {
+  async function getOrgList(userName) {
     // A1. 取得使用者所在的所有組織(org)和組織身分
     let getOrgList = await getCkanApiOrgListForUser(userName);
     // A2. 篩選組織出身分為admin的組織
@@ -92,6 +92,7 @@ export default function Members() {
     let getPkgListPkg = await getCkanApiCollaboratorListForUser(userName);
     // B2. 篩選出身分為admin的資料集
     getPkgListPkg = filterAdminCapacityList(getPkgListPkg);
+    console.log(getPkgListPkg);
     // 3. 篩選出符合格式的資料集(package)
     getPkgListPkg = filterFormatPkgList(getPkgListPkg);
     // 4. 放入pkgList並避免重複
