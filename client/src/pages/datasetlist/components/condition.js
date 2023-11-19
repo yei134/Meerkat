@@ -12,29 +12,36 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 
 const Condition = (inputText) => {
-  var [orglist, setOrglist] = useState(); //組織列表
-  var [grouplist, setGrouplist] = useState(); //群組列表
-  var [taglist, setTaglist] = useState(); //標籤列表
-  var [condition, setCondition] = useState({}); //篩選條件參數
-  var [datsetlist, setDatsetlist] = useState(); //顯示之資料集(全)
-  var [distributedDatalist, setDistributedDatalist] = useState(); //顯示之資料集(每6個維一個陣列)
+  const [orglist, setOrglist] = useState(); //組織列表
+  const [grouplist, setGrouplist] = useState(); //群組列表
+  const [taglist, setTaglist] = useState(); //標籤列表
+  const [condition, setCondition] = useState({
+    //篩選條件參數
+    name: "",
+    type: "",
+    id: "",
+    URL: "",
+  });
+  const [datsetlist, setDatsetlist] = useState(); //顯示之資料集(全)
+  const [distributedDatalist, setDistributedDatalist] = useState(); //顯示之資料集(每6個為一個陣列)
   const [isOrgListVisible, setOrgListVisible] = useState(false); //初始狀態把導覽列關起來
   const [isGroupListVisible, setGroupListVisible] = useState(false); //初始狀態把導覽列關起來
   const [isTagListVisible, setTagListVisible] = useState(false); //初始狀態把導覽列關起來
-  var [pageNow, setPageNow] = useState(1); //當前頁數
-  var dataSix = 6; //一頁顯示的資料筆數
-  var [pagestotal, setPagestotal] = useState(); //總頁數
-  var [datalistNow, setDatalistNow] = useState(); //目前頁數的資料-陣列-6個以內
+  const [pageNow, setPageNow] = useState(1); //當前頁數
+  const dataSix = 6; //一頁顯示的資料筆數
+  const [pagestotal, setPagestotal] = useState(); //總頁數
+  const [datalistNow, setDatalistNow] = useState(); //目前頁數的資料-陣列-6個以內
 
   //=== 拿取orglist、grouplist、taglist資料 ===//
   useEffect(() => {
     const getOrglist = async () => {
       try {
         await axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/organization_list`, { headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN } }).then((response) => {
-          orglist = response.data;
-          setOrglist(orglist);
+          let org = response.data;
+          setOrglist(org);
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,8 +52,7 @@ const Condition = (inputText) => {
     const getGrouplist = async () => {
       try {
         await axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/group_list`, { headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN } }).then((response) => {
-          grouplist = response.data;
-          setGrouplist(grouplist);
+          setGrouplist(response.data);
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -58,8 +64,7 @@ const Condition = (inputText) => {
     const getTaglist = async () => {
       try {
         await axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/tag_list`, { headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN } }).then((response) => {
-          taglist = response.data;
-          setTaglist(taglist);
+          setTaglist(response.data);
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -69,36 +74,58 @@ const Condition = (inputText) => {
     getTaglist();
   }, []);
 
-  //=== 當inputText或condition改變時，以searchQuery方式拿取datsetlist資料 ===//
+  //=== 當inputText或condition清空時，以searchQuery方式拿取datsetlist資料 ===//
   useEffect(() => {
     const searchQuery = inputText.inputText;
-    axios
-      .get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/package_search`, {
-        params: {
-          limit: 1000, //不寫預設是10筆, 寫死一個較大的筆數
-          searchQuery: searchQuery,
-        },
-        headers: {
-          Authorization: process.env.REACT_APP_CKAN_TOKEN,
-        },
-      })
-      .then((response) => {
-        datsetlist = response.data.results;
-        setDatsetlist(datsetlist);
-        pagestotal = Math.ceil(datsetlist.length / dataSix);
-        setPagestotal(pagestotal);
-        distributedDatalist = chunkArray(datsetlist, dataSix);
-        setDistributedDatalist(distributedDatalist);
-        setPageNow(1);
-        datalistNow = distributedDatalist[pageNow - 1];
-        setDatalistNow(datalistNow);
-      })
-      .catch((error) => console.error(error));
+    const getDataset = async () => {
+      try {
+        axios
+          .get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/package_search`, {
+            params: {
+              limit: 1000, //不寫預設是10筆, 寫死一個較大的筆數
+              searchQuery: searchQuery,
+            },
+            headers: {
+              Authorization: process.env.REACT_APP_CKAN_TOKEN,
+            },
+          })
+          .then((res) => {
+            let dl = res.data.results;
+            setDatsetlist(dl);
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (condition.id == "") {
+      getDataset();
+    }
   }, [inputText, condition]);
+
+  useEffect(() => {
+    if (condition.id !== "" && condition.id !== undefined) {
+      getDatasetList(condition);
+      setPageNow(1);
+    }
+  }, [condition]);
+
+  useEffect(() => {
+    if (datsetlist !== undefined) {
+      let pt = Math.ceil(datsetlist.length / dataSix);
+      setPagestotal(pt);
+      let ddl = chunkArray(datsetlist, dataSix);
+      setDistributedDatalist(ddl);
+      setPageNow(1);
+      if (pageNow == 1) {
+        let dln = ddl[pageNow - 1];
+        setDatalistNow(dln);
+      }
+    }
+  }, [datsetlist]);
 
   //=== 依照篩選條件去後端拿資料集 ===//
   function getDatasetList() {
-    const getDatasetlist = async () => {
+    const getDataset = async () => {
       const id = condition.id;
       try {
         await axios
@@ -108,65 +135,60 @@ const Condition = (inputText) => {
             },
             headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN },
           })
-          .then((response) => {
-            datsetlist = response.data;
-            setDatsetlist(datsetlist);
-            pagestotal = Math.ceil(datsetlist.length / dataSix);
-            setPagestotal(pagestotal);
-            distributedDatalist = chunkArray(datsetlist, dataSix);
-            setDistributedDatalist(distributedDatalist);
-            setPageNow(1);
-            if (pageNow == 1) {
-              datalistNow = distributedDatalist[pageNow - 1];
-              setDatalistNow(datalistNow);
-            }
+          .then((res) => {
+            let dl = res.data;
+            setDatsetlist(dl);
           });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    getDatasetlist();
+    if (condition.id !== "" && condition.id !== undefined) {
+      getDataset();
+    }
   }
 
   //=== 更改篩選條件資料-organization類 ===//
   function handleConditionOrgChange(e) {
-    condition.name = "Organizations";
-    condition.type = "orgID";
-    condition.id = e.target.value;
-    condition.URL = "organization_package_list";
-    setCondition(condition);
-    getDatasetList(condition);
-    setPageNow(1);
-    return condition;
+    setCondition({
+      ...condition,
+      name: "Organizations",
+      type: "orgID",
+      id: e,
+      URL: "organization_package_list",
+    });
   }
 
   //=== 更改篩選條件資料-group類 ===//
   function handleConditionGroupChange(e) {
-    condition.name = "Groups";
-    condition.type = "groupID";
-    condition.id = e.target.value;
-    condition.URL = "group_package_list";
-    setCondition(condition);
-    getDatasetList(condition);
-    setPageNow(1);
-    return condition;
+    setCondition({
+      ...condition,
+      name: "Groups",
+      type: "groupID",
+      id: e,
+      URL: "group_package_list",
+    });
   }
 
   //=== 更改篩選條件資料-tag類 ===//
   function handleConditionTagChange(e) {
-    condition.name = "Tags";
-    condition.type = "tagID";
-    condition.id = e.target.value;
-    condition.URL = "tag_package_list";
-    setCondition(condition);
-    getDatasetList(condition);
-    setPageNow(1);
-    return condition;
+    setCondition({
+      ...condition,
+      name: "Tags",
+      type: "tagID",
+      id: e,
+      URL: "tag_package_list",
+    });
   }
 
   //=== 取消篩選條件 ===//
   function cancelCondition() {
-    setCondition({});
+    setCondition({
+      name: "",
+      type: "",
+      id: "",
+      URL: "",
+    });
     getDatasetList();
   }
 
@@ -192,20 +214,20 @@ const Condition = (inputText) => {
   //=== 監聽下一頁button ===//
   const plusPageChange = () => {
     if (pageNow < pagestotal) {
-      pageNow = pageNow + 1;
-      setPageNow(pageNow);
+      let pn = pageNow + 1;
+      setPageNow(pn);
+      let dln = distributedDatalist[pn - 1];
+      setDatalistNow(dln);
     }
-    datalistNow = distributedDatalist[pageNow - 1];
-    setDatalistNow(datalistNow);
   };
   //=== 監聽上一頁button ===//
   const minusPageChange = () => {
     if (pageNow > 1) {
-      pageNow = pageNow - 1;
-      setPageNow(pageNow);
+      let pn = pageNow - 1;
+      setPageNow(pn);
+      let dln = distributedDatalist[pn - 1];
+      setDatalistNow(dln);
     }
-    datalistNow = distributedDatalist[pageNow - 1];
-    setDatalistNow(datalistNow);
   };
 
   //=== 將拿到的datasetlist做資料處理，每{chunkSize}個值裝進一個二維陣列 ===//
@@ -251,8 +273,9 @@ const Condition = (inputText) => {
               <div>
                 {orglist.map((element, index) => {
                   return (
-                    <button className="package-condition-item" value={element} key={index} onClick={handleConditionOrgChange}>
-                      {element}
+                    <button className="package-condition-item" value={element} key={index} onClick={() => handleConditionOrgChange(element)}>
+                      <BookmarkIcon />
+                      <div>{element}</div>
                     </button>
                   );
                 })}
@@ -282,8 +305,9 @@ const Condition = (inputText) => {
               <div>
                 {grouplist.map((element, index) => {
                   return (
-                    <button className="package-condition-item" value={element} key={index} onClick={handleConditionGroupChange}>
-                      {element}
+                    <button className="package-condition-item" value={element} key={index} onClick={() => handleConditionGroupChange(element)}>
+                      <BookmarkIcon />
+                      <div>{element}</div>
                     </button>
                   );
                 })}
@@ -313,8 +337,9 @@ const Condition = (inputText) => {
               <div className="">
                 {taglist.map((element, index) => {
                   return (
-                    <button className="package-condition-item" value={element} key={index} onClick={handleConditionTagChange}>
-                      {element}
+                    <button className="package-condition-item" value={element} key={index} onClick={() => handleConditionTagChange(element)}>
+                      <BookmarkIcon />
+                      <div>{element}</div>
                     </button>
                   );
                 })}
@@ -350,7 +375,7 @@ const Condition = (inputText) => {
               </div>
             </div>
           )}
-          {condition.id && (
+          {condition.id && datsetlist && (
             <div className="right-condition-nav">
               <div className="right-condition-container">
                 <font className="pick-condition-title">

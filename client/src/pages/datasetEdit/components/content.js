@@ -97,15 +97,19 @@ const Content = ({ datasetName }) => {
             <input value={author_email} onChange={handleAuthor_emailChange} className="form-input-style"></input>
           </div>
           <div>
-            <span>Mantainer：</span>
+            <span>
+              Mantainer：<font className="edit-must-fill">&#8251;必填</font>
+            </span>
             <input value={maintainer} onChange={handleMaintainerChange} className="form-input-style"></input>
           </div>
           <div>
-            <span>Mantainer E-mail：</span>
+            <span>
+              Mantainer E-mail：<font className="edit-must-fill">&#8251;必填</font>
+            </span>
             <input value={maintainer_email} onChange={handleMantainer_emailChange} className="form-input-style"></input>
           </div>
           <div>
-            <span>Notes：</span>
+            <span>Description：</span>
             <textarea value={notes} onChange={handleNotesChange} className="form-input-style"></textarea>
           </div>
         </form>

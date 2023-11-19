@@ -6,7 +6,7 @@ import UploadIcon from "@mui/icons-material/Upload";
 ReactModal.setAppElement("#root");
 
 //上傳檔案按鈕1
-function UploadFile({ datasetName, fileUploadCount, setFileUploadCount }) {
+function UploadFile({ datasetName, fileUploadCount, setFileUploadCount, getCkanApiPackageShow }) {
   const [file, setFile] = useState([]);
   // const [description, setdescription] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -29,6 +29,7 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount }) {
   const handleFileUploadSuccess = () => {
     if (file.length > 0) {
       setFileUploadCount((prevCount) => prevCount + 1);
+      getCkanApiPackageShow();
     }
   };
 
@@ -70,24 +71,22 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount }) {
               headers: headers,
             })
               .then((getRes) => {
-                console.log(getRes);
                 handleFileUploadSuccess();
               })
               .catch((err) => {
-                console.log("err=" + err);
+                console.error("err=" + err);
               });
           }
         }
-        resourcesUpload();
+        await resourcesUpload();
         window.alert("上傳成功");
-        console.log(resourceFiles);
       } else {
         throw Error("no resourceFile uploaded.");
       }
     } catch (error) {
       // ckan返回請求錯誤的訊息
       console.error(error);
-      console.log("Error fetching data from external API");
+      console.error("Error fetching data from external API");
       window.alert("上傳失敗"); // 顯示失敗訊息
     } finally {
       // 無論上傳成功或失敗，最後都執行 closeModal
@@ -99,6 +98,7 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount }) {
     <span className="dicom-btn-container">
       <button onClick={handleUpload} className="edit-icon-button">
         <UploadIcon />
+        附件上傳
       </button>
       <ReactModal isOpen={showModal} onRequestClose={closeModal} contentLabel="Upload Modal" className="modal" shouldCloseOnOverlayClick={false} shouldCloseOnEsc={false}>
         <h2>選擇要上傳的檔案</h2>

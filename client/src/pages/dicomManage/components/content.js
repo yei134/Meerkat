@@ -1,6 +1,7 @@
 //套件
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 //檔案
 import ConRight from "./conright";
@@ -22,6 +23,7 @@ const Content = ({ datasetName, datasetTitle, files }) => {
   var [symptomIdPick, setSymptomIdPick] = useState(); //選擇的病徵ID
   const [inputSymptom, setInputSymptom] = useState(""); //新增病徵
   const [deleteArray, setDeleteArray] = useState([]);
+  const navigate = useNavigate();
 
   // console.log(typeof(datasetName));
   const [open, setOpen] = React.useState(false); //新增病徵-對話框狀態(預設關)
@@ -31,11 +33,13 @@ const Content = ({ datasetName, datasetTitle, files }) => {
 
   //=== 點擊新增病徵-對話框-SUBMIT, 接CkanAPI新增索引 ===//
   const AddSymptom = () => {
+    console.log(datasetName);
+    const symptoms = [inputSymptom];
     axios.post(
       `${process.env.REACT_APP_BACKEND_URI}api/ckan/index_create`,
       {
         package_id: datasetName,
-        symptom: inputSymptom,
+        symptoms: symptoms,
       },
       {
         headers: {
@@ -44,6 +48,7 @@ const Content = ({ datasetName, datasetTitle, files }) => {
       }
     );
     setOpen(false);
+    navigate(`/datasetInfo/${datasetName}-type-private/dicomManage`);
   };
 
   function ChooseSymptoms(e) {
@@ -87,16 +92,7 @@ const Content = ({ datasetName, datasetTitle, files }) => {
               <DialogTitle>新增索引檔 - {datasetTitle}</DialogTitle>
               <DialogContent>
                 <DialogContentText>輸入病徵名稱，命名規則：</DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="symptom"
-                  type="email"
-                  fullWidth
-                  variant="standard"
-                  onChange={(e) => setInputSymptom(e.target.value)}
-                />
+                <TextField autoFocus margin="dense" id="name" label="symptom" type="email" fullWidth variant="standard" onChange={(e) => setInputSymptom(e.target.value)} />
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClickDialogState}>Cancel</Button>
@@ -115,12 +111,7 @@ const Content = ({ datasetName, datasetTitle, files }) => {
             <div>
               {symptoms.map((item, index) => (
                 <div key={index}>
-                  <button
-                    key={index}
-                    onClick={ChooseSymptoms}
-                    value={item}
-                    className="symptoms-button"
-                  >
+                  <button key={index} onClick={ChooseSymptoms} value={item} className="symptoms-button">
                     {item[1]}
                   </button>
                   <br />

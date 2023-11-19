@@ -33,10 +33,11 @@ hr {
 
 .add {
   margin-top: 20px;
+  margin-right: 1rem;
   background-color: #444;
   color: #fff;
   box-sizing: border-box;
-  width: 60px;
+  width: 70px;
   height: 25px;
   padding: 5px;
   border-radius: 4px; /*按鈕圓角*/

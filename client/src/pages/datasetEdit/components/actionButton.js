@@ -43,6 +43,7 @@ const ActionButton = ({ title, id, author, author_email, maintainer, maintainer_
   const handleAlert = () => {
     if (res.private.success == 200 && res.public.success == 200) {
       alert("修改成功！");
+      navigate(`/datasetInfo/${id}`);
     }
   };
   function DeleteDataset() {

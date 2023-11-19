@@ -207,6 +207,8 @@ header nav ul li a, .newDatasetBtn{
   margin-bottom: 5%;
 }
 .package-condition-item{
+  display: flex;
+  align-Items: center;
   font-size: 0.5rem;
   margin-left: 2.5vw;
   padding: 3%;
@@ -217,6 +219,7 @@ header nav ul li a, .newDatasetBtn{
   text-align: left;
   margin-bottom: 5%;
   cursor: pointer;
+  color: #909090;
 }
 .package-condition-item:hover {
   color: #FFFFFF;
@@ -227,7 +230,6 @@ header nav ul li a, .newDatasetBtn{
 .package-condition-item:focus {
   color: #455367;
   outline-color: transparent;
-  background-color: #D9D9D9;
   outline-style:solid;
   transition: 0.3s;
   border-radius:10px;

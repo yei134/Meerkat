@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "datasetInfo/:getId/fileUpload/:getSymptom",
+    path: "datasetInfo/:getId/fileUpload/:getSymptom/:getSymptomId",
     // dicom檔案上傳
     element: (
       <PrivateRoute>
