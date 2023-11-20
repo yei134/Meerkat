@@ -159,10 +159,10 @@ header nav ul li a, .newDatasetBtn{
 .package-condition-div-style{
   display: flex;
   flex-direction: row;
-  width: 90vw;
+  width: 95vw;
   position: absolute;
   left: 50%;
-  margin: 4rem 0 0 -45vw;
+  margin: 4rem 0 0 -47.25vw;
 }
 .list_content{
   display: flex;
@@ -189,7 +189,7 @@ header nav ul li a, .newDatasetBtn{
 }
 .condition{
   /* display: none; */
-  /* flex: 1.5; */
+  flex: 3;
   width: 15vw;
   margin: 0 ;
   margin: 0rem 1rem;
@@ -320,14 +320,18 @@ header nav ul li a, .newDatasetBtn{
   align-self: center;
 }
 .icon-button-container{
-  margin-top: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex: 1;
 }
 .icon-button{
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border:none;
   background-color: transparent;
-  height: auto;
+  height: 3vh;
   padding: 0.5%;
 }
 .icon-button:hover{

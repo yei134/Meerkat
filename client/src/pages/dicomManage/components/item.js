@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Checkbox } from "@mui/material";
 
 const Item = ({ symptomId, number, AccessionNumber, PatientID, SOPInstanceUID, StudyInstanceUID, Modality, StudyDescription, SeriesInstanceUID, type, ValueAdd, ValueDelete }) => {
-  var [dicomUIDs, setDicomUIDs] = useState("");
+  const [dicomUIDs, setDicomUIDs] = useState("");
   function CheckboxChange(e) {
     setDicomUIDs("");
-    dicomUIDs = e.target.value;
-    setDicomUIDs(dicomUIDs);
+    const UID = e.target.value;
+    setDicomUIDs(UID);
     if (e.target.checked === true) {
-      ValueAdd(dicomUIDs); //呼叫父層級(ConRight)改值
-      return dicomUIDs;
+      ValueAdd(UID); //呼叫父層級(ConRight)改值
+      return UID;
     } else {
-      ValueDelete(dicomUIDs); //呼叫父層級(ConRight)改值
-      return dicomUIDs;
+      ValueDelete(UID); //呼叫父層級(ConRight)改值
+      return UID;
     }
   }
-
   return (
     <tr>
       <td>{number}</td>
@@ -35,7 +34,7 @@ const Item = ({ symptomId, number, AccessionNumber, PatientID, SOPInstanceUID, S
               <VisibilityIcon />
             </a>
           </button>
-          <Checkbox onChange={CheckboxChange} value={StudyInstanceUID}></Checkbox>
+          <Checkbox onChange={CheckboxChange} value={StudyInstanceUID} defaultChecked={false} checked={dicomUIDs === StudyInstanceUID}></Checkbox>
         </div>
       </td>
     </tr>

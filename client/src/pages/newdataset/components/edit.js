@@ -20,11 +20,7 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
   const [groups, setGroups] = useState("test-department"); //package_create groups(屬於哪幾類群組 如腦部 肺部
   const [ownerOrg, setOwnerOrg] = useState("national-taipei-university-of-nursing-and-health-scienses"); //package_create owner_org(組織id 例如25188a0c-7f13-4562-a5e2-042df726de3c
   const [input1, setInput1] = useState("");
-  const [input2, setInput2] = useState("");
-  const [symptoms, setSymptoms] = useState([]); //病徵
   const navigate = useNavigate();
-
-  useEffect(() => {}, [symptoms]);
 
   //newDataset's label change
   function nameChange(e) {
@@ -67,42 +63,6 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
       setInput1(value);
     } else {
       alert("請輸入小寫英文字母或數字！");
-    }
-  }
-  function descriptionChange(e) {
-    setInput2(e.target.value);
-  }
-
-  //按鈕活動方法
-  function addSymptoms() {
-    console.log(symptoms);
-    var flag = 0;
-    //條件1：接到的值不能為空字串
-    //條件2：接到的值不能重複使用
-    arraySymptoms.map((item) => {
-      const { symptoms } = item;
-      if (symptoms === input1) {
-        alert("此名稱已輸入過，請換其他名稱！");
-        flag = 1;
-        return;
-      }
-    });
-    if (flag === 0) {
-      submittingState1.current = true;
-      //addItem(symptoms);
-      if (input1 === "") {
-        alert("請輸入名稱再做新增！");
-      } else {
-        symptomsAdd(function (prev) {
-          return [
-            ...prev,
-            {
-              id: v4(),
-              symptoms: input1,
-            },
-          ];
-        });
-      }
     }
   }
 
@@ -250,18 +210,8 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
             <span>Description：</span>
             <textarea value={note} onChange={noteChange} className="new-form-input-style" />
           </div>
-          {/* 操作按鈕 */}
-          {/* <label>
-            <div className="div_symptom_name">
-              <h5>*索引檔名稱：</h5>
-              <input type="text" value={input1} onChange={symptomsChange} placeholder="請以英文病徵命名(需小寫英文字母，可附加 ' _ ' 符號)" className="new-form-input-style" />
-            </div>
-          </label> */}
         </form>
       </div>
-      {/* <button className="add" onClick={addSymptoms}>
-        新增
-      </button> */}
       <button className="add" onClick={btn_submit}>
         Submit
       </button>

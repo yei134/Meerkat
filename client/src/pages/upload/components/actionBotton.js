@@ -13,20 +13,22 @@ function ActionBotton({ datasetName, setUploadFile, deletealldata, status, uploa
   var time = Date(); //取得現在時間
   time = time.split(" "); //將取得的值用空白分割
   time = time[3] + "-" + time[1] + "-" + time[2] + " " + time[4]; //取出分割後需要的部分
-  var [packageDataInfo, setPackageDataInfo] = useState([]);
   const [title, setTitle] = useState("");
 
   useEffect(() => {
     const getDataset = async () => {
+      console.log(datasetName);
       try {
         await axios
           .get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/package_show`, {
             params: { datasetName: datasetName },
+            headers: {
+              Authorization: process.env.REACT_APP_CKAN_TOKEN,
+            },
           })
-          .then((response) => {
-            packageDataInfo = response.data;
-            setPackageDataInfo(packageDataInfo);
-            setTitle(packageDataInfo.title);
+          .then((res) => {
+            const pInfo = res.data;
+            setTitle(pInfo.title);
           });
       } catch (error) {
         console.error("Error fetching data:", error);
