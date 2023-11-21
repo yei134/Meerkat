@@ -124,6 +124,9 @@ exports.getStudiesList = async (req, res) => {
           method: "GET",
           url: fileUrl,
           responseType: "stream",
+          headers: {
+            Authorization: header,
+          },
         })
           .then((response) => {
             response.data.pipe(writer);
@@ -135,8 +138,8 @@ exports.getStudiesList = async (req, res) => {
             })
           )
           .catch((err) => {
-            console.log(err);
-            res.status(500).send(err);
+            console.log(err.response.data);
+            // res.status(500).send(err);
           });
       } catch (e) {
         res.status(500).send(e);
@@ -642,51 +645,59 @@ exports.postStudiesAppend = async (req, res) => {
   var indexFileName = ""; // 檔案名稱
   var indexFileUploadName = ""; // 要patch回去的name欄位
 
+  var index = "";
+  var header = "";
   // 4. 針對接到的resource_id，抓下csv檔URL
-  function step4(callback) {
+  async function step4(callback) {
     try {
       // 索引檔resource_id
-      var index = "";
+
       if (req.body.id) {
         index = req.body.id;
       } else {
         throw "id is required.";
       }
-      var header = "";
+
       if (req.headers.authorization) {
-        header = req.body.authorization;
+        header = req.headers.authorization;
       } else {
         throw "token is required.";
       }
     } catch (e) {
-      res.status(500).send(e);
+      res.status(403).send(e);
     }
-    //拉csv的下載URL
-    axios
-      .get(ckanVariable.ckanGetResourceShow, {
-        params: {
-          id: index,
-        },
-        headers: {
-          Authorization: header,
-        },
-      })
-      .then((getRes) => {
-        console.log("step.4 get symptom index file downloading url");
-        indexFileUrl = getRes.data.result.url;
-        const now = new Date();
-        const nowISO = now.toISOString();
-        const dateString = nowISO.replace(/:/g, "");
-        console.log(dateString);
-        indexFileName = dateString + "_index.csv";
-        indexFilePath = `${csvTempDirectory}${indexFileName}`;
-        indexFileUploadName = getRes.data.result.name;
-        callback();
-      })
-      .catch((err) => {
-        console.log(err.response);
-        res.status(500).send(axiosErrMesJSON);
-      });
+
+    try {
+      console.log(header);
+      //拉csv的下載URL
+      axios
+        .get(ckanVariable.ckanGetResourceShow, {
+          params: {
+            id: index,
+          },
+          headers: {
+            Authorization: header,
+          },
+        })
+        .then((getRes) => {
+          console.log("step.4 get symptom index file downloading url");
+          indexFileUrl = getRes.data.result.url;
+          const now = new Date();
+          const nowISO = now.toISOString();
+          const dateString = nowISO.replace(/:/g, "");
+          console.log(dateString);
+          indexFileName = dateString + "_index.csv";
+          indexFilePath = `${csvTempDirectory}${indexFileName}`;
+          indexFileUploadName = getRes.data.result.name;
+          callback();
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          // res.status(500).send(axiosErrMesJSON);
+        });
+    } catch (err) {
+      console.log("err");
+    }
   }
 
   // 5. 將上項的CSV URL存到csv_temp[index_csv]
@@ -713,7 +724,7 @@ exports.postStudiesAppend = async (req, res) => {
         )
         .catch((err) => {
           console.log(err.response);
-          res.status(500).send(axiosErrMesJSON);
+          // res.status(500).send(axiosErrMesJSON);
         });
     } else {
       console.log(`step.5 no exist index to append.`);
@@ -837,7 +848,7 @@ exports.postStudiesAppend = async (req, res) => {
       };
       const ErrMesJSON = JSON.stringify(ErrMes, null, 2);
       console.error(ErrMesJSON);
-      res.status(500).send(ErrMesJSON);
+      //res.status(500).send(ErrMesJSON);
     }
 
     const headers = {
@@ -867,7 +878,7 @@ exports.postStudiesAppend = async (req, res) => {
         })
         .catch((err) => {
           console.log(raccoonErrMesJSON);
-          res.status(500).send(raccoonErrMesJSON);
+          //res.status(500).send(raccoonErrMesJSON);
         });
     } else {
       const resData = {
@@ -888,7 +899,7 @@ exports.postStudiesAppend = async (req, res) => {
       }
     } catch (e) {
       console.error(e);
-      res.sendStatus(500);
+      //res.sendStatus(500);
     }
     if (!noDCMflag) {
       const indexID = req.body.id;
@@ -932,7 +943,7 @@ exports.postStudiesAppend = async (req, res) => {
         })
         .catch((err) => {
           console.log(err.response);
-          res.status(500).send(axiosErrMesJSON);
+          //res.status(500).send(axiosErrMesJSON);
         });
     } else {
       const resData = {
@@ -961,7 +972,7 @@ exports.postStudiesAppend = async (req, res) => {
       callback();
     } catch (e) {
       console.error("delete dicom folder / files failed.");
-      res.sendStatus(500);
+      //res.sendStatus(500);
     }
   }
 

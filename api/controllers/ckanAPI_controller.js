@@ -1160,10 +1160,10 @@ exports.postIndexCreate = async (req, res) => {
         const packageResourcesList = results.map((item) => item.name);
         const appendSymptomsFiltered = tmpSymptoms.filter(
           (symptom) =>
-            !packageResourcesList.some((resource) => resource.includes(symptom))
+            !packageResourcesList.some((resource) => resource === symptom)
         );
         existSymptoms = tmpSymptoms.filter((symptom) =>
-          packageResourcesList.some((resource) => resource.includes(symptom))
+          packageResourcesList.some((resource) => resource === symptom)
         );
         symptoms = appendSymptomsFiltered;
         if (symptoms.length == 0) {

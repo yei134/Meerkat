@@ -1,9 +1,9 @@
-# api@1.4.11 變動 2023/11/18
+# api@1.4.12 變動 2023/11/21
 
 ### 完成進度
 #### DEBUG DONE
-1. /api/raccoon/appendStudies
-  > 修改檔案格式冒號之問題
+1. /api/raccoon/appendStudies & /api/raccoon/studiesList
+  > 修改沒帶headers的bug
 
 #### UPDATE DONE
 
