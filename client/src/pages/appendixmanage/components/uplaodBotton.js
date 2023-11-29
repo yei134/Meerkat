@@ -6,7 +6,7 @@ import UploadIcon from "@mui/icons-material/Upload";
 ReactModal.setAppElement("#root");
 
 //上傳檔案按鈕1
-function UploadFile({ datasetName, fileUploadCount, setFileUploadCount, getCkanApiPackageShow }) {
+function UploadFile({ datasetName, setFileUploadCount, getCkanApiPackageShow }) {
   const [file, setFile] = useState([]);
   // const [description, setdescription] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -41,7 +41,7 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount, getCkanA
   const handleUploadConfirm = async () => {
     try {
       // resourceFile is required or throw error response
-      if (file) {
+      if (file.length>0) {
         // 做post請求的data參數
         const packageID = datasetName;
 
@@ -54,17 +54,20 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount, getCkanA
         const resourceFiles = file;
 
         async function resourcesUpload() {
-          for (let resourceFile of resourceFiles) {
-            //宣告formdata物件
-            const formData = new FormData();
-            // package_id is required
-            formData.append("package_id", packageID);
+
+          //宣告formdata物件
+          const formData = new FormData();
+          // package_id is required
+          formData.append("package_id", packageID);
+
+          const list_res = Promise.all(()=>{for (let resourceFile of resourceFiles) {
             // 將檔案轉成blob屬性
             const blob = new Blob([resourceFile]);
             formData.append("resourceFile", blob, resourceFile.name);
             formData.append("resourceName", resourceFile.name);
             // 對ckan平台做post請求
-            await axios({
+            const upload_res = async() => {
+              await axios({
               method: "post",
               url: `${process.env.REACT_APP_BACKEND_URI}api/ckan/resource_create`,
               data: formData,
@@ -72,14 +75,21 @@ function UploadFile({ datasetName, fileUploadCount, setFileUploadCount, getCkanA
             })
               .then((getRes) => {
                 handleFileUploadSuccess();
+                return (200);                
               })
               .catch((err) => {
                 console.error("err=" + err);
-              });
-          }
+                console.log("error test");
+                return (500);
+              });}
+            return upload_res;
+          }})
+          return list_res;
         }
-        await resourcesUpload();
-        window.alert("上傳成功");
+
+        const uploadState = await resourcesUpload();
+        if (uploadState.indexOf(500)===-1){console.log("上傳失敗");}else{console.log("上傳成功");}
+        // window.alert("上傳成功");
       } else {
         throw Error("no resourceFile uploaded.");
       }
