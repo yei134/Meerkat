@@ -11,22 +11,29 @@ div {
 }
 .route {
   display: flex;
-  align-items: center;
+  align-items: end;
   color:#6C757D;
-  font-weight:800;
   letter-spacing: 1px;
+  font-size: 1.2rem;
 }
 .edit-icon-button{
+  align-items: center;
   color: #595959;
-  display: inline-block;
   border:none;
   background-color: transparent;
   height: auto;
+  width: auto;
   padding: 0.5%;
+  margin-left: 1.2rem;
+}
+.flex-center{
+  display: flex;
+  flex-direction: row;
+  align-items:center;
 }
 .edit-icon-button:hover{
   background-color: #8b8b8b15;
-  border-radius: 100%;
+  border-radius: 20%;
   transition: 1s;
 }
 /* 清除初始css */

@@ -12,13 +12,7 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import ChatIcon from "@mui/icons-material/Chat";
 
-const ConRight = ({
-  symptom,
-  symptomId,
-  datasetName,
-  datasetTitle,
-  keywords,
-}) => {
+const ConRight = ({ symptom, symptomId, datasetName, datasetTitle, keywords }) => {
   const [dicomList, setDicomList] = useState([]); //所有取得的檔案
   const [distributedDicomList, setDistributedDicomList] = useState([]);
   const [deleteObject, setDeleteObject] = useState({});
@@ -28,11 +22,11 @@ const ConRight = ({
   const [pagelist, setPaglist] = useState([]); //當前顯示的分頁列表
   const [dicomlistNow, setDicomlistNow] = useState();
   const [conditionNum, setConditionNum] = useState(10);
+  const [delete200, setDelete200] = useState("");
 
   //=== 頁數動態樣式 ===//
   const StyledButton = styled.button`
-    background-color: ${(props) =>
-      props.page === pageNow ? "#8b8b8b40" : "transparent"};
+    background-color: ${(props) => (props.page === pageNow ? "#8b8b8b40" : "transparent")};
     border-radius: 100px;
     font-size: medium;
     margin-left: 10px;
@@ -41,6 +35,7 @@ const ConRight = ({
 
   //=== 向後端拿取索引檔底下的studies ===//
   useEffect(() => {
+    console.log(symptomId);
     if (symptomId !== undefined) {
       axios
         .get(`${process.env.REACT_APP_BACKEND_URI}api/raccoon/studies`, {
@@ -62,7 +57,7 @@ const ConRight = ({
           setDicomList([]);
         });
     }
-  }, [symptomId, conditionNum]);
+  }, [symptomId, conditionNum, deleteEcho]);
 
   //=== 當要顯示的病徵資料更新時 ===//
   useEffect(() => {
@@ -131,23 +126,23 @@ const ConRight = ({
   //=== 呼叫後端API刪studies ===//
   function deleteRaccoonDicom() {
     const FormData = JSON.stringify(deleteObject);
+    console.log(FormData);
     if (deleteObject !== undefined) {
       axios
-        .delete(
-          `${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesDelete`,
-          {
-            data: FormData,
-            headers: {
-              Authorization: process.env.REACT_APP_CKAN_TOKEN,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((response) => {
-          deleteEcho = response.data;
-          setDeleteEcho(setDeleteEcho);
-          alert("成功刪除" + deleteEcho.deletedDICOM.length + "筆資料");
-          window.location.reload();
+        .delete(`${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesDelete`, {
+          data: FormData,
+          headers: {
+            Authorization: process.env.REACT_APP_CKAN_TOKEN,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setDicomUIDs([]);
+          console.log(deleteObject);
+          console.log(res.data.deletedDICOM);
+          let deleted_DICOM = res.data.deletedDICOM;
+          setDeleteEcho(res.data);
+          alert("成功刪除" + deleted_DICOM.length + "筆資料");
         })
         .catch((error) => {
           console.error(error);
@@ -197,16 +192,46 @@ const ConRight = ({
     <div className="conRight">
       <div className="route">
         <HomeIcon />
-        <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>/
-        <a href={`/datasetInfo/${datasetName}`}>
-          &nbsp;&nbsp;{datasetTitle}&nbsp;&nbsp;
-        </a>
-        /
+        <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>/<a href={`/datasetInfo/${datasetName}`}>&nbsp;&nbsp;{datasetTitle}&nbsp;&nbsp;</a>/
         <a href={`/datasetInfo/${datasetName}/dicomManage`} className="page">
           &nbsp;&nbsp;dicom列表
         </a>
       </div>
-      {dicomlistNow && (
+      {/* 以下有三種conright 1.還未建symptom 2.symptom還未擁有影像 3.正常顯示影像列表 */}
+      {/* 1.還未建symptom */}
+      {!symptom && (
+        <div className="alert_font_style">
+          <ChatIcon />
+          &nbsp;This dataset does not have any symptoms yet. Please add them first.&nbsp;&nbsp;
+        </div>
+      )}
+      {/* 2.symptom還未擁有影像 */}
+      {symptom && !dicomlistNow && (
+        <div>
+          <div className="route">
+            <div className="flex-container-column-symptom">
+              <font className="symptom-fontTitle">{symptom}</font>
+              <font className="symptom-fontIndex">
+                {datasetName}
+                {keywords}
+                {symptom}
+              </font>
+            </div>
+          </div>
+          <div className="alert_font_style">
+            <ChatIcon />
+            &nbsp;This symptom does not have a file yet. Please upload it first.&nbsp;&nbsp;
+            <a href={`/datasetInfo/${datasetName}/fileUpload/${symptom}/${symptomId}`}>
+              <span className="flex-center">
+                <UploadIcon />
+                Upload
+              </span>
+            </a>
+          </div>
+        </div>
+      )}
+      {/* 3.正常顯示影像列表 */}
+      {dicomlistNow && symptom && (
         <div>
           <div className="route">
             <div className="flex-container-column-symptom">
@@ -226,106 +251,86 @@ const ConRight = ({
                   <option value="25">一次25筆資料</option>
                 </select>
               </div>
-              <button className="edit-icon-button" onClick={deleteRaccoonDicom}>
-                <DeleteIcon />
-                Delete
-              </button>
               <button className="edit-icon-button">
-                <a href={`/datasetInfo/${datasetName}/fileUpload/${symptomId}`}>
-                  <UploadIcon />
-                  Upload
+                <a href={`/datasetInfo/${datasetName}/fileUpload/${symptom}/${symptomId}`}>
+                  <span className="flex-center">
+                    <UploadIcon />
+                    Upload
+                  </span>
                 </a>
+              </button>
+              <button className="edit-icon-button" onClick={deleteRaccoonDicom}>
+                <span className="flex-center">
+                  <DeleteIcon />
+                  Delete
+                </span>
               </button>
             </div>
           </div>
-          {dicomlistNow && (
-            <table className="dicomManage-conrign-table">
-              <thead>
-                <tr>
-                  <th>NO.</th>
-                  <th>StudyInstanceUID</th>
-                  <th>SeriesInstanceUID</th>
-                  <th>SOPInstanceUID</th>
-                  <th>AcsessionNumber</th>
-                  <th>PatientID</th>
-                  <th>Modality</th>
-                  <th>StudyDescription</th>
-                  <th>type</th>
-                  <th>Operation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dicomlistNow.map((item, index) => {
-                  return (
-                    <Item
-                      key={index}
-                      number={index + 1}
-                      symptomId={symptomId}
-                      dicomUID={item.StudyInstanceUID}
-                      AccessionNumber={item.AccessionNumber}
-                      PatientID={item.PatientID}
-                      SeriesInstanceUID={item.SeriesInstanceUID}
-                      SOPInstanceUID={item.SOPInstanceUID}
-                      StudyInstanceUID={item.StudyInstanceUID}
-                      Modality={item.Modality}
-                      StudyDescription={item.StudyDescription}
-                      type={item.Type}
-                      ValueAdd={handleValueFromChildAdd} // 改變deleteObject的值
-                      ValueDelete={handleValueFromChildDelete}
-                    />
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-          {/* 頁面列表 */}
+          <table className="dicomManage-conrign-table">
+            <thead>
+              <tr>
+                <th>NO.</th>
+                <th>StudyInstanceUID</th>
+                <th>SeriesInstanceUID</th>
+                <th>SOPInstanceUID</th>
+                <th>AcsessionNumber</th>
+                <th>PatientID</th>
+                <th>Modality</th>
+                <th>StudyDescription</th>
+                <th>type</th>
+                <th>Operation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dicomlistNow.map((item, index) => {
+                return (
+                  <Item
+                    key={index}
+                    number={index + 1}
+                    symptomId={symptomId}
+                    dicomUID={item.StudyInstanceUID}
+                    AccessionNumber={item.AccessionNumber}
+                    PatientID={item.PatientID}
+                    SeriesInstanceUID={item.SeriesInstanceUID}
+                    SOPInstanceUID={item.SOPInstanceUID}
+                    StudyInstanceUID={item.StudyInstanceUID}
+                    Modality={item.Modality}
+                    StudyDescription={item.StudyDescription}
+                    type={item.Type}
+                    ValueAdd={handleValueFromChildAdd} // 改變deleteObject的值
+                    ValueDelete={handleValueFromChildDelete}
+                    deleteEcho={deleteEcho}
+                  />
+                );
+              })}
+            </tbody>
+          </table>
+          <font className="symptom-fontIndex2">
+            共{dicomList.length}筆資料 / 共{distributedDicomList.length}頁
+          </font>
+          {/* 頁面切換列表 */}
           {pagelist && (
             <div className="pagelist-container">
               {pageNow > 1 && (
-                <button
-                  onClick={minuspageStateChange}
-                  className="icon-button"
-                  title={"上一頁"}
-                >
+                <button onClick={minuspageStateChange} className="icon-button" title={"上一頁"}>
                   <KeyboardArrowLeftIcon />
                 </button>
               )}
               {pagelist.map((item, index) => {
                 return (
-                  <StyledButton
-                    key={index}
-                    page={item}
-                    value={item}
-                    onClick={pageStateChange}
-                    className="icon-button"
-                  >
+                  <StyledButton key={index} page={item} value={item} onClick={pageStateChange} className="icon-button">
                     {item}
                   </StyledButton>
                 );
               })}
               {pageNow < distributedDicomList.length && (
-                <button
-                  onClick={pluspageStateChange}
-                  className="icon-button"
-                  title={"下一頁"}
-                >
+                <button onClick={pluspageStateChange} className="icon-button" title={"下一頁"}>
                   <KeyboardArrowRightIcon />
                 </button>
               )}
             </div>
           )}
-          <font className="symptom-fontIndex">共{dicomList.length}筆資料</font>
-          <font className="symptom-fontIndex">
-            共{distributedDicomList.length}頁
-          </font>
-        </div>
-      )}
-      {!dicomlistNow && (
-        <div>
-          <div className="alert_font_style">
-            <ChatIcon />
-            &nbsp;尚未擁有索引檔，請先建立！
-          </div>
         </div>
       )}
     </div>

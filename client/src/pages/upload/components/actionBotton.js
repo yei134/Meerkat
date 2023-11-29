@@ -9,41 +9,26 @@ import UploadIcon from "@mui/icons-material/Upload";
 import DeleteIcon from "@mui/icons-material/Delete";
 //多檔案上傳參考:https://ithelp.ithome.com.tw/articles/10269464
 //js基本操作:https://ithelp.ithome.com.tw/articles/10274961
-function ActionBotton({
-  datasetName,
-  setUploadFile,
-  deletealldata,
-  status,
-  setstatus,
-  uploadFile,
-  symptomId,
-}) {
+function ActionBotton({ datasetName, setUploadFile, deletealldata, status, uploadFile, symptomId, symptom }) {
   var time = Date(); //取得現在時間
   time = time.split(" "); //將取得的值用空白分割
   time = time[3] + "-" + time[1] + "-" + time[2] + " " + time[4]; //取出分割後需要的部分
-  var [packageDataInfo, setPackageDataInfo] = useState([]);
   const [title, setTitle] = useState("");
-  var [files, setFiles] = useState();
-  const keywords = "_[type]_"; //辨別[索引檔]和[附件檔]的關鍵詞
-  var [indexFiles, setIndexFiles] = useState([]); //資料集內的索引檔
-  var [symptoms, setSymptoms] = useState([]); //資料集名稱+病徵名稱
-  var [symptomsInfo, setSymptomsInfo] = useState([]); //資料集名稱+病徵名稱+病徵ID
-  var [symptomPick, setSymptomPick] = useState(); //選擇的病徵名稱
-  var [symptomIdPick, setSymptomIdPick] = useState(); //選擇的病徵ID
 
   useEffect(() => {
     const getDataset = async () => {
+      console.log(datasetName);
       try {
         await axios
           .get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/package_show`, {
             params: { datasetName: datasetName },
+            headers: {
+              Authorization: process.env.REACT_APP_CKAN_TOKEN,
+            },
           })
-          .then((response) => {
-            packageDataInfo = response.data;
-            setPackageDataInfo(packageDataInfo);
-            setTitle(packageDataInfo.title);
-            files = packageDataInfo.resources.map((resource) => resource);
-            setFiles(files);
+          .then((res) => {
+            const pInfo = res.data;
+            setTitle(pInfo.title);
           });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -51,26 +36,9 @@ function ActionBotton({
     };
     getDataset();
   }, []);
-  useEffect(() => {
-    if (Array.isArray(files)) {
-      indexFiles = files.filter((item) => {
-        return typeof item.name === "string" && item.name.includes(keywords);
-      }); // 過濾掉的所有檔案[索引檔]
-      setIndexFiles(indexFiles);
-      symptoms = indexFiles.map((str) => {
-        return str.name.split(keywords);
-      }); // symptoms[1]為病徵名稱
-      setSymptoms(symptoms);
-      symptomsInfo = indexFiles.map((str, index) => {
-        return symptoms[index].splice(3, 0, str.id); //把病徵ID加進陣列
-      });
-      setSymptomsInfo(symptomsInfo);
-      setSymptomPick(symptoms[0][1]);
-      setSymptomIdPick(symptoms[0][2]);
-    }
-  }, [files]);
   function status() {
-    setstatus(function (prev) {
+    console.log(uploadFile);
+    setUploadFile(function (prev) {
       const newUploadFile = uploadFile.map((item) => {
         const formData = new FormData();
         formData.append("id", symptomId);
@@ -78,25 +46,30 @@ function ActionBotton({
         formData.append("description", symptomId);
         if (formData !== undefined) {
           axios
-            .post(
-              `${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesAppend`,
-              formData,
-              {
-                headers: {
-                  Authorization: process.env.REACT_APP_CKAN_TOKEN,
-                  "Content-Type": "multipart/form-data",
-                },
+            .post(`${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesAppend`, formData, {
+              headers: {
+                Authorization: process.env.REACT_APP_CKAN_TOKEN,
+                "Content-Type": "multipart/form-data",
+              },
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                setUploadFile((prev) => {
+                  // 取出當前處理的資料
+                  let change = prev.filter((file) => file.id === item.id)[0];
+                  // 更改狀態
+                  change.fileStatus = "SUCCESS";
+                  // 取出非處理資料
+                  const prev_filter = prev.filter((file) => file.id !== item.id);
+                  return [...prev_filter, change];
+                });
+              } else {
+                alert(item.fileName + "上傳失敗");
               }
-            )
-            .then((response) => {
-              console.log(response.data);
-              return {
-                ...item,
-                fileStatus: "SUCCESS",
-              };
             })
             .catch((error) => {
-              console.log(error);
+              console.error(error);
+              alert(item.fileName + "上傳失敗");
             });
         }
         return item;
@@ -135,45 +108,25 @@ function ActionBotton({
     <div className="flex-container-row">
       <div className="route">
         <HomeIcon />
-        <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>/
-        <a href={`/datasetInfo/${datasetName}`}>
-          &nbsp;&nbsp;{title}&nbsp;&nbsp;
-        </a>
-        /
-        <a href={`/datasetInfo/${datasetName}/dicomManage`}>
-          &nbsp;&nbsp;{title}&nbsp;dicom列表&nbsp;&nbsp;
-        </a>
-        /
-        <a href={`/datasetInfo/${datasetName}/fileUpload`} className="page">
-          &nbsp;&nbsp;{symptomPick}上傳區
+        <a href="/">&nbsp;資料集列表&nbsp;&nbsp;</a>/<a href={`/datasetInfo/${datasetName}`}>&nbsp;&nbsp;{title}&nbsp;&nbsp;</a>/
+        <a href={`/datasetInfo/${datasetName}/dicomManage`}>&nbsp;&nbsp;{title}&nbsp;dicom列表&nbsp;&nbsp;</a>/
+        <a href={`/datasetInfo/${datasetName}/fileUpload/${symptom}/${symptomId}`} className="page">
+          &nbsp;&nbsp;{symptom}上傳區
         </a>
       </div>
       {/* className="upload" */}
       <label htmlFor="filenp">
-        <input
-          type="file"
-          id="filenp"
-          onChange={add}
-          accept=".dcm"
-          multiple={true}
-        />
+        <input type="file" id="filenp" onChange={add} accept=".dcm" multiple={true} />
         <span className="btnFile">
           <InsertDriveFileIcon />
-          瀏覽檔案
+          Select Files
         </span>
       </label>
       <label htmlFor="filep">
-        <input
-          type="file"
-          id="filep"
-          webkitdirectory="true"
-          onChange={add}
-          accept=".dcm"
-          multiple={true}
-        />
+        <input type="file" id="filep" webkitdirectory="true" onChange={add} accept=".dcm" multiple={true} />
         <span className="btnFile">
           <FolderIcon />
-          瀏覽資料夾
+          Select Folders
         </span>
       </label>
       <span />

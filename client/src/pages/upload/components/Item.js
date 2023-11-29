@@ -2,17 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import UploadIcon from "@mui/icons-material/Upload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-const Item = ({
-  id,
-  number,
-  fileName,
-  fileStatus,
-  processingProgress,
-  fileSize,
-  setUploadFile,
-  uploadFile,
-  symptomId,
-}) => {
+const Item = ({ id, number, fileName, fileStatus, processingProgress, fileSize, setUploadFile, uploadFile, symptomId }) => {
   const [uploadDiocomFile, setUploadDiocomFile] = useState({});
 
   useEffect(() => {
@@ -24,7 +14,6 @@ const Item = ({
     });
   }
   function uploadItem() {
-    var res = {};
     console.log(symptomId);
     setUploadFile(function (prev) {
       const newUploadFile = prev.map((item) => {
@@ -36,34 +25,32 @@ const Item = ({
           formData.append("dicomFile", item.dicomFile);
           formData.append("description", symptomId);
           if (formData !== undefined) {
-            axios
-              .post(
-                `${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesAppend`,
-                formData,
-                {
-                  headers: {
-                    Authorization: process.env.REACT_APP_CKAN_TOKEN,
-                    "Content-Type": "multipart/form-data",
-                  },
-                }
-              )
-              .then((response) => {
-                console.log(response);
-                res = response;
+            const res = axios
+              .post(`${process.env.REACT_APP_BACKEND_URI}api/raccoon/studiesAppend`, formData, {
+                headers: {
+                  Authorization: process.env.REACT_APP_CKAN_TOKEN,
+                  "Content-Type": "multipart/form-data",
+                },
+              })
+              .then((res) => {
                 alert(item.fileName + "上傳成功");
                 if (res.status === 200) {
-                  console.log("File uploaded successfully.");
-                  return {
-                    ...item,
-                    fileStatus: "SUCCESS",
-                  };
+                  setUploadFile((prev) => {
+                    // 取出當前處理的資料
+                    let change = prev.filter((file) => file.id === item.id)[0];
+                    // 更改狀態
+                    change.fileStatus = "SUCCESS";
+                    // 取出非處理資料
+                    const prev_filter = prev.filter((file) => file.id !== item.id);
+                    return [...prev_filter, change];
+                  });
                 } else {
-                  console.log("File upload failed.");
-                  return item;
+                  alert(item.fileName + "上傳失敗");
                 }
               })
               .catch((error) => {
-                console.log(error);
+                console.error(error);
+                alert(item.fileName + "上傳失敗");
               });
           }
         }
@@ -77,9 +64,7 @@ const Item = ({
     <tr>
       <td>{number}</td>
       <td>{fileName}</td>
-      <td className={fileStatus === "READY" ? "ready" : "success"}>
-        {fileStatus}
-      </td>
+      <td className={fileStatus === "READY" ? "ready" : "success"}>{fileStatus}</td>
       <td>Created&ensp;Time:{processingProgress}</td>
       <td>{fileSize}</td>
       <td>

@@ -7,3 +7,23 @@
     padding-top: 3.4rem;
   }
 }
+/* 改變滾軸宽度 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* 改變滾軸底色 */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+/* 改變滾軸滑塊樣式 */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+}
+
+/* 改變滾軸滑塊hover樣式 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}

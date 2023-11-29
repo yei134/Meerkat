@@ -20,15 +20,16 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
   const [groups, setGroups] = useState("test-department"); //package_create groups(屬於哪幾類群組 如腦部 肺部
   const [ownerOrg, setOwnerOrg] = useState("national-taipei-university-of-nursing-and-health-scienses"); //package_create owner_org(組織id 例如25188a0c-7f13-4562-a5e2-042df726de3c
   const [input1, setInput1] = useState("");
-  const [input2, setInput2] = useState("");
-  const [symptoms, setSymptoms] = useState([]); //病徵
   const navigate = useNavigate();
-
-  useEffect(() => {}, [symptoms]);
 
   //newDataset's label change
   function nameChange(e) {
-    setName(e.target.value);
+    const value = e.target.value;
+    if (/^[a-z0-9_-]*$/.test(value)) {
+      setName(value);
+    } else {
+      alert("請輸入小寫英文字母、數字、連字符或底線！");
+    }
   }
   function titleChange(e) {
     setTitle(e.target.value);
@@ -58,46 +59,10 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
     //索引檔名稱輸入時判斷
     //條件：只能輸入 "小寫英文字母" 和 "_"
     const value = e.target.value;
-    if (/^[a-z_]*$/.test(value)) {
+    if (/^[a-z0-9]*$/.test(value)) {
       setInput1(value);
     } else {
-      alert("請輸入小寫英文字母！");
-    }
-  }
-  function descriptionChange(e) {
-    setInput2(e.target.value);
-  }
-
-  //按鈕活動方法
-  function addSymptoms() {
-    console.log(symptoms);
-    var flag = 0;
-    //條件1：接到的值不能為空字串
-    //條件2：接到的值不能重複使用
-    arraySymptoms.map((item) => {
-      const { symptoms } = item;
-      if (symptoms === input1) {
-        alert("此名稱已輸入過，請換其他名稱！");
-        flag = 1;
-        return;
-      }
-    });
-    if (flag === 0) {
-      submittingState1.current = true;
-      //addItem(symptoms);
-      if (input1 === "") {
-        alert("請輸入名稱再做新增！");
-      } else {
-        symptomsAdd(function (prev) {
-          return [
-            ...prev,
-            {
-              id: v4(),
-              symptoms: input1,
-            },
-          ];
-        });
-      }
+      alert("請輸入小寫英文字母或數字！");
     }
   }
 
@@ -144,7 +109,7 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
           author_email: author_email,
           maintainer: maintainer,
           maintainer_email: maintainer_email,
-          note: note,
+          notes: note,
           owner_org: ownerOrg,
           group: groups,
         },
@@ -169,7 +134,7 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
           setNote("");
           setPrivate(false);
           setGroups("");
-          navigate(`/datasetInfo/${name}`);
+          navigate(`/datasetInfo/${name}-type-private`);
         } else {
           alert("資料集創建失敗！");
         }
@@ -227,33 +192,26 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
             <input type="text" value={author_email} onChange={author_emailChange} className="new-form-input-style" />
           </div>
           <div>
-            <span>Maintainer：</span>
+            <span>
+              Maintainer：
+              <font className="edit-must-fill">&#8251;必填</font>
+            </span>
             <input type="text" value={maintainer} onChange={maintainerChange} className="new-form-input-style" />
           </div>
           <div>
-            <span>Maintainer&nbsp;E-mail：</span>
+            <span>
+              Maintainer&nbsp;E-mail：
+              <font className="edit-must-fill">&#8251;必填</font>
+            </span>
             <input type="text" value={maintainer_email} onChange={maintainer_emailChange} className="new-form-input-style" />
           </div>
-          <div>
-            <span>Notes:</span>
-            <textarea value={note} onChange={noteChange} className="new-form-input-style" />
-          </div>
           <hr></hr>
-          {/* 操作按鈕 */}
-          <label>
-            <div className="div_symptom_name">
-              <h5>*索引檔名稱：</h5>
-              <input type="text" value={input1} onChange={symptomsChange} placeholder="請以英文病徵命名(需小寫英文字母，可附加 ' _ ' 符號)" className="new-form-input-style" />
-            </div>
-          </label>
           <div>
-            <List listSymptoms={symptoms} listDelete={setSymptoms} submittingState1={submittingState1} />
+            <span>Description：</span>
+            <textarea value={note} onChange={noteChange} className="new-form-input-style" />
           </div>
         </form>
       </div>
-      <button className="add" onClick={addSymptoms}>
-        新增
-      </button>
       <button className="add" onClick={btn_submit}>
         Submit
       </button>

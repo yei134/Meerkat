@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "datasetInfo/:getId/fileUpload/:getSymptom",
+    path: "datasetInfo/:getId/fileUpload/:getSymptom/:getSymptomId",
     // dicom檔案上傳
     element: (
       <PrivateRoute>
@@ -72,15 +72,6 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <DatasetEdit />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/datasetInfo/:getId/appendixmanage",
-    // 資料集附件管理與上傳
-    element: (
-      <PrivateRoute>
-        <Apendmanage />
       </PrivateRoute>
     ),
   },

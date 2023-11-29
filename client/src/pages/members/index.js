@@ -1,25 +1,17 @@
 // 套件
-import axios from "axios";
-import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
+import { useEffect, useState } from "react";
+import axios from "axios";
 // 檔案
 import "./index.css";
 import VisualTable from "../../components/visualTable";
 import { ckan_default, ckan_token } from "../../global/constants";
 
 export default function Members() {
-  // 網頁跳轉涵式
-  const navigate = useNavigate();
-  // 取得keycloak資訊
   const { keycloak } = useKeycloak();
   // 使用者keycloak資訊
   const [userInfo, setUserInfo] = useState({});
-  // 有權限的org列表
-  const [orgList, setOrgList] = useState([]);
-  // 有權限的pkg列表
-  const [pkgList, setPkgList] = useState([]);
-  // 可操作列表(orgnization[org]+package[pkg])
+  // 可操作列表
   const [operationList, setOperationList] = useState([]);
   // 成員資料
   const [members, setMembers] = useState([]);
@@ -33,11 +25,7 @@ export default function Members() {
     { id: 4, name: "capacity", display: "Role" },
   ];
 
-  // 1.首次刷新時，取得使用者登入資訊
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-  // 1.1.取keycloak中的user資料
+  // 取keycloak中的user資料
   async function getUserInfo() {
     await keycloak
       .loadUserProfile()
@@ -46,63 +34,13 @@ export default function Members() {
       })
       .catch((e) => {
         console.log(e);
-        alert("登入錯誤");
-        navigate("/");
       });
   }
-  // 2.當使用者資料更新時，取得操作列表
-  useEffect(() => {
-    if (userInfo.email !== undefined) {
-      getOperationList();
-    }
-    setOperationList([]);
-    setOrgList([]);
-    setPkgList([]);
-    setMembers([]);
-    setRoleChange({});
-  }, [userInfo]);
-  // 2.1.取得使用者可操作列表(orgnization[org]+package[pkg])
+  // 取得使用者所屬的組織
   async function getOperationList() {
     // 待補：透過saml取得user在ckan的name
-    let userName = await userInfo.email.split("@")[0];
-    userName = userName.replace(".", "-");
-    // A. 組織可操作列表取得
-    getOrgList(userName);
-    // B. 資料集可操作列表取得
-    getPkgList(userName);
-  }
-  // A. 取得組織資料集列表
-  async function getOrgList(userName) {
-    // A1. 取得使用者所在的所有組織(org)和組織身分
-    let getOrgList = await getCkanApiOrgListForUser(userName);
-    // A2. 篩選組織出身分為admin的組織
-    getOrgList = filterAdminCapacityList(getOrgList);
-    // A2.1. 儲存組織列表
-    setOrgList(getOrgList);
-    // A3. 取得組織內所有的資料集列表
-    let getPkgListOrg = await getOrgPkgList();
-    console.log("A3. getPkgListOrg:", getPkgListOrg);
-    // 3. 篩選出符合格式的資料集(package)
-    getPkgListOrg = filterFormatPkgList(getPkgListOrg);
-    // 4. 放入pkgList並避免重複
-    putInPkgList(getPkgListOrg);
-  }
-  // B. 取得單獨資料集列表
-  async function getPkgList(userName) {
-    // B1. 取得所在的資料集列表
-    let getPkgListPkg = await getCkanApiCollaboratorListForUser(userName);
-    // B2. 篩選出身分為admin的資料集
-    getPkgListPkg = filterAdminCapacityList(getPkgListPkg);
-    // B3. 取得pkg的name
-    getPkgListPkg = await pkgSearch(getPkgListPkg);
-    // 3. 篩選出符合格式的資料集(package)
-    // getPkgListPkg = filterFormatPkgList(getPkgListPkg);
-    // 4. 放入pkgList並避免重複
-    // putInPkgList(getPkgListPkg);
-  }
-  // A1. 取得使用者所在的所有組織(org)和組織身分
-  async function getCkanApiOrgListForUser(userName) {
-    const getOrgList = await axios
+    const userName = userInfo.email.split("@")[0];
+    await axios
       .get(`${ckan_default}api/ckan/organization_list_for_user`, {
         params: { id: userName },
         headers: {
@@ -110,120 +48,45 @@ export default function Members() {
         },
       })
       .then((res) => {
-        return res.data;
+        let tmp = [];
+        res.data.map((element) => {
+          // 是org管理者時，取所有資料集
+          if (element.capacity === "admin") {
+            getOrgPackageList(element.id);
+            tmp.push(element);
+          }
+        });
+        setOperationList(tmp);
       })
       .catch((e) => {
         console.log(e);
-        return [];
       });
-    return getOrgList;
   }
-  // A2.&B2. 篩選組織出身分為admin的組織
-  function filterAdminCapacityList(getList) {
-    const adminList = getList.filter((ele) => ele.capacity === "admin");
-    return adminList;
-  }
-  // A3. 取得組織內所有的資料集列表
-  async function getOrgPkgList() {
-    const orgPkgList = await Promise.all(
-      orgList.map((element) => {
-        return getCkanApiOrgPkgList(element.id);
-      })
-    );
-    async function getCkanApiOrgPkgList(orgId) {
-      const res = await axios
-        .get(`${ckan_default}api/ckan/organization_package_list`, {
-          params: { id: orgId },
-          headers: {
-            Authorization: ckan_token,
-          },
-        })
-        .then((res) => {
-          console.log(res.data);
-          return res.data;
-        })
-        .catch((e) => {
-          console.log(e);
-          return [];
-        });
-      return res;
-    }
-    return orgPkgList;
-  }
-  // B1. 取得所在的資料集列表
-  async function getCkanApiCollaboratorListForUser(userName) {
-    const getPkgList = await axios
-      .get(`${ckan_default}api/ckan/collaborator_list_for_user`, {
-        params: { id: userName },
+  // 取得組織所擁有資料集
+  async function getOrgPackageList(orgId) {
+    await axios
+      .get(`${ckan_default}api/ckan/organization_package_list`, {
+        params: { id: orgId },
         headers: {
           Authorization: ckan_token,
         },
       })
       .then((res) => {
-        return res.data;
+        let tmp = [];
+        res.data.map((element) => {
+          console.log(element);
+          tmp.push(element);
+        });
+        setOperationList((prev) => {
+          return [...prev, ...tmp];
+        });
       })
       .catch((e) => {
         console.log(e);
-        return [];
       });
-    return getPkgList;
   }
-  // B3. 取得pkg的name
-  async function pkgSearch(getPkgListPkg) {
-    const res = await new Promise(() => {
-      getPkgListPkg.map((element) => {
-        return getCkanApiPkgShow(element.package_id);
-      });
-    });
-    async function getCkanApiPkgShow(pkgId) {
-      const res = await axios
-        .get(`${ckan_default}api/ckan/package_show`, {
-          params: { datasetName: pkgId },
-          headers: {
-            Authorization: ckan_token,
-          },
-        })
-        .then((res) => {
-          return res.data;
-        })
-        .catch((e) => {
-          console.log(e);
-          return {};
-        });
-      return res;
-    }
-  }
-  // 3. 篩選出符合格式的資料集(package)
-  function filterFormatPkgList(getPkgList) {
-    console.log(getPkgList);
-    // const formatList = getPkgList.filter((pack) => pack.name.includes("-type-private"));
-    const formatList = getPkgList.filter((pack) => {
-      // typeof pack.name === "string" 用來防止filter爆掉
-      return typeof pack.name === "string" && pack.name.includes("-type-private");
-    });
-    console.log(formatList);
-    return formatList;
-  }
-  // 4. 放入pkgList並避免重複
-  function putInPkgList(getPkgList) {
-    getPkgList.map((element) => {
-      if (!pkgList.filter((pack) => pack.id.includes(element.id))) {
-        setPkgList((prev) => {
-          return [...prev, element];
-        });
-      }
-    });
-  }
-  // 5. 合併pkgList和orgList
-  useEffect(() => {
-    setOperationList(() => {
-      return [...orgList, ...pkgList];
-      // return { organization: orgList, dataset: pkgList };
-    });
-  }, [orgList, pkgList]);
-
   // 取得選取範圍org/dataset內的成員
-  async function getMembers(type, name) {
+  async function getMembers(type, id) {
     let api = "";
     if (type === "organization") {
       api = `${ckan_default}api/ckan/organization_info`;
@@ -233,7 +96,7 @@ export default function Members() {
     if (api !== "") {
       await axios
         .get(api, {
-          params: { id: name },
+          params: { id: id },
           headers: {
             Authorization: ckan_token,
           },
@@ -241,11 +104,11 @@ export default function Members() {
         .then(async (res) => {
           if (type === "organization") {
             const tmp = res.data.users;
-            const memberInfo = await getCkanUser(tmp, "id", "organization", name);
+            const memberInfo = await getCkanUser(tmp, "id", "organization", id);
             setMembers(memberInfo);
           } else if (type === "dataset") {
             const tmp = res.data;
-            const memberInfo = await getCkanUser(tmp, "user_id", "dataset", name);
+            const memberInfo = await getCkanUser(tmp, "user_id", "dataset", id);
             setMembers(memberInfo);
           }
         })
@@ -254,8 +117,8 @@ export default function Members() {
         });
     }
   }
-  // 取得ckan的user資訊 (type和name是為了表格操作放入的)
-  async function getCkanUser(arr, field_name, type, name) {
+  // 取得ckan的user資訊 (type和id是為了表格操作放入的)
+  async function getCkanUser(arr, field_name, type, id) {
     // promise將區塊內程序打包使執行序完全執行後才往下運行
     const res = await Promise.all(
       arr.map(async (element) => {
@@ -268,7 +131,7 @@ export default function Members() {
           })
           .then((res) => {
             const tmp = res.data;
-            const operate = { type: type, name: name, user: tmp.name, role: element.capacity, display: true };
+            const operate = { type: type, id: id, user: tmp.name, role: element.capacity, display: true };
             // operate內的名稱會連動到changeOperate方法
             return { name: tmp.name, email: tmp.email, capacity: element.capacity, operate: operate };
           })
@@ -281,6 +144,15 @@ export default function Members() {
     return res;
   }
 
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+  useEffect(() => {
+    if (userInfo.email !== undefined) {
+      getOperationList();
+    }
+  }, [userInfo]);
+
   return (
     <>
       {/* 操作選單 */}
@@ -291,7 +163,7 @@ export default function Members() {
               <li
                 key={`operationList_${index}`}
                 onClick={() => {
-                  getMembers(element.type, element.name);
+                  getMembers(element.type, element.id);
                 }}
               >{`${element.type}:  ${element.title}-${element.private}`}</li>
             );
@@ -308,7 +180,7 @@ export default function Members() {
 }
 function ChangeOperate({ roleChange, setRoleChange }) {
   // type:organization/dataset,
-  // id:(org/set)'s name,
+  // id:(org/set)'s id,
   // name:user's name,
   // role:original role
   const roleList = [
@@ -339,7 +211,7 @@ function ChangeOperate({ roleChange, setRoleChange }) {
       .post(
         api,
         {
-          id: roleChange.name,
+          id: roleChange.id,
           users: [roleChange.user],
           role: formJson.role,
         },
