@@ -81,6 +81,9 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
     } else if (maintainer_email === "") {
       alert("管理者電子郵件尚未填寫！");
       return;
+    } else if (!author_email.includes("@gmail.com") || !maintainer_email.includes("@gmail.com")) {
+      alert("錯誤：電子郵件格式不正確！須包含'@gmail.com'！");
+      return;
     } else {
       add(function () {
         return [
@@ -136,10 +139,10 @@ const Edit = ({ add, symptomsAdd, submittingState1, dataset, arraySymptoms }) =>
           setGroups("");
           navigate(`/datasetInfo/${name}-type-private`);
         } else {
-          alert("資料集創建失敗！");
+          alert("錯誤：資料集創建失敗！");
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => alert("錯誤：資料集已存在"));
   }
   //test
   function btn_reset() {

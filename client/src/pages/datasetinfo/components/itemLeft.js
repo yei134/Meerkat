@@ -12,6 +12,7 @@ const ItemLeft = ({ name, format, last_modified, url }) => {
   } else {
     last_modified_date = "不明";
   }
+
   //img src分類-依format分配icon
   if (format == "CSV") {
     imgSrc = "../fileIndex.svg";
@@ -20,6 +21,7 @@ const ItemLeft = ({ name, format, last_modified, url }) => {
     imgSrc = "../fileUnknow.svg";
     type = ".不知名檔案類型";
   }
+
   return (
     <div className="file-float-row">
       <div className="formate-a-style">

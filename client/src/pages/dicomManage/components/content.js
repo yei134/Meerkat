@@ -115,6 +115,7 @@ const Content = ({ datasetName }) => {
       }
     }
   }, [symptoms]);
+
   return (
     <div className="symptoms-list">
       <div className="flex-container-column">

@@ -1,25 +1,30 @@
+//套件
 import React, { useEffect, useState } from "react";
 import Linkify from "linkify-react"; //判斷字串是否含超連結
+//檔案
 import ItemLeft from "./itemLeft";
 import ItemRight from "./itemRight";
 import "../index.css";
+//icon庫
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PsychologyIcon from "@mui/icons-material/Psychology";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+
 const ConRight = ({ notes, title, files, name }) => {
-  var [indexFiles, setIndexFiles] = useState([]);
-  var [appendix, setAppendix] = useState([]);
+  const [indexFiles, setIndexFiles] = useState([]); //索引檔
+  const [appendix, setAppendix] = useState([]); //附件檔
+
   useEffect(() => {
     const keywords = "_[type]_"; //辨別[索引檔]和[附件檔]的關鍵詞
-    indexFiles = files.filter((item) => {
+    let index_Files = files.filter((item) => {
       return typeof item.name === "string" && item.name.includes(keywords);
     }); // indexFiles => [索引檔]
-    setIndexFiles(indexFiles);
-    appendix = files.filter((item) => {
+    setIndexFiles(index_Files);
+    let appendix_Files = files.filter((item) => {
       return typeof item.name === "string" && !item.name.includes(keywords);
     }); // appendix => [附件檔]
-    setAppendix(appendix);
+    setAppendix(appendix_Files);
   }, [files]);
 
   return (

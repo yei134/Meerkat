@@ -1,4 +1,6 @@
+//套件
 import React from "react";
+//檔案
 import ConLeft from "./conleft";
 import ConRight from "./conright";
 

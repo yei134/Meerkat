@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 //檔案
 import "./index.css";
-import Header from "./components/hearder";
 import Content from "./components/content";
 
 function DatasetInfo() {

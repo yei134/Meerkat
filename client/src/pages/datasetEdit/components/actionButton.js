@@ -1,9 +1,10 @@
+//套件
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ActionButton = ({ title, id, author, author_email, maintainer, maintainer_email, notes, datasetName }) => {
-  var [res, setRes] = useState();
+  const [res, setRes] = useState();
   const navigate = useNavigate();
   const handleSubmit = async () => {
     console.log(maintainer_email);
@@ -28,10 +29,9 @@ const ActionButton = ({ title, id, author, author_email, maintainer, maintainer_
               headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN },
             }
           )
-          .then((response) => {
-            console.log(response.data.status);
-            res = response.data.status;
-            setRes(res);
+          .then((res) => {
+            const response = res.data.status;
+            setRes(response);
             handleAlert();
           });
       } catch (error) {
@@ -57,9 +57,8 @@ const ActionButton = ({ title, id, author, author_email, maintainer, maintainer_
           "Content-Type": "application/json",
         },
       })
-      .then((response) => {
-        console.log(response);
-        if ((response.status = 200)) {
+      .then((res) => {
+        if ((res.status = 200)) {
           alert(datasetName + "已被刪除！");
           navigate("/");
         } else {

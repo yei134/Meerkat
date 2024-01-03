@@ -1,9 +1,8 @@
 //套件
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-//檔案
-// import { AuthContext } from "../../../helpers/AuthContext";
 import { BrowserRouter as Router, Link, Route, useNavigate } from "react-router-dom";
+//icon庫
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 const Content = ({ dataset }) => {
@@ -22,7 +21,6 @@ const Content = ({ dataset }) => {
       try {
         await axios.get(`${process.env.REACT_APP_BACKEND_URI}api/ckan/package_show`, { params: { datasetName: name }, headers: { Authorization: process.env.REACT_APP_CKAN_TOKEN } }).then((res) => {
           let Info = res.data;
-          //以下為破解拿不到孫子的怪寫法
           setOrgInfo(Info.organization);
           let fs = Info.resources;
           setFiles(fs);
