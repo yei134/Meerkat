@@ -1,9 +1,11 @@
-# api@1.4.12 變動 2023/11/21
+# api@1.4.13 變動 2024/01/03
 
 ### 完成進度
 #### DEBUG DONE
-1. /api/raccoon/appendStudies & /api/raccoon/studiesList
-  > 修改沒帶headers的bug
+1. /api/ckan/package_create 
+  > 拔掉groups必填
+2. /api/ckan/package_create 
+  > 創建出錯時回傳錯誤
 
 #### UPDATE DONE
 

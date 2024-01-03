@@ -780,6 +780,7 @@ exports.postPackageCreate = async (req, res) => {
   var header = "";
 
   checkRequest(packageCreate);
+  // checkRequest();
 
   async function checkRequest(callback) {
     try {
@@ -807,14 +808,9 @@ exports.postPackageCreate = async (req, res) => {
         if (!req.body.owner_org) {
           throw "owner_org field is required.";
         }
-        if (!req.body.group) {
-          throw "group field is required.";
-        }
         data = req.body;
         data["private"] = false;
         data["extras"] = [{ key: "needapply", value: "true" }];
-        const group = req.body.group;
-        data["groups"] = [{ name: group }];
       }
       //前端post過來的ckanToken
       if (!req.headers.authorization) {
@@ -863,8 +859,9 @@ exports.postPackageCreate = async (req, res) => {
         } else {
           throw "this dataset name is used by others.";
         }
-      } else {
-        throw "this dataset name is used by others.";
+      }else if(privateRes.success == 500){
+        console.log(privateRes.log);
+        res.status(500).send(privateRes.log);
       }
     } catch (e) {
       console.log(e);
